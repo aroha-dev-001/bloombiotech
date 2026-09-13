@@ -32,12 +32,10 @@ export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
 
   if (status === "ok") {
     return (
-      <div className="border border-leaf/40 bg-white p-6">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-leaf">
-          Logged
-        </p>
-        <h3 className="mt-2 font-serif text-2xl">Enquiry received.</h3>
-        <p className="mt-2 text-sm text-muted">
+      <div className="border border-[var(--brand)]/40 bg-[var(--surface)] p-6">
+        <p className="eyebrow eyebrow-accent">Logged</p>
+        <h3 className="display d-3 mt-3">Enquiry received.</h3>
+        <p className="prose-body mt-3 text-sm">
           WhatsApp the plant if you need a same-day pack list.
         </p>
         <Button href={whatsappUrl()} className="mt-5">
@@ -50,21 +48,21 @@ export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid gap-6 sm:grid-cols-2">
-        <label className="block text-xs uppercase tracking-[0.16em] text-muted">
+        <label className="eyebrow block">
           Name
-          <input required name="name" className="field text-base tracking-normal text-ink normal-case" />
+          <input required name="name" className="field" />
         </label>
-        <label className="block text-xs uppercase tracking-[0.16em] text-muted">
+        <label className="eyebrow block">
           Phone
-          <input required name="phone" type="tel" className="field text-base tracking-normal text-ink normal-case" />
+          <input required name="phone" type="tel" className="field" />
         </label>
       </div>
-      <label className="block text-xs uppercase tracking-[0.16em] text-muted">
+      <label className="eyebrow block">
         Email
-        <input name="email" type="email" className="field text-base tracking-normal text-ink normal-case" />
+        <input name="email" type="email" className="field" />
       </label>
       <fieldset>
-        <legend className="text-xs uppercase tracking-[0.16em] text-muted">I am a</legend>
+        <legend className="eyebrow">I am a</legend>
         <input type="hidden" name="audience" value={audience} />
         <div className="mt-3 flex flex-wrap gap-2">
           {audiences.map((a) => (
@@ -72,23 +70,22 @@ export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
               key={a}
               type="button"
               onClick={() => setAudience(a)}
-              className={`border px-3 py-1.5 text-sm transition-transform duration-400 ${
+              className={`tag min-h-9 px-3 transition-colors duration-300 ${
                 audience === a
-                  ? "border-leaf bg-leaf text-white"
-                  : "border-forest/15 bg-transparent hover:border-forest/40"
+                  ? "border-[var(--brand)] bg-[var(--brand)] text-[#06120a]"
+                  : "hover:border-[var(--fg)] hover:text-[var(--fg)]"
               }`}
-              style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
             >
               {a}
             </button>
           ))}
         </div>
       </fieldset>
-      <label className="block text-xs uppercase tracking-[0.16em] text-muted">
+      <label className="eyebrow block">
         Product of interest
         <select
           name="product"
-          className="field text-base tracking-normal text-ink normal-case"
+          className="field"
           defaultValue={presetProduct ?? ""}
         >
           <option value="">Not sure yet</option>
@@ -99,13 +96,13 @@ export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
           ))}
         </select>
       </label>
-      <label className="block text-xs uppercase tracking-[0.16em] text-muted">
+      <label className="eyebrow block">
         Crop, acres, and what you need
         <textarea
           required
           name="message"
           rows={4}
-          className="field text-base tracking-normal text-ink normal-case"
+          className="field"
           placeholder="12 acres robusta · AMC liquid + Trichoderma for nursery"
         />
       </label>
@@ -113,12 +110,12 @@ export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
         <Button type="submit" disabled={status === "sending"}>
           {status === "sending" ? "Sending…" : "Send enquiry"}
         </Button>
-        <a href={`mailto:${site.email}`} className="text-sm text-muted hover:text-forest">
+        <a href={`mailto:${site.email}`} className="meta hover:text-[var(--fg)]">
           Email instead
         </a>
       </div>
       {status === "err" ? (
-        <p className="text-sm text-moss">
+        <p className="prose-body text-sm">
           Could not save here. WhatsApp {site.phoneDisplay}.
         </p>
       ) : null}

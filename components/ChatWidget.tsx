@@ -24,7 +24,7 @@ const nav = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Products" },
   { href: "/about", label: "Company" },
-  { href: "/gallery", label: "Photos" },
+  { href: "/gallery", label: "Film room" },
   { href: "/enquire", label: "Quote" },
 ];
 
@@ -254,10 +254,10 @@ export function ChatWidget() {
   return (
     <>
       {open ? (
-        <div className="pointer-events-auto fixed inset-0 z-[90] flex h-[100dvh] w-full flex-col overflow-hidden border border-forest/15 bg-white shadow-2xl overscroll-none sm:inset-auto sm:right-4 sm:bottom-20 sm:h-[min(36rem,78vh)] sm:w-[26rem] sm:rounded-2xl">
+        <div className="pointer-events-auto fixed inset-0 z-[90] flex h-[100dvh] w-full flex-col overflow-hidden border border-[var(--line)] bg-[var(--bone)] shadow-2xl overscroll-none sm:inset-auto sm:right-4 sm:bottom-20 sm:h-[min(36rem,78vh)] sm:w-[26rem] sm:rounded-none">
           {historyOpen ? (
-            <div className="absolute inset-0 z-10 flex flex-col bg-white">
-              <div className="flex items-center justify-between border-b border-forest/10 px-3 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+            <div className="absolute inset-0 z-10 flex flex-col bg-[var(--bone)]">
+              <div className="flex items-center justify-between border-b border-[var(--line)] px-3 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
                 <p className="text-sm font-medium">Chat history</p>
                 <button
                   type="button"
@@ -293,7 +293,7 @@ export function ChatWidget() {
             </div>
           ) : null}
 
-          <div className="flex items-center gap-2 border-b border-forest/10 px-2 py-2 pt-[max(0.5rem,env(safe-area-inset-top))]">
+          <div className="flex items-center gap-2 border-b border-[var(--line)] px-2 py-2 pt-[max(0.5rem,env(safe-area-inset-top))]">
             <AiMark />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium leading-tight">Ask Bloom AI</p>
@@ -310,13 +310,13 @@ export function ChatWidget() {
             </IconBtn>
           </div>
 
-          <div className="flex gap-1 overflow-x-auto border-b border-forest/10 px-2 py-1.5">
+          <div className="flex gap-1 overflow-x-auto border-b border-[var(--line)] px-2 py-1.5">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={closePanel}
-                className="shrink-0 rounded-full bg-cream px-3 py-2 text-[12px] text-forest"
+                className="shrink-0 rounded-full bg-cream px-3 py-2 text-[12px] text-[var(--ink)]"
               >
                 {item.label}
               </Link>
@@ -331,7 +331,7 @@ export function ChatWidget() {
               m.role === "user" ? (
                 <div
                   key={m.id}
-                  className="ml-8 rounded-2xl bg-leaf px-3 py-2 text-sm text-white sm:ml-10"
+                  className="ml-8 rounded-none bg-[var(--brand)] px-3 py-2 text-sm text-white sm:ml-10"
                 >
                   {m.content}
                 </div>
@@ -348,7 +348,7 @@ export function ChatWidget() {
           </div>
 
           <form
-            className="flex gap-2 border-t border-forest/10 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+            className="flex gap-2 border-t border-[var(--line)] p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
             onSubmit={(e) => {
               e.preventDefault();
               send(input);
@@ -360,7 +360,7 @@ export function ChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask in a few words…"
               enterKeyHint="send"
-              className="min-h-11 min-w-0 flex-1 rounded-full border border-forest/20 px-4 text-base sm:text-sm"
+              className="min-h-11 min-w-0 flex-1 rounded-full border border-[var(--line)] px-4 text-base sm:text-sm"
             />
             <button
               type="submit"
@@ -380,7 +380,7 @@ export function ChatWidget() {
           e.stopPropagation();
           setOpen(true);
         }}
-        className={`fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[91] flex items-center gap-2 rounded-full bg-white py-2.5 pr-4 pl-2 text-sm font-medium shadow-lg ring-1 ring-forest/10 ${open ? "hidden sm:flex" : "flex"}`}
+        className={`fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[91] flex items-center gap-2 rounded-full bg-[var(--bone)] py-2.5 pr-4 pl-2 text-sm font-medium shadow-lg ring-1 ring-forest/10 ${open ? "hidden sm:flex" : "flex"}`}
         aria-expanded={open}
         aria-label="Open Ask Bloom AI"
       >
@@ -406,7 +406,7 @@ function IconBtn({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="grid h-11 w-11 place-items-center text-xl leading-none text-forest hover:bg-cream"
+      className="grid h-11 w-11 place-items-center text-xl leading-none text-[var(--ink)] hover:bg-cream"
     >
       {children}
     </button>
@@ -421,15 +421,15 @@ function AnswerCard({
   onAsk: (q: string) => void;
 }) {
   return (
-    <div className="mr-2 rounded-2xl bg-white p-3 text-sm shadow-sm sm:mr-4">
-      <p className="font-medium text-forest">{answer.title}</p>
+    <div className="mr-2 rounded-none bg-[var(--bone)] p-3 text-sm shadow-sm sm:mr-4">
+      <p className="font-medium text-[var(--ink)]">{answer.title}</p>
       {answer.summary ? (
         <p className="mt-2 text-[13px] leading-relaxed text-ink">{answer.summary}</p>
       ) : null}
       <ul className="mt-3 space-y-1.5 text-[13px] leading-snug text-ink">
         {(answer.bullets ?? []).map((b) => (
           <li key={b} className="flex gap-2">
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf" />
+            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />
             <span>{b}</span>
           </li>
         ))}
@@ -441,7 +441,7 @@ function AnswerCard({
             <Link
               key={l.href + l.label}
               href={l.href}
-              className="rounded-full bg-cream px-3 py-1.5 text-[12px] text-leaf"
+              className="rounded-full bg-cream px-3 py-1.5 text-[12px] text-[var(--leaf)]"
             >
               {l.label}
             </Link>
@@ -455,7 +455,7 @@ function AnswerCard({
               key={q}
               type="button"
               onClick={() => onAsk(q)}
-              className="rounded-full border border-forest/15 px-3 py-1.5 text-left text-[12px] text-muted"
+              className="rounded-full border border-[var(--line)] px-3 py-1.5 text-left text-[12px] text-muted"
             >
               {q}
             </button>

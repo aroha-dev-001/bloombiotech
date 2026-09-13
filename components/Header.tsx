@@ -2,111 +2,156 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { MorphIcon } from "morphicons/react";
-import { Menu, X } from "lucide";
+import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
-import { Button } from "./Button";
 import { site, telHref } from "@/lib/site";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "Company" },
-  { href: "/products", label: "Catalogue" },
-  { href: "/gallery", label: "Photos" },
-  { href: "/journal", label: "Journal" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/products", label: "Catalogue", note: "15 packs" },
+  { href: "/about", label: "The plant", note: "Chikkamagaluru" },
+  { href: "/gallery", label: "Film room", note: "Photos + footage" },
+  { href: "/journal", label: "Field notes", note: "Journal" },
+  { href: "/enquire", label: "Enquiry", note: "Quote desk" },
 ];
 
 export function Header() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const onHero = path === "/";
+
+  useEffect(() => {
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
-    <header className="site-header">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2.5">
-        <Link
-          href="/"
-          className="flex h-12 shrink-0 items-center overflow-hidden sm:h-[3.25rem]"
-          onClick={() => setOpen(false)}
-        >
-          <Logo
-            priority
-            className="h-10 max-h-10 max-w-[11rem] sm:h-12 sm:max-h-12 sm:max-w-[16rem]"
-          />
-        </Link>
-        <nav className="hidden items-center gap-5 text-[13px] text-forest lg:flex lg:gap-8">
-          {links.map((l) => (
+    <>
+      <header className="site-header" data-solid={onHero ? undefined : "true"}>
+        <div className="shell flex h-[var(--nav-h)] items-center justify-between gap-6">
+          <Link href="/" aria-label="Bloom Biotech, home" className="flex items-center">
+            <Logo priority className="h-8 w-auto sm:h-9" tone="dark" />
+          </Link>
+
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                data-active={path.startsWith(l.href) || undefined}
+                className="nav-link"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a href={telHref()} className="nav-link hidden xl:inline-flex">
+              {site.phoneDisplay}
+            </a>
             <Link
-              key={l.href}
-              href={l.href}
-              data-active={l.href === "/" ? path === "/" : path.startsWith(l.href)}
-              className="nav-link"
+              href="/enquire"
+              className="btn btn-primary hidden h-10 min-h-10 sm:inline-flex"
             >
-              {l.label}
+              Request a quote
+              <span className="arw" aria-hidden>
+                →
+              </span>
             </Link>
-          ))}
-        </nav>
-        <div className="hidden items-center gap-3 lg:flex">
-          <Button href={telHref()} variant="ghost">
-            Call {site.phoneDisplay}
-          </Button>
-          <Button href="/enquire">Request a quote</Button>
+            <button
+              type="button"
+              className="nav-toggle lg:hidden"
+              aria-expanded={open}
+              aria-controls="nav-sheet"
+              aria-label={open ? "Close menu" : "Open menu"}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span className="grid gap-[5px]" aria-hidden>
+                <i
+                  className="block h-px w-5 bg-current transition-transform duration-300"
+                  style={open ? { transform: "translateY(6px) rotate(45deg)" } : undefined}
+                />
+                <i
+                  className="block h-px w-5 bg-current transition-opacity duration-300"
+                  style={open ? { opacity: 0 } : undefined}
+                />
+                <i
+                  className="block h-px w-5 bg-current transition-transform duration-300"
+                  style={open ? { transform: "translateY(-6px) rotate(-45deg)" } : undefined}
+                />
+              </span>
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          className="grid h-11 w-11 place-items-center border border-forest/15 text-forest lg:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          <MorphIcon
-            icon={open ? X : Menu}
-            size={22}
-            color="currentColor"
-            strokeWidth={1.75}
-            reducedMotion="user"
-          />
-        </button>
-      </div>
-      <nav
-        className={`mobile-nav lg:hidden ${open ? "is-open" : ""}`}
+      </header>
+
+      <div
+        id="nav-sheet"
+        className={`nav-sheet ${open ? "is-open" : ""}`}
         aria-hidden={!open}
+        data-tone="dark"
       >
-        <div className="flex flex-col gap-2 px-4 py-4">
+        <div className="shell flex h-[var(--nav-h)] items-center justify-between">
+          <Logo className="h-8 w-auto" tone="dark" />
+          <button
+            type="button"
+            className="nav-toggle"
+            onClick={() => setOpen(false)}
+            aria-label="Close menu"
+            tabIndex={open ? 0 : -1}
+          >
+            <span aria-hidden className="text-lg leading-none">
+              ×
+            </span>
+          </button>
+        </div>
+
+        <nav className="shell self-center py-6" aria-label="Mobile">
           {links.map((l, i) => (
             <Link
               key={l.href}
               href={l.href}
+              className="nav-sheet-item"
               onClick={() => setOpen(false)}
-              data-active={l.href === "/" ? path === "/" : path.startsWith(l.href)}
-              className="nav-card"
               style={{ ["--i" as string]: i }}
+              tabIndex={open ? 0 : -1}
             >
-              <span>
-                <span className="font-mono text-[10px] text-muted">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="ml-2 text-lg">{l.label}</span>
-              </span>
-              <span className="text-leaf">→</span>
+              <span className="display d-3">{l.label}</span>
+              <span className="eyebrow">{l.note}</span>
             </Link>
           ))}
-          <div className="nav-actions mt-1 flex flex-col gap-2">
-            <Button
-              href={telHref()}
-              variant="ghost"
-              className="w-full"
-              onClick={() => setOpen(false)}
-            >
-              Call {site.phoneDisplay}
-            </Button>
-            <Button href="/enquire" className="w-full" onClick={() => setOpen(false)}>
-              Request a quote
-            </Button>
-          </div>
+        </nav>
+
+        <div className="shell grid gap-3 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:grid-cols-2">
+          <a href={telHref()} className="btn btn-ghost" tabIndex={open ? 0 : -1}>
+            Call {site.phoneDisplay}
+            <span className="arw" aria-hidden>
+              →
+            </span>
+          </a>
+          <Link
+            href="/enquire"
+            className="btn btn-primary"
+            onClick={() => setOpen(false)}
+            tabIndex={open ? 0 : -1}
+          >
+            Request a quote
+            <span className="arw" aria-hidden>
+              →
+            </span>
+          </Link>
         </div>
-      </nav>
-    </header>
+      </div>
+    </>
   );
 }

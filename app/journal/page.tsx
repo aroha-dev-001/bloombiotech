@@ -3,35 +3,62 @@ import Link from "next/link";
 import { articles } from "@/lib/articles";
 
 export const metadata: Metadata = {
-  title: "Journal",
-  description: "Articles on microbial inputs, coffee soils, and dealer practice.",
+  title: "Field notes",
+  description: "Notes on microbial inputs, coffee soils and dealer practice.",
 };
 
 export default function JournalPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16">
-      <p className="text-xs uppercase tracking-[0.2em] text-soil">Journal</p>
-      <h1 className="mt-2 font-serif text-4xl text-forest">Articles</h1>
-      <p className="mt-3 text-muted">
-        Field notes written as if Bloom were briefing a new agronomist - not
-        generic SEO filler.
-      </p>
-      <ul className="mt-10 space-y-6">
-        {articles.map((a) => (
-          <li key={a.slug}>
-            <Link
-              href={`/journal/${a.slug}`}
-              className="block rounded-2xl border border-forest/10 bg-white/50 p-6 hover:border-leaf/40"
-            >
-              <p className="text-xs text-soil">
-                {a.date} · {a.tags.join(" · ")}
-              </p>
-              <h2 className="mt-2 font-serif text-2xl text-forest">{a.title}</h2>
-              <p className="mt-2 text-sm text-muted">{a.excerpt}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <header data-tone="dark" className="pt-[calc(var(--nav-h)+3rem)] pb-14">
+        <div className="shell">
+          <p className="eyebrow">
+            <span className="eyebrow-accent">Field notes</span>
+            <span className="mx-2 opacity-40">/</span>
+            {articles.length} entries
+          </p>
+          <h1 className="display d-hero mt-6 max-w-[12ch]">Field notes.</h1>
+          <p className="lede mt-8">
+            Written the way the plant would brief a new agronomist — dose,
+            route, caution. Not search filler.
+          </p>
+        </div>
+      </header>
+
+      <section data-tone="light" className="band-tight">
+        <div className="shell">
+          <ul className="border-t border-[var(--line)]">
+            {articles.map((a, i) => (
+              <li key={a.slug} data-rv style={{ ["--rv-d" as string]: `${i * 50}ms` }}>
+                <Link
+                  href={`/journal/${a.slug}`}
+                  className="group grid gap-3 border-b border-[var(--line)] py-8 md:grid-cols-[10rem_minmax(0,1fr)_auto] md:items-baseline md:gap-8"
+                >
+                  <span className="meta">{a.date}</span>
+                  <span>
+                    <span className="display d-3 block transition-colors group-hover:text-[var(--accent)]">
+                      {a.title}
+                    </span>
+                    <span className="prose-body mt-2 block max-w-[60ch] text-[0.95rem]">
+                      {a.excerpt}
+                    </span>
+                    <span className="mt-4 flex flex-wrap gap-1.5">
+                      {a.tags.map((t) => (
+                        <span key={t} className="tag">
+                          {t}
+                        </span>
+                      ))}
+                    </span>
+                  </span>
+                  <span className="text-[var(--accent)] transition-transform duration-500 group-hover:translate-x-1" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </>
   );
 }

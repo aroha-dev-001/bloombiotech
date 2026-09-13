@@ -5,11 +5,14 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { AiMark } from "./AiMark";
+import { useMounted } from "@/hooks/useMounted";
 import { site } from "@/lib/site";
 
 const STORAGE = "bloom-ai-enquiry-v3";
 const START = "bloom-ai-enquiry-start-v3";
-const DELAY_MS = 10_000;
+const DELAY_MS = 45_000;
+/** Never interrupt the opening act: wait until the visitor is deep in the page. */
+const SCROLL_GATE = 0.5;
 
 const steps = [
   {
@@ -51,17 +54,14 @@ function valid(key: (typeof steps)[number]["key"], value: string) {
 
 export function EnquiryPulse() {
   const path = usePathname();
-  const [ready, setReady] = useState(false);
+  const ready = useMounted();
+
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [values, setValues] = useState({ name: "", phone: "", email: "" });
   const [error, setError] = useState("");
   const [status, setStatus] = useState<"talk" | "sending" | "ok" | "err">("talk");
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setReady(true);
-  }, []);
 
   useEffect(() => {
     if (path !== "/") return;
@@ -82,9 +82,30 @@ export function EnquiryPulse() {
       start = Date.now();
     }
 
+    const deepEnough = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      return window.scrollY / max >= SCROLL_GATE;
+    };
+
+    let done = false;
+    const fire = () => {
+      if (done) return;
+      done = true;
+      setOpen(true);
+    };
+
+    const onScroll = () => {
+      if (Date.now() - start < DELAY_MS) return;
+      if (deepEnough()) fire();
+    };
+
     const wait = Math.max(0, DELAY_MS - (Date.now() - start));
-    const t = window.setTimeout(() => setOpen(true), wait);
-    return () => window.clearTimeout(t);
+    const t = window.setTimeout(onScroll, wait);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [path]);
 
   useEffect(() => {
@@ -167,14 +188,14 @@ export function EnquiryPulse() {
       <div className="pulse-card">
         <div className="pulse-photo">
           <Image
-            src="/photos/coffee.png"
+            src="/plant/hall-wide.jpg"
             alt=""
             fill
             sizes="26rem"
-            className="object-cover object-[72%_center]"
+            className="object-cover"
           />
           <div className="pulse-photo-veil" />
-          <p className="pulse-photo-label">Bloom Biotech · coffee country</p>
+          <p className="pulse-photo-label">Bloom Biotech · Chikkamagaluru</p>
         </div>
         <button type="button" className="pulse-close" onClick={close} aria-label="Close">
           ×
@@ -183,11 +204,9 @@ export function EnquiryPulse() {
           <div className="flex items-center gap-3 pr-8">
             <AiMark />
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-leaf">
-                Ask Bloom AI
-              </p>
-              <p id="pulse-title" className="font-serif text-xl text-forest">
-                Quote from the Chikkamagaluru plant
+              <p className="eyebrow eyebrow-accent">Ask Bloom AI</p>
+              <p id="pulse-title" className="display d-3 mt-1">
+                Quote from the plant
               </p>
             </div>
           </div>
@@ -200,8 +219,8 @@ export function EnquiryPulse() {
 
           {status === "ok" ? (
             <div className="mt-5">
-              <p className="font-serif text-2xl text-forest">Noted{first ? `, ${first}` : ""}.</p>
-              <p className="mt-2 text-sm text-muted">
+              <p className="display d-3">Noted{first ? `, ${first}` : ""}.</p>
+              <p className="prose-body mt-3 text-sm">
                 We have your number for Bio Sanjiveeni, Bhu Samruddhi, and the rest of the
                 brochure line. WhatsApp {site.phoneDisplay} if you need a pack list today.
               </p>

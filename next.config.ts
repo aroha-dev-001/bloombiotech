@@ -21,14 +21,6 @@ const nextConfig: NextConfig = {
       { source: "/products/root-care", destination: "/products", permanent: true },
     ];
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-    ],
-  },
 };
 
 export default nextConfig;
