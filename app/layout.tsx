@@ -1,4 +1,5 @@
-import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -7,27 +8,30 @@ import { EnquiryPulse } from "@/components/EnquiryPulse";
 import { MotionRoot } from "@/components/MotionRoot";
 import { site } from "@/lib/site";
 
-const news = Newsreader({
-  variable: "--font-news",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  display: "swap",
 });
 
 const plex = IBM_Plex_Sans({
   variable: "--font-plex",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(site.website),
   title: {
-    default: `${site.name} - ${site.tagline}`,
+    default: `${site.name} — ${site.tagline}`,
     template: `%s · ${site.name}`,
   },
   description: site.description,
@@ -44,10 +48,11 @@ export const metadata = {
   },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  viewportFit: "cover" as const,
+  viewportFit: "cover",
+  themeColor: "#070a08",
 };
 
 export default function RootLayout({
@@ -58,17 +63,22 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${news.variable} ${plex.variable} ${plexMono.variable} h-full`}
-      data-scroll-behavior="smooth"
+      className={`${archivo.variable} ${plex.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
-      <body
-        className="flex min-h-full flex-col bg-paper text-ink antialiased"
-        suppressHydrationWarning
-      >
+      <body className="flex min-h-svh flex-col" suppressHydrationWarning>
+        <noscript>
+          {/* Reveals are JS-driven; without it, show everything immediately. */}
+          <style>{`[data-rv]{opacity:1!important;transform:none!important}[data-rv="mask"]::after{display:none!important}`}</style>
+        </noscript>
         <MotionRoot>
+          <a href="#main" className="skip-link">
+            Skip to content
+          </a>
           <Header />
-          <main className="flex-1 pb-24 sm:pb-8">{children}</main>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <Footer />
           <ChatWidget />
           <EnquiryPulse />

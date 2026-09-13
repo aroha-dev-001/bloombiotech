@@ -7,9 +7,47 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 function paintScroll(y: number) {
   const next = Number.isFinite(y) ? Math.max(0, y) : window.scrollY || 0;
   const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-  document.documentElement.style.setProperty("--scroll", String(Math.min(1, next / max)));
-  document.documentElement.style.setProperty("--hero-shift", String(Math.min(next, 720)));
-  document.documentElement.classList.toggle("is-scrolled", next > 18);
+  const root = document.documentElement;
+  root.style.setProperty("--scroll", String(Math.min(1, next / max)));
+  root.style.setProperty("--hero-shift", String(Math.min(next, 900)));
+  root.classList.toggle("is-scrolled", next > 24);
+}
+
+/**
+ * One observer reveals every [data-rv] element on the page, so sections can
+ * stay server components and still animate in.
+ */
+function useRevealObserver(reduce: boolean) {
+  useEffect(() => {
+    if (reduce) {
+      document.querySelectorAll("[data-rv]").forEach((el) => el.classList.add("is-in"));
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+    );
+
+    const watch = () => {
+      document.querySelectorAll("[data-rv]:not(.is-in)").forEach((el) => io.observe(el));
+    };
+
+    watch();
+    const mo = new MutationObserver(watch);
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      mo.disconnect();
+      io.disconnect();
+    };
+  }, [reduce]);
 }
 
 export function MotionRoot({ children }: { children: ReactNode }) {
@@ -19,35 +57,22 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("reduce-motion", reduce);
   }, [reduce]);
 
+  useRevealObserver(reduce);
+
   useEffect(() => {
-    let last = window.scrollY;
     let frame = 0;
     let lenis: Lenis | undefined;
 
-    const onTick = (y: number) => {
-      paintScroll(y);
-      if (Math.abs(y - last) > 2) {
-        document.documentElement.dataset.scrollDir = y > last ? "down" : "up";
-      }
-      last = y;
-    };
-
     if (!reduce) {
-      lenis = new Lenis({
-        autoRaf: true,
-        anchors: false,
-        duration: 1.05,
-      });
-      lenis.on("scroll", (instance) => onTick(instance.scroll));
-      onTick(window.scrollY);
-      return () => {
-        lenis?.destroy();
-      };
+      lenis = new Lenis({ autoRaf: true, anchors: true, duration: 1.05 });
+      lenis.on("scroll", (instance: { scroll: number }) => paintScroll(instance.scroll));
+      paintScroll(window.scrollY);
+      return () => lenis?.destroy();
     }
 
     const tick = () => {
       frame = 0;
-      onTick(window.scrollY);
+      paintScroll(window.scrollY);
     };
     const onScroll = () => {
       if (frame) return;

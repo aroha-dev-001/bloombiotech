@@ -1,83 +1,67 @@
-"use client";
-
 import Link from "next/link";
-import { useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+type Variant = "primary" | "ghost" | "solid";
 
 type Props = {
   href?: string;
-  variant?: "primary" | "ghost";
+  variant?: Variant;
   className?: string;
   children: ReactNode;
   type?: "button" | "submit";
   disabled?: boolean;
+  arrow?: boolean;
   onClick?: () => void;
+};
+
+const variants: Record<Variant, string> = {
+  primary: "btn-primary",
+  ghost: "btn-ghost",
+  solid: "btn-solid",
 };
 
 export function Button({
   href,
   variant = "primary",
-  className = "",
+  className,
   children,
   type = "button",
   disabled,
+  arrow = true,
   onClick,
 }: Props) {
-  const ref = useRef<HTMLElement>(null);
-  const cls = `btn ${variant === "primary" ? "btn-primary" : "btn-ghost"} relative z-10 ${className}`;
-
-  function onMove(e: React.MouseEvent) {
-    const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const r = el.getBoundingClientRect();
-    const dx = e.clientX - (r.left + r.width / 2);
-    const dy = e.clientY - (r.top + r.height / 2);
-    el.style.transform = `translate(${dx * 0.18}px, ${dy * 0.22}px) scale(1.03)`;
-  }
-
-  function onLeave() {
-    if (ref.current) ref.current.style.transform = "";
-  }
-
-  const motion = { onMouseMove: onMove, onMouseLeave: onLeave };
+  const cls = cn("btn", variants[variant], className);
+  const inner = (
+    <>
+      {children}
+      {arrow ? (
+        <span className="arw" aria-hidden>
+          →
+        </span>
+      ) : null}
+    </>
+  );
 
   if (href) {
     const external = /^(https?:|tel:|mailto:|sms:)/i.test(href);
     if (external) {
       return (
-        <a
-          href={href}
-          ref={ref as React.Ref<HTMLAnchorElement>}
-          className={cls}
-          onClick={onClick}
-          {...motion}
-        >
-          {children}
+        <a href={href} className={cls} onClick={onClick}>
+          {inner}
         </a>
       );
     }
     return (
-      <Link
-        href={href}
-        ref={ref as React.Ref<HTMLAnchorElement>}
-        className={cls}
-        onClick={onClick}
-        {...motion}
-      >
-        {children}
+      <Link href={href} className={cls} onClick={onClick}>
+        {inner}
       </Link>
     );
   }
 
   return (
-    <button
-      ref={ref as React.Ref<HTMLButtonElement>}
-      type={type}
-      disabled={disabled}
-      className={cls}
-      onClick={onClick}
-      {...motion}
-    >
-      {children}
+    <button type={type} disabled={disabled} className={cls} onClick={onClick}>
+      {inner}
     </button>
   );
 }
