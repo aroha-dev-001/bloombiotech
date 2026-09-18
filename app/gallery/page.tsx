@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FilmRoom } from "@/components/home/FilmRoom";
 
 export const metadata: Metadata = {
-  title: "Film room",
+  title: "Manufacturing",
   description:
     "Drone footage, fermentation-hall film and photographs from the Bloom Biotech production unit in Chikkamagaluru.",
 };
@@ -13,7 +13,7 @@ export default function GalleryPage() {
       <header data-tone="dark" className="pt-[calc(var(--nav-h)+3rem)] pb-12">
         <div className="shell">
           <p className="eyebrow">
-            <span className="eyebrow-accent">Film room</span>
+            <span className="eyebrow-accent">Manufacturing</span>
             <span className="mx-2 opacity-40">/</span>
             Plant + packs
           </p>

@@ -15,21 +15,39 @@ const columns = [
     ],
   },
   {
-    title: "Company",
+    title: "Solutions",
     links: [
-      { href: "/about", label: "The plant" },
-      { href: "/gallery", label: "Film room" },
-      { href: "/journal", label: "Field notes" },
-      { href: "/#faq", label: "Questions" },
-      { href: "/enquire", label: "Request a quote" },
+      { href: "/solutions#finder", label: "Find the right product" },
+      { href: "/solutions?crop=coffee", label: "Coffee" },
+      { href: "/solutions?crop=black-pepper", label: "Black pepper" },
+      { href: "/solutions?crop=pomegranate", label: "Pomegranate" },
+      { href: "/field", label: "Field stories" },
     ],
   },
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About Bloom" },
+      { href: "/#labs-to-farms", label: "Labs to farms" },
+      { href: "/gallery", label: "Manufacturing" },
+      { href: "/journal", label: "Field notes" },
+      { href: "/faq", label: "Questions" },
+      { href: "/enquire", label: "Contact" },
+    ],
+  },
+];
+
+const pathways = [
+  { href: "/solutions#finder", label: "Farmers" },
+  { href: "/enquire?audience=dealer", label: "Dealers" },
+  { href: "/enquire?audience=distributor", label: "Distributors" },
+  { href: "/enquire?audience=general", label: "General" },
 ];
 
 export function Footer() {
   return (
     <footer data-tone="dark" className="relative">
-      <div className="shell grid gap-12 py-16 md:grid-cols-[1.3fr_repeat(2,minmax(0,0.7fr))_1fr] md:py-20">
+      <div className="shell grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.2fr_repeat(2,minmax(0,0.75fr))_1fr] md:py-20">
         <div>
           <Logo tone="dark" className="h-9" />
           <p className="lede mt-6 max-w-xs text-[0.95rem]">
@@ -37,6 +55,18 @@ export function Footer() {
             own unit in Chikkamagaluru. First in India to licence Arka Microbial
             Consortium from ICAR-IIHR.
           </p>
+          <div className="mt-8">
+            <p className="eyebrow">Start here</p>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {pathways.map((p) => (
+                <li key={p.href}>
+                  <Link href={p.href} className="tag hover:text-[var(--fg)]">
+                    {p.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="mt-6 flex gap-2">
             <a
               href={site.instagram}

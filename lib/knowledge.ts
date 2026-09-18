@@ -41,6 +41,30 @@ export function companyKnowledge(): KnowledgeChunk[] {
       href: "/products",
       text: `AMC powder and compost culture: do not mix with antibiotics, pesticides, or insecticides. Bio Astra, Bluderma, Blumonas, Bio Vanish, Bio Erase, Bio Hit, Bio Ace: do not mix with fungicides, pesticides, or insecticides. Calcare: caution when mixing with high-phosphorus fertilizers. Store cool and dry, away from direct sunlight. NutriCare C2 and AscoGold: store below 25°C.`,
     },
+    {
+      id: "finder",
+      title: "Finding the right pack",
+      href: "/solutions",
+      text: `A guided product finder is at /solutions. Step 1 pick the crop (coffee, black pepper, pomegranate, floriculture, or other crops). Step 2 pick what is needed: disease management, pest management, nematode management, better nutrition, root health, soil biology, or composting. Step 3 optionally pick the application route: soil, drip, foliar, or compost. Results are tiered: packs named for that crop first, then packs that answer one of the needs that crop is worked on for, then the rest that simply print "suitable for all crops" (held behind a "show more" control). The catalogue at /products carries the same filters as a flat list. The brochure names pomegranate, black pepper and floriculture as the commercial crops where AMC is used in crop protection management; most packs print "suitable for all crops". Crop-to-pack matching on this site is derived from the printed targets, usage and crop fields on each pack, not from a brochure recommendation table.`,
+    },
+    {
+      id: "field",
+      title: "Field records",
+      href: "/field",
+      text: `Field records are published at /field, one per crop (pomegranate, black pepper, coffee). The structure is published but the observations are placeholders in square brackets until a grower has reported and verified them. Bloom publishes no trial data, no yield percentages, no testimonials and no result claims. Never state a result, yield increase or field outcome for any Bloom product.`,
+    },
+    {
+      id: "faq",
+      title: "Common questions",
+      href: "/faq",
+      text: `Answers are grouped at /faq: choosing a pack (which pack for my crop, how to apply, tank-mixing, cost, carrier vs liquid), the technology (what AMC is, what Bio Astra is, organic marks, shelf life, why the pack CFU governs), and trade (dealer board lists, distributor appointments, where the plant is). The four a grower asks first are also on the homepage.`,
+    },
+    {
+      id: "audiences",
+      title: "Who to contact and how",
+      href: "/enquire",
+      text: `Four pathways at /enquire: farmers (/enquire?audience=farmer) who want the right pack for a crop; dealers (/enquire?audience=dealer) who want the board list and commercial names; distributors (/enquire?audience=distributor) who want territory and portfolio; and general visitors (/enquire?audience=general). Estates and KVK institutions use the same desk. WhatsApp ${site.phoneDisplay} is fastest during working hours.`,
+    },
   ];
 
   for (const p of products) {

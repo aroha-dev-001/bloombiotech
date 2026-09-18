@@ -31,7 +31,7 @@ const cells = [
 
 export function Scale() {
   return (
-    <section data-tone="light" className="band-tight border-y border-[var(--line)]">
+    <section data-tone="bone" className="band-tight border-y border-[var(--line)]">
       <div className="shell">
         <ul className="grid gap-px bg-[var(--line)] sm:grid-cols-2 lg:grid-cols-4">
           {cells.map((c, i) => (

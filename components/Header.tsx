@@ -6,13 +6,26 @@ import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { site, telHref } from "@/lib/site";
 
+/**
+ * Seven destinations, ordered the way the site tells its story. Labels are what
+ * a grower would say out loud, not what the plant calls things internally.
+ */
 const links = [
-  { href: "/products", label: "Catalogue", note: "15 packs" },
-  { href: "/about", label: "The plant", note: "Chikkamagaluru" },
-  { href: "/gallery", label: "Film room", note: "Photos + footage" },
-  { href: "/journal", label: "Field notes", note: "Journal" },
-  { href: "/enquire", label: "Enquiry", note: "Quote desk" },
+  { href: "/about", label: "About", note: "Since 2013", core: true },
+  { href: "/products", label: "Products", note: "15 packs", core: true },
+  { href: "/solutions", label: "Solutions", note: "By crop", core: true },
+  { href: "/#labs-to-farms", label: "Labs to farms", note: "The journey", core: false },
+  { href: "/field", label: "Field stories", note: "Crop records", core: false },
+  { href: "/gallery", label: "Manufacturing", note: "Plant + footage", core: false },
+  { href: "/enquire", label: "Contact", note: "Quote desk", core: true },
 ];
+
+/** Hash links must not light up as a section; match on pathname only. */
+function isActive(path: string, href: string) {
+  if (href.includes("#")) return false;
+  if (href === "/") return path === "/";
+  return path === href || path.startsWith(`${href}/`);
+}
 
 export function Header() {
   const path = usePathname();
@@ -42,13 +55,13 @@ export function Header() {
             <Logo priority className="h-8 w-auto sm:h-9" tone="dark" />
           </Link>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-5 xl:gap-7 lg:flex" aria-label="Primary">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                data-active={path.startsWith(l.href) || undefined}
-                className="nav-link"
+                data-active={isActive(path, l.href) || undefined}
+                className={l.core ? "nav-link" : "nav-link hidden xl:inline-flex"}
               >
                 {l.label}
               </Link>
@@ -56,21 +69,21 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href={telHref()} className="nav-link hidden xl:inline-flex">
+            <a href={telHref()} className="nav-link hidden 2xl:inline-flex">
               {site.phoneDisplay}
             </a>
             <Link
-              href="/enquire"
+              href="/solutions#finder"
               className="btn btn-primary hidden h-10 min-h-10 sm:inline-flex"
             >
-              Request a quote
+              Find the right product
               <span className="arw" aria-hidden>
                 →
               </span>
             </Link>
             <button
               type="button"
-              className="nav-toggle lg:hidden"
+              className="nav-toggle xl:hidden"
               aria-expanded={open}
               aria-controls="nav-sheet"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -140,12 +153,12 @@ export function Header() {
             </span>
           </a>
           <Link
-            href="/enquire"
+            href="/solutions#finder"
             className="btn btn-primary"
             onClick={() => setOpen(false)}
             tabIndex={open ? 0 : -1}
           >
-            Request a quote
+            Find the right product
             <span className="arw" aria-hidden>
               →
             </span>

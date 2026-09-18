@@ -1,29 +1,39 @@
 import { Hero } from "@/components/home/Hero";
 import { DataRail } from "@/components/home/DataRail";
-import { Origin } from "@/components/home/Origin";
+import { LabsToFarms } from "@/components/home/LabsToFarms";
+import { FindYourSolution } from "@/components/home/FindYourSolution";
+import { CropSolutions } from "@/components/home/CropSolutions";
 import { ProductRail } from "@/components/home/ProductRail";
+import { FieldStories } from "@/components/home/FieldStories";
 import { PlantStory } from "@/components/home/PlantStory";
-import { Capabilities } from "@/components/home/Capabilities";
-import { Assurance } from "@/components/home/Assurance";
-import { RouteGuide } from "@/components/home/RouteGuide";
-import { Scale } from "@/components/home/Scale";
-import { FilmRoom } from "@/components/home/FilmRoom";
+import { Pathways } from "@/components/home/Pathways";
 import { Questions } from "@/components/home/Questions";
 import { Contact } from "@/components/home/Contact";
 
+/**
+ * Nine sections, one arc:
+ *   understand the science → find your solution → by crop → the line →
+ *   see it in the field → see how it is made → act → ask → reach us.
+ *
+ * What used to sit here and now lives where it is actually looked for:
+ *   the company, the numbers, capability and assurance  → /about
+ *   the four application routes                         → /solutions
+ *   the film room and the plate wall                    → /gallery
+ *   every question past the first four                  → /faq
+ *   the other twelve packs                              → /products
+ */
 export default function HomePage() {
   return (
     <>
       <Hero />
       <DataRail />
-      <Origin />
+      <LabsToFarms />
+      <FindYourSolution />
+      <CropSolutions />
       <ProductRail />
+      <FieldStories />
       <PlantStory />
-      <Capabilities />
-      <Assurance />
-      <RouteGuide />
-      <Scale />
-      <FilmRoom />
+      <Pathways />
       <Questions />
       <Contact />
     </>

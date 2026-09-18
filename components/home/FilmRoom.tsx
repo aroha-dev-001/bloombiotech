@@ -34,7 +34,7 @@ export function FilmRoom({ heading = true }: { heading?: boolean }) {
       <div className="shell">
         {heading ? (
           <SectionHead
-            index="07"
+            index="10"
             kicker="Film room"
             title="The unit, unedited."
             lede="Drone passes over Beekanahalli Village and footage from the fermentation floor, with the packs those vessels fill."

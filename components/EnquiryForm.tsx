@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { site, whatsappUrl } from "@/lib/site";
 import { products } from "@/lib/products";
+import { audiences, type Audience } from "@/lib/audience";
 import { Button } from "./Button";
 
-const audiences = ["Farmer", "Dealer", "Estate / plantation", "Institution / KVK"] as const;
-
-export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
+export function EnquiryForm({
+  presetProduct,
+  presetAudience = "Farmer",
+  presetMessage,
+}: {
+  presetProduct?: string;
+  presetAudience?: Audience;
+  presetMessage?: string;
+}) {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err">("idle");
-  const [audience, setAudience] = useState<(typeof audiences)[number]>("Farmer");
+  const [audience, setAudience] = useState<Audience>(presetAudience);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -97,13 +104,22 @@ export function EnquiryForm({ presetProduct }: { presetProduct?: string }) {
         </select>
       </label>
       <label className="eyebrow block">
-        Crop, acres, and what you need
+        {audience === "Dealer" || audience === "Distributor"
+          ? "Territory, crops served, and what you want on the board"
+          : "Crop, acres, and what you need"}
         <textarea
           required
           name="message"
           rows={4}
           className="field"
-          placeholder="12 acres robusta · AMC liquid + Trichoderma for nursery"
+          defaultValue={presetMessage}
+          placeholder={
+            audience === "Dealer"
+              ? "Chikkamagaluru taluk · coffee and pepper growers · want the carrier line on the board"
+              : audience === "Distributor"
+                ? "Districts covered · crops · existing portfolio · warehouse"
+                : "12 acres robusta · AMC liquid + Trichoderma for nursery"
+          }
         />
       </label>
       <div className="flex flex-wrap items-center gap-4 pt-2">

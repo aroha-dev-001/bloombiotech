@@ -15,7 +15,7 @@ export function RouteGuide() {
     <section id="routes" data-tone="light" className="band">
       <div className="shell">
         <SectionHead
-          index="06"
+          index="03"
           kicker="Application"
           title="Four ways it reaches the root."
           lede="Doses below are the brochure routes for the carrier and liquid lines. If the pouch or can in your hand prints something else, follow the pack."

@@ -2,13 +2,22 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/products";
 
-export function PackCard({ product, index }: { product: Product; index: number }) {
+export function PackCard({
+  product,
+  index,
+  reveal = true,
+}: {
+  product: Product;
+  index: number;
+  /** Off when a parent already animates the card (e.g. filter transitions). */
+  reveal?: boolean;
+}) {
   return (
     <Link
       href={`/products/${product.slug}`}
       className="pcard group w-auto"
-      data-rv
-      style={{ ["--rv-d" as string]: `${(index % 4) * 60}ms` }}
+      data-rv={reveal ? "" : undefined}
+      style={reveal ? { ["--rv-d" as string]: `${(index % 4) * 60}ms` } : undefined}
     >
       <p className="pcard-index eyebrow">{String(index + 1).padStart(2, "0")}</p>
       <div className="pcard-media">

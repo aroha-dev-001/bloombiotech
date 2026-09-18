@@ -30,8 +30,11 @@ Full dump: ${origin}/llms-full.txt
 
 - [Home](${origin}/)
 - [Company](${origin}/about)
-- [Catalogue](${origin}/products)
-- [Film room](${origin}/gallery)
+- [Products](${origin}/products)
+- [Solutions by crop](${origin}/solutions)
+- [In the field](${origin}/field)
+- [Manufacturing / film room](${origin}/gallery)
+- [Questions](${origin}/faq)
 - [Journal](${origin}/journal)
 - [Enquire](${origin}/enquire)
 
