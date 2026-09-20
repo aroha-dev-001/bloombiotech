@@ -5,7 +5,6 @@ import { getProduct, products } from "@/lib/products";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { Button } from "@/components/Button";
 import { BackLink } from "@/components/BackLink";
-import { CropStrip } from "@/components/products/CropStrip";
 import { ProductExplorer } from "@/components/products/ProductExplorer";
 import { whatsappUrl } from "@/lib/site";
 
@@ -54,16 +53,16 @@ export default async function ProductPage({ params }: Props) {
               </div>
             </div>
 
-            <figure className="pack-stage">
+            <div className="frame aspect-[4/5] bg-[color-mix(in_srgb,var(--bone)_6%,transparent)]">
               <Image
                 src={product.photo}
                 alt={`${product.name} pack`}
                 fill
                 priority
-                sizes="(min-width: 1024px) 24rem, 100vw"
-                className="object-contain"
+                sizes="(min-width: 1024px) 22rem, 100vw"
+                className="object-contain p-8"
               />
-            </figure>
+            </div>
           </div>
         </div>
       </header>
@@ -74,8 +73,6 @@ export default async function ProductPage({ params }: Props) {
           <ProductExplorer product={product} />
         </div>
       </section>
-
-      <CropStrip product={product} />
 
       {/* Long-form background, kept but no longer the first thing you meet. */}
       <section data-tone="bone" className="band">
@@ -108,7 +105,7 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
-      <section data-tone="light" className="band-tight">
+      <section data-tone="bone" className="band-tight">
         <div className="shell flex flex-wrap items-center justify-between gap-6">
           <div>
             <p className="eyebrow">Next pack</p>
