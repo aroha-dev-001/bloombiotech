@@ -44,7 +44,7 @@ export function PlantStory() {
       <div className="shell">
         <div className="sec-head" data-rv>
           <p className="eyebrow">
-            <span className="eyebrow-accent">§03</span>
+            <span className="eyebrow-accent">§06</span>
             <span className="mx-2 opacity-40">/</span>
             Manufacture
           </p>

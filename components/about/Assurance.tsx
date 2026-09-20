@@ -7,7 +7,7 @@ export function Assurance() {
       <div className="shell grid gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
         <div>
           <p className="eyebrow" data-rv>
-            <span className="eyebrow-accent">§05</span>
+            <span className="eyebrow-accent">§03</span>
             <span className="mx-2 opacity-40">/</span>
             Assurance
           </p>

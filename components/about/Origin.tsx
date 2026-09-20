@@ -43,9 +43,12 @@ export function Origin() {
               </p>
               <footer className="eyebrow mt-4">Bloom Biotech · company brochure</footer>
             </blockquote>
-            <div className="mt-10" data-rv>
-              <Button href="/about" variant="ghost">
-                The plant in full
+            <div className="mt-10 flex flex-wrap gap-3" data-rv>
+              <Button href="/gallery" variant="ghost">
+                Inside the plant
+              </Button>
+              <Button href="/products" variant="ghost">
+                The catalogue
               </Button>
             </div>
           </div>

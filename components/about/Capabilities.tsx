@@ -3,10 +3,10 @@ import { SectionHead } from "../SectionHead";
 
 export function Capabilities() {
   return (
-    <section id="capability" data-tone="bone" className="band">
+    <section id="capability" data-tone="light" className="band">
       <div className="shell">
         <SectionHead
-          index="04"
+          index="02"
           kicker="Capability"
           title="What the unit can actually make."
           lede="Six production capabilities, each tied to packs you can hold. No capacity figures are published here because none are printed anywhere we can cite."

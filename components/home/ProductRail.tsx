@@ -1,146 +1,96 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 import { products } from "@/lib/products";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useMounted } from "@/hooks/useMounted";
+import { SectionHead } from "../SectionHead";
 
-function Card({ product, i }: { product: (typeof products)[number]; i: number }) {
-  return (
-    <Link href={`/products/${product.slug}`} className="pcard group">
-      <p className="pcard-index eyebrow">{String(i + 1).padStart(2, "0")}</p>
-      <div className="pcard-media">
-        <Image
-          src={product.photo}
-          alt={`${product.name} pack`}
-          fill
-          sizes="(min-width: 1024px) 21rem, 60vw"
-        />
-      </div>
-      <div className="pcard-body">
-        <p className="eyebrow">
-          {product.category}
-          {product.imported ? " · imported" : ""}
-        </p>
-        <h3 className="display d-3">{product.name}</h3>
-        <p className="meta text-[0.72rem] leading-relaxed">{product.technology}</p>
-        <p className="mt-2 flex items-center justify-between border-t border-[var(--line-soft)] pt-3 text-[0.72rem] uppercase tracking-[0.16em] text-[var(--accent)]">
-          Open pack
-          <span className="transition-transform duration-500 group-hover:translate-x-1">→</span>
-        </p>
-      </div>
-    </Link>
-  );
-}
+/**
+ * Six packs, not fifteen.
+ *
+ * The homepage used to pin and scroll the entire catalogue horizontally, which
+ * cost a full screen-height of scroll to say something the catalogue page says
+ * better. This shows the three licensed IIHR technologies plus one pack from
+ * each remaining line, and sends everyone else to /products.
+ */
+const featured = [
+  "bio-sanjiveeni",
+  "bhu-samruddhi",
+  "bio-astra",
+  "bluderma",
+  "bloom-compost-culture",
+  "ascogold",
+];
 
-function MoreCard() {
-  return (
-    <Link
-      href="/products"
-      className="pcard flex w-[clamp(15rem,24vw,21rem)] items-center justify-center border-dashed p-10 text-center"
-    >
-      <span className="display d-3">
-        All fifteen packs
-        <span className="mt-3 block text-[var(--accent)]" aria-hidden>
-          →
-        </span>
-      </span>
-    </Link>
-  );
-}
-
-/** Desktop: the section pins and the row tracks scroll horizontally. */
-function PinnedRail() {
-  const wrap = useRef<HTMLDivElement>(null);
-  const row = useRef<HTMLDivElement>(null);
-  const [distance, setDistance] = useState(0);
-
-  useEffect(() => {
-    const measure = () => {
-      if (!row.current) return;
-      setDistance(Math.max(0, row.current.scrollWidth - window.innerWidth + 32));
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: wrap,
-    offset: ["start start", "end end"],
-  });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -distance]);
-
-  return (
-    <div ref={wrap} style={{ height: `calc(100svh + ${distance}px)` }}>
-      <div className="rail-pin">
-        <motion.div ref={row} className="rail-row" style={{ x }}>
-          {products.map((p, i) => (
-            <Card key={p.slug} product={p} i={i} />
-          ))}
-          <MoreCard />
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-function SnapRail() {
-  return (
-    <>
-      <div className="snap-row">
-        {products.map((p, i) => (
-          <Card key={p.slug} product={p} i={i} />
-        ))}
-        <MoreCard />
-      </div>
-      <div className="shell mt-8">
-        <Link href="/products" className="link">
-          All fifteen packs <span aria-hidden>→</span>
-        </Link>
-      </div>
-    </>
-  );
-}
+const picks = featured
+  .map((slug) => products.find((p) => p.slug === slug))
+  .filter((p): p is (typeof products)[number] => Boolean(p));
 
 export function ProductRail() {
-  const reduce = useReducedMotion();
-  const wide = useMediaQuery("(min-width: 900px)");
-  // Server render and first paint are always the scroller; the pinned rail
-  // mounts afterwards, so its scroll target exists before it measures.
-  const mounted = useMounted();
-  const pinned = mounted && wide && !reduce;
-
   return (
-    <section
-      id="catalogue"
-      data-tone="carbon"
-      className={pinned ? undefined : "overflow-hidden"}
-    >
-      <div className={pinned ? "band-tight" : "band"}>
-        <div className="shell">
-          <div className="sec-head" data-rv>
-            <p className="eyebrow">
-              <span className="eyebrow-accent">§02</span>
-              <span className="mx-2 opacity-40">/</span>
-              The line
-            </p>
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <h2 className="display d-1 max-w-[14ch]">Fifteen packs, four jobs.</h2>
-              <p className="lede max-w-[34ch]">
-                Consortia, biocontrol, compost culture and crop nutrition. Every
-                pack carries its own organisms, colony count, dose and mixing
-                rule.
-              </p>
-            </div>
-          </div>
+    <section id="catalogue" data-tone="carbon" className="band">
+      <div className="shell">
+        <SectionHead
+          index="04"
+          kicker="The line"
+          title="Fifteen packs, four jobs."
+          lede="Consortia, biocontrol, compost culture and crop nutrition. Every pack carries its own organisms, colony count, dose and mixing rule."
+        />
+
+        <ul className="mt-14 grid gap-px bg-[var(--line)] sm:grid-cols-2 lg:grid-cols-3">
+          {picks.map((p, i) => (
+            <li key={p.slug} data-rv style={{ ["--rv-d" as string]: `${i * 60}ms` }}>
+              <Link
+                href={`/products/${p.slug}`}
+                className="group flex h-full gap-5 bg-[var(--bg)] p-5 transition-colors duration-500 hover:bg-[color-mix(in_srgb,var(--accent)_8%,var(--bg))] md:p-6"
+              >
+                <div className="relative aspect-[3/4] w-20 shrink-0 overflow-hidden bg-[color-mix(in_srgb,var(--fg)_6%,transparent)]">
+                  <Image
+                    src={p.photo}
+                    alt=""
+                    fill
+                    sizes="5rem"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p className="eyebrow">
+                    {p.category}
+                    {p.imported ? " · imported" : ""}
+                  </p>
+                  <h3 className="display d-3 mt-2">{p.name}</h3>
+                  <p className="meta mt-2 text-[0.7rem] leading-relaxed">
+                    {p.technology}
+                  </p>
+                  <p className="mt-4 flex items-center justify-between gap-2 border-t border-[var(--line-soft)] pt-3 text-[0.66rem] uppercase tracking-[0.16em] text-[var(--accent)]">
+                    Open pack
+                    <span
+                      className="transition-transform duration-500 group-hover:translate-x-1"
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  </p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div
+          className="mt-10 flex flex-wrap items-center justify-between gap-6"
+          data-rv
+        >
+          <p className="meta max-w-[46ch] text-[0.72rem] leading-relaxed">
+            Shown: the three ICAR-IIHR licensed technologies, plus one pack from
+            the biocontrol, compost and nutrition lines.
+          </p>
+          <Link href="/products" className="btn btn-primary">
+            See all {products.length} packs
+            <span className="arw" aria-hidden>
+              →
+            </span>
+          </Link>
         </div>
       </div>
-      {pinned ? <PinnedRail /> : <SnapRail />}
     </section>
   );
 }
