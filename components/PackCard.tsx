@@ -19,7 +19,6 @@ export function PackCard({
       data-rv={reveal ? "" : undefined}
       style={reveal ? { ["--rv-d" as string]: `${(index % 4) * 60}ms` } : undefined}
     >
-      <p className="pcard-index eyebrow">{String(index + 1).padStart(2, "0")}</p>
       <div className="pcard-media">
         <Image
           src={product.photo}
@@ -29,16 +28,8 @@ export function PackCard({
         />
       </div>
       <div className="pcard-body">
-        <p className="eyebrow">
-          {product.category}
-          {product.imported ? " · imported" : ""}
-        </p>
         <h3 className="display d-3">{product.name}</h3>
-        <p className="meta text-[0.7rem] leading-relaxed">{product.technology}</p>
-        <p className="mt-2 flex items-center justify-between border-t border-[var(--line-soft)] pt-3 text-[0.7rem] uppercase tracking-[0.16em] text-[var(--accent)]">
-          Open pack
-          <span className="transition-transform duration-500 group-hover:translate-x-1">→</span>
-        </p>
+        <p className="meta">{product.technology}</p>
       </div>
     </Link>
   );

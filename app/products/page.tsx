@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/lib/products";
 import { CatalogueBrowser } from "@/components/solutions/CatalogueBrowser";
 import { Button } from "@/components/Button";
 
@@ -13,22 +13,16 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <header data-tone="dark" className="pt-[calc(var(--nav-h)+3rem)] pb-14">
+      <header data-tone="light" className="pt-[calc(var(--nav-h)+5rem)] pb-20">
         <div className="shell">
-          <p className="eyebrow">
-            <span className="eyebrow-accent">Products</span>
-            <span className="mx-2 opacity-40">/</span>
-            {products.length} packs
-          </p>
-          <h1 className="display d-hero mt-6 max-w-[12ch]">The line, in full.</h1>
-          <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
-            <p className="lede">
-              Organisms, colony count, dose and mixing rule for every pack.
-              Prices are quoted from the plant — there is no public price list
-              and no checkout.
+          <h1 className="display d-hero max-w-[13ch]">Every product we make.</h1>
+          <div className="mt-10 grid gap-10 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
+            <p className="lede lede-wide">
+              Organisms, dose and mixing rule on every pack. Prices are quoted
+              from the plant.
             </p>
-            <Link href="/solutions#finder" className="btn btn-primary">
-              Not sure? Use the finder
+            <Link href="/solutions#find" className="btn btn-primary">
+              Not sure? Find your solution
               <span className="arw" aria-hidden>
                 →
               </span>
@@ -37,27 +31,36 @@ export default function ProductsPage() {
         </div>
       </header>
 
-      <section data-tone="light" className="band-tight">
+      {/* Where every pack on this page is filled. Real footage, no scrim. */}
+      <section data-tone="light" className="pb-4">
+        <div className="shell">
+          <figure className="page-band" data-rv="mask">
+            <Image
+              src="/film/fermentation-vessels.jpg"
+              alt="Stainless steel fermenters in the Bloom Biotech production hall"
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <section data-tone="light" className="band">
         <div className="shell">
           <CatalogueBrowser />
         </div>
       </section>
 
-      <section data-tone="carbon" className="band-tight">
-        <div className="shell flex flex-wrap items-end justify-between gap-8">
-          <div>
-            <h2 className="display d-2 max-w-[18ch]">
-              Not sure which pack fits the crop?
-            </h2>
-            <p className="lede mt-4">
-              Send the crop, the area and the problem. The plant answers with a
-              route and a pack.
-            </p>
-          </div>
+      <section data-tone="carbon" className="band">
+        <div className="shell flex flex-wrap items-end justify-between gap-10">
+          <h2 className="display d-1 max-w-[16ch]">
+            Not sure which pack fits your crop?
+          </h2>
           <div className="flex flex-wrap gap-3">
-            <Button href="/solutions#finder">Find the right product</Button>
-            <Button href="/enquire?audience=farmer" variant="ghost">
-              Talk to an expert
+            <Button href="/solutions#find">Find your solution</Button>
+            <Button href="/enquire" variant="ghost" arrow={false}>
+              Talk to us
             </Button>
           </div>
         </div>

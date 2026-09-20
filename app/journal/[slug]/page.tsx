@@ -24,7 +24,7 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <>
-      <header data-tone="dark" className="pt-[calc(var(--nav-h)+3rem)] pb-14">
+      <header data-tone="light" className="pt-[calc(var(--nav-h)+3rem)] pb-14">
         <div className="shell">
           <Link href="/journal" className="link">
             <span aria-hidden>←</span> Field notes

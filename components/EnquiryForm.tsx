@@ -6,6 +6,7 @@ import { products } from "@/lib/products";
 import { audiences, type Audience } from "@/lib/audience";
 import { Button } from "./Button";
 
+/** Short, plain and asked once: who you are, how to reach you, what you grow. */
 export function EnquiryForm({
   presetProduct,
   presetAudience = "Farmer",
@@ -39,13 +40,13 @@ export function EnquiryForm({
 
   if (status === "ok") {
     return (
-      <div className="border border-[var(--brand)]/40 bg-[var(--surface)] p-6">
-        <p className="eyebrow eyebrow-accent">Logged</p>
-        <h3 className="display d-3 mt-3">Enquiry received.</h3>
-        <p className="prose-body mt-3 text-sm">
-          WhatsApp the plant if you need a same-day pack list.
+      <div className="rounded-[var(--r)] border border-[var(--brand)]/40 bg-[var(--surface)] p-8">
+        <h3 className="display d-3">Thank you — we have it.</h3>
+        <p className="prose-body mt-4">
+          We will come back to you with a pack and a price. If it is urgent,
+          WhatsApp the plant.
         </p>
-        <Button href={whatsappUrl()} className="mt-5">
+        <Button href={whatsappUrl()} className="mt-7">
           Open WhatsApp
         </Button>
       </div>
@@ -53,60 +54,49 @@ export function EnquiryForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-7">
       <div className="grid gap-6 sm:grid-cols-2">
-        <label className="eyebrow block">
+        <label className="form-label">
           Name
           <input required name="name" className="field" />
         </label>
-        <label className="eyebrow block">
+        <label className="form-label">
           Phone
           <input required name="phone" type="tel" className="field" />
         </label>
       </div>
-      <label className="eyebrow block">
-        Email
-        <input name="email" type="email" className="field" />
-      </label>
-      <fieldset>
-        <legend className="eyebrow">I am a</legend>
-        <input type="hidden" name="audience" value={audience} />
-        <div className="mt-3 flex flex-wrap gap-2">
-          {audiences.map((a) => (
-            <button
-              key={a}
-              type="button"
-              onClick={() => setAudience(a)}
-              className={`tag min-h-9 px-3 transition-colors duration-300 ${
-                audience === a
-                  ? "border-[var(--brand)] bg-[var(--brand)] text-[#06120a]"
-                  : "hover:border-[var(--fg)] hover:text-[var(--fg)]"
-              }`}
-            >
-              {a}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <label className="eyebrow block">
-        Product of interest
-        <select
-          name="product"
-          className="field"
-          defaultValue={presetProduct ?? ""}
-        >
-          <option value="">Not sure yet</option>
-          {products.map((p) => (
-            <option key={p.slug} value={p.name}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="eyebrow block">
-        {audience === "Dealer" || audience === "Distributor"
-          ? "Territory, crops served, and what you want on the board"
-          : "Crop, acres, and what you need"}
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <label className="form-label">
+          I am a
+          <select
+            name="audience"
+            className="field"
+            value={audience}
+            onChange={(e) => setAudience(e.target.value as Audience)}
+          >
+            {audiences.map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="form-label">
+          Product
+          <select name="product" className="field" defaultValue={presetProduct ?? ""}>
+            <option value="">Not sure yet</option>
+            {products.map((p) => (
+              <option key={p.slug} value={p.name}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <label className="form-label">
+        {audience === "Farmer" ? "Crop, acres and what you need" : "What you need from us"}
         <textarea
           required
           name="message"
@@ -114,25 +104,25 @@ export function EnquiryForm({
           className="field"
           defaultValue={presetMessage}
           placeholder={
-            audience === "Dealer"
-              ? "Chikkamagaluru taluk · coffee and pepper growers · want the carrier line on the board"
-              : audience === "Distributor"
-                ? "Districts covered · crops · existing portfolio · warehouse"
-                : "12 acres robusta · AMC liquid + Trichoderma for nursery"
+            audience === "Farmer"
+              ? "12 acres robusta — liquid AMC and something for the nursery"
+              : "Districts covered, crops served, and what you want to carry"
           }
         />
       </label>
-      <div className="flex flex-wrap items-center gap-4 pt-2">
-        <Button type="submit" disabled={status === "sending"}>
+
+      <div className="flex flex-wrap items-center gap-6 pt-2">
+        <Button type="submit" disabled={status === "sending"} arrow={false}>
           {status === "sending" ? "Sending…" : "Send enquiry"}
         </Button>
-        <a href={`mailto:${site.email}`} className="meta hover:text-[var(--fg)]">
+        <a href={`mailto:${site.email}`} className="prose-body hover:text-[var(--fg)]">
           Email instead
         </a>
       </div>
+
       {status === "err" ? (
-        <p className="prose-body text-sm">
-          Could not save here. WhatsApp {site.phoneDisplay}.
+        <p className="prose-body">
+          That did not go through. WhatsApp or call {site.phoneDisplay}.
         </p>
       ) : null}
     </form>

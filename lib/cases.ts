@@ -72,7 +72,7 @@ export const fieldCases: readonly FieldCase[] = [
       {
         key: "during",
         label: "During",
-        photo: "/photos/amc/amc-01-soil-drench.jpg",
+        photo: "/farm/application.jpg",
         alt: "Carrier consortium mixed into water and drenched over the root zone",
         caption: "Soil drench — 1 kg in 40 L of water over the root system.",
       },
@@ -98,7 +98,7 @@ export const fieldCases: readonly FieldCase[] = [
       {
         key: "during",
         label: "During",
-        photo: "/photos/amc/amc-02-fym-compost.jpg",
+        photo: "/farm/compost.jpg",
         alt: "Carrier consortium mixed into a farmyard manure heap before field application",
         caption: "FYM enrichment — 5-10 kg in 1 MT, applied after 7-10 days.",
       },
@@ -124,7 +124,7 @@ export const fieldCases: readonly FieldCase[] = [
       {
         key: "during",
         label: "During",
-        photo: "/photos/amc/amc-03-drip-filter.jpg",
+        photo: "/farm/drip.jpg",
         alt: "Mixed consortium filtered through cloth into a tank feeding a drip line",
         caption: "Drip fertigation — mixed, filtered, then run through the line.",
       },

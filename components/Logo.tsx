@@ -30,19 +30,13 @@ export function Logo({ className, priority, tone = "light", markOnly }: Props) {
       {markOnly ? (
         <span className="sr-only">Bloom Biotech</span>
       ) : (
-        <span className="flex flex-col justify-center leading-none">
-          <span
-            className="display text-[0.98rem] tracking-[-0.02em] sm:text-[1.1rem]"
-            style={{ color: dark ? "var(--bone)" : "var(--ink)" }}
-          >
-            Bloom Biotech
-          </span>
-          <span
-            className="mt-1 font-mono text-[0.46rem] uppercase tracking-[0.28em] sm:text-[0.5rem]"
-            style={{ color: dark ? "var(--lime)" : "var(--leaf)" }}
-          >
-            Green Biotechnology
-          </span>
+        /* The wordmark alone. The "Green Biotechnology" line that used to sit
+           under it set at 7px — decoration too small to read, on every page. */
+        <span
+          className="display text-[1.05rem] leading-none tracking-[-0.02em] sm:text-[1.2rem]"
+          style={{ color: dark ? "var(--bone)" : "var(--ink)" }}
+        >
+          Bloom Biotech
         </span>
       )}
     </span>

@@ -3,14 +3,11 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { products, type Product } from "@/lib/products";
 import {
-  applications,
-  applicationsOf,
   crops,
   needs,
   needsOf,
   suitsAllCrops,
   getCrop,
-  type ApplicationId,
   type CropId,
   type NeedId,
 } from "@/lib/solutions";
@@ -26,15 +23,13 @@ const categories: { key: Category; label: string }[] = [
 ];
 
 /**
- * The catalogue, filterable four ways: category, crop, problem and application
- * route. Every filter is a toggle, so a grower can answer as much of
- * "I grow this, I have this problem, I apply it this way" as they know.
+ * The catalogue, filterable by type, crop and problem. Every filter is a
+ * toggle, so a grower can answer as much as they know and no more.
  */
 export function CatalogueBrowser() {
   const [category, setCategory] = useState<Category | undefined>();
   const [crop, setCrop] = useState<CropId | undefined>();
   const [need, setNeed] = useState<NeedId | undefined>();
-  const [application, setApplication] = useState<ApplicationId | undefined>();
 
   const list = useMemo(() => {
     const named = crop ? new Set(getCrop(crop)?.named ?? []) : new Set<string>();
@@ -43,12 +38,11 @@ export function CatalogueBrowser() {
       if (crop && crop !== "other" && !named.has(p.slug) && !suitsAllCrops(p))
         return false;
       if (need && !needsOf(p).includes(need)) return false;
-      if (application && !applicationsOf(p).includes(application)) return false;
       return true;
     });
-  }, [category, crop, need, application]);
+  }, [category, crop, need]);
 
-  const active = [category, crop, need, application].filter(Boolean).length;
+  const active = [category, crop, need].filter(Boolean).length;
 
   const groups: { label: string; node: ReactNode }[] = [
     {
@@ -109,47 +103,25 @@ export function CatalogueBrowser() {
         </>
       ),
     },
-    {
-      label: "Application",
-      node: (
-        <>
-          {applications.map((a) => (
-            <button
-              key={a.id}
-              type="button"
-              className="chip"
-              aria-pressed={application === a.id}
-              title={a.route}
-              onClick={() =>
-                setApplication(application === a.id ? undefined : a.id)
-              }
-            >
-              {a.label}
-            </button>
-          ))}
-        </>
-      ),
-    },
   ];
 
   return (
     <div>
-      <div className="grid gap-6 border-y border-[var(--line)] py-7 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-8 md:grid-cols-3">
         {groups.map((g) => (
           <div key={g.label}>
-            <p className="eyebrow mb-3">{g.label}</p>
+            <p className="eyebrow mb-4">{g.label}</p>
             <div className="chip-rail">{g.node}</div>
           </div>
         ))}
       </div>
 
       <div
-        className="mt-6 flex flex-wrap items-center justify-between gap-4"
+        className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-6"
         aria-live="polite"
       >
         <p className="meta">
           {list.length} of {products.length} packs
-          {active ? ` · ${active} filter${active === 1 ? "" : "s"} on` : ""}
         </p>
         {active ? (
           <button
@@ -159,19 +131,18 @@ export function CatalogueBrowser() {
               setCategory(undefined);
               setCrop(undefined);
               setNeed(undefined);
-              setApplication(undefined);
             }}
           >
-            Clear filters <span aria-hidden>↺</span>
+            Clear filters
           </button>
         ) : null}
       </div>
 
       {list.length ? (
-        <div className="shop-grid mt-8">
+        <div className="shop-grid mt-10">
           {list.map((p, i) => (
             <div
-              key={`${category ?? ""}${crop ?? ""}${need ?? ""}${application ?? ""}-${p.slug}`}
+              key={`${category ?? ""}${crop ?? ""}${need ?? ""}-${p.slug}`}
               className="pop"
               style={{ ["--pop-d" as string]: `${Math.min(i, 8) * 40}ms` }}
             >
@@ -180,10 +151,10 @@ export function CatalogueBrowser() {
           ))}
         </div>
       ) : (
-        <div className="mt-10 border border-dashed border-[var(--line)] p-8 text-center">
-          <p className="display d-3">Nothing matches all four.</p>
-          <p className="prose-body mx-auto mt-3 max-w-[42ch] text-[0.95rem]">
-            Drop one filter — the application route is usually the one to relax.
+        <div className="mt-10 rounded-[var(--r-lg)] border border-dashed border-[var(--line)] p-12 text-center">
+          <p className="display d-3">Nothing matches that combination.</p>
+          <p className="prose-body mx-auto mt-4 max-w-[42ch]">
+            Try dropping one filter.
           </p>
         </div>
       )}
