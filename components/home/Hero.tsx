@@ -116,12 +116,12 @@ export function Hero() {
           </span>
         </h1>
 
+        {/* One short line, not a paragraph. The film below says the rest. */}
         <p
-          className="lede lede-wide hero-line mt-8 text-[var(--bone)] opacity-90"
+          className="lede hero-line mt-7 text-[var(--bone)] opacity-90"
           style={{ ["--i" as string]: 2 }}
         >
-          ICAR-IIHR licensed consortia, biocontrols and crop nutrition,
-          fermented and packed at our own unit in Chikkamagaluru.
+          Licensed by ICAR-IIHR. Made in Chikkamagaluru.
         </p>
 
         {/* The rotation, made clickable. */}

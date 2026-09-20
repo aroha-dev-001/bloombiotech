@@ -2482,3 +2482,309 @@ textarea.field {
     linear-gradient(180deg, rgba(7, 10, 8, 0.4) 0%, rgba(7, 10, 8, 0.05) 32%, rgba(7, 10, 8, 0.7) 100%),
     linear-gradient(98deg, rgba(7, 10, 8, 0.52) 0%, rgba(7, 10, 8, 0.06) 58%, rgba(7, 10, 8, 0) 78%);
 }
+
+/* ---------- capability cards + dialog (about) ----------
+   Six blocks of body copy became six controls: a photograph of that part of
+   the plant, and the packs it makes, one tap away. */
+
+.cap-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.45s var(--ease-out),
+    transform 0.45s var(--spring-out),
+    box-shadow 0.45s var(--ease-out);
+}
+
+.cap-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 24px 50px -34px rgba(0, 0, 0, 0.45);
+}
+
+.cap-shot {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+}
+
+.cap-shot img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 1s var(--ease-out);
+}
+
+.cap-card:hover .cap-shot img {
+  transform: scale(1.06);
+}
+
+.cap-body {
+  display: block;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.cap-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.4rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.cap-more i {
+  font-style: normal;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.cap-card:hover .cap-more i {
+  transform: translateX(5px);
+}
+
+/* ---------- dialog ---------- */
+
+.cap-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: var(--gut);
+  background: color-mix(in srgb, var(--void) 72%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  animation: cap-fade 0.35s var(--ease-out) both;
+}
+
+@keyframes cap-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cap-dialog {
+  position: relative;
+  display: grid;
+  width: min(62rem, 100%);
+  max-height: 88svh;
+  overflow: hidden auto;
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  color: var(--fg);
+  animation: cap-rise 0.45s var(--ease-out) both;
+}
+
+@keyframes cap-rise {
+  from { opacity: 0; transform: translate3d(0, 20px, 0) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (min-width: 900px) {
+  .cap-dialog {
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+    align-items: stretch;
+  }
+}
+
+.cap-dialog-media {
+  position: relative;
+  min-height: 14rem;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+}
+
+.cap-dialog-body {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.cap-dialog-label {
+  margin-top: 2.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--dim);
+}
+
+.cap-packs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.cap-packs li > * {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  font-size: 1.05rem;
+  color: var(--fg);
+}
+
+.cap-packs li > span {
+  color: var(--dim);
+}
+
+.cap-packs li > a {
+  transition:
+    background-color 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out);
+}
+
+.cap-packs li > a:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.cap-packs i {
+  font-style: normal;
+  opacity: 0.6;
+}
+
+.cap-dialog-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.cap-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  height: 2.75rem;
+  width: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.cap-close:hover {
+  background: var(--bg);
+  border-color: var(--fg);
+}
+
+/* ---------- product page ---------- */
+
+/* The packshot needs a stage. On a light page a 6% frame was invisible. */
+.pack-stage {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  padding: clamp(1.75rem, 3vw, 2.75rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background:
+    radial-gradient(
+      100% 80% at 50% 0%,
+      color-mix(in srgb, var(--brand) 16%, transparent),
+      transparent 70%
+    ),
+    color-mix(in srgb, var(--fg) 4%, transparent);
+}
+
+.pack-stage img {
+  padding: inherit;
+}
+
+/* Which crops a pack is for, as pictures rather than a comma list. */
+.crop-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+}
+
+@media (min-width: 760px) {
+  .crop-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.crop-strip-card {
+  position: relative;
+  display: grid;
+  align-content: end;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--r);
+  padding: 1rem;
+  color: var(--bone);
+  isolation: isolate;
+  transition: transform 0.55s var(--ease-out), box-shadow 0.55s var(--ease-out);
+}
+
+@media (min-width: 760px) {
+  .crop-strip-card {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+.crop-strip-card img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  filter: saturate(0.9) brightness(0.8);
+  transition: transform 1s var(--ease-out), filter 0.5s var(--ease-out);
+}
+
+.crop-strip-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, transparent 40%, rgba(7, 10, 8, 0.85) 100%);
+}
+
+.crop-strip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -28px rgba(0, 0, 0, 0.8);
+}
+
+.crop-strip-card:hover img {
+  transform: scale(1.06);
+  filter: saturate(1) brightness(0.88);
+}
+
+.crop-strip-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.crop-strip-name i {
+  font-style: normal;
+  font-size: 0.7em;
+  color: var(--lime);
+}
