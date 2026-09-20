@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Required for App Router SSR, route handlers and ISR.
+# Without this the build publishes static files only and no functions.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
