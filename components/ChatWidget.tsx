@@ -258,10 +258,10 @@ export function ChatWidget() {
           {historyOpen ? (
             <div className="absolute inset-0 z-10 flex flex-col bg-[var(--bone)]">
               <div className="flex items-center justify-between border-b border-[var(--line)] px-3 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-                <p className="text-sm font-medium">Chat history</p>
+                <p className="text-[1rem] font-medium">Chat history</p>
                 <button
                   type="button"
-                  className="grid h-11 min-w-11 place-items-center text-sm text-muted"
+                  className="grid h-11 min-w-11 place-items-center text-[0.95rem] text-muted"
                   onClick={() => setHistoryOpen(false)}
                 >
                   Back
@@ -276,14 +276,14 @@ export function ChatWidget() {
                         setActiveId(t.id);
                         setHistoryOpen(false);
                       }}
-                      className={`mb-1 w-full rounded-xl px-3 py-3 text-left text-sm ${
+                      className={`mb-1 w-full rounded-xl px-3 py-3 text-left text-[0.95rem] ${
                         t.id === activeId ? "bg-lime/30" : "hover:bg-cream"
                       }`}
                     >
                       <span className="block truncate font-medium text-ink">
                         {t.title}
                       </span>
-                      <span className="text-xs text-muted">
+                      <span className="text-[0.95rem] text-muted">
                         {t.updatedAt ? new Date(t.updatedAt).toLocaleString() : "Current"}
                       </span>
                     </button>
@@ -296,7 +296,7 @@ export function ChatWidget() {
           <div className="flex items-center gap-2 border-b border-[var(--line)] px-2 py-2 pt-[max(0.5rem,env(safe-area-inset-top))]">
             <AiMark />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium leading-tight">Ask Bloom AI</p>
+              <p className="text-[1rem] font-medium leading-tight">Ask Bloom AI</p>
               <p className="truncate text-[11px] text-muted">{active.title}</p>
             </div>
             <IconBtn label="New chat" onClick={newChat}>
@@ -331,7 +331,7 @@ export function ChatWidget() {
               m.role === "user" ? (
                 <div
                   key={m.id}
-                  className="ml-8 rounded-none bg-[var(--brand)] px-3 py-2 text-sm text-white sm:ml-10"
+                  className="ml-8 rounded-none bg-[var(--brand)] px-3 py-2 text-[0.95rem] text-white sm:ml-10"
                 >
                   {m.content}
                 </div>
@@ -340,7 +340,7 @@ export function ChatWidget() {
               ),
             )}
             {busy ? (
-              <div className="flex items-center gap-2 text-xs text-muted">
+              <div className="flex items-center gap-2 text-[0.95rem] text-muted">
                 <ThinkingOrb state="composing" size={20} theme="light" />
                 Reading the catalogue…
               </div>
@@ -360,7 +360,7 @@ export function ChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask in a few words…"
               enterKeyHint="send"
-              className="min-h-11 min-w-0 flex-1 rounded-full border border-[var(--line)] px-4 text-base sm:text-sm"
+              className="min-h-11 min-w-0 flex-1 rounded-full border border-[var(--line)] px-4 text-base"
             />
             <button
               type="submit"
@@ -380,7 +380,7 @@ export function ChatWidget() {
           e.stopPropagation();
           setOpen(true);
         }}
-        className={`fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[91] flex items-center gap-2 rounded-full bg-[var(--bone)] py-2.5 pr-4 pl-2 text-sm font-medium shadow-lg ring-1 ring-forest/10 ${open ? "hidden sm:flex" : "flex"}`}
+        className={`fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[91] flex items-center gap-2 rounded-full bg-[var(--bone)] py-2.5 pr-4 pl-2 text-[1rem] font-medium shadow-lg ring-1 ring-forest/10 ${open ? "hidden sm:flex" : "flex"}`}
         aria-expanded={open}
         aria-label="Open Ask Bloom AI"
       >
@@ -421,7 +421,7 @@ function AnswerCard({
   onAsk: (q: string) => void;
 }) {
   return (
-    <div className="mr-2 rounded-none bg-[var(--bone)] p-3 text-sm shadow-sm sm:mr-4">
+    <div className="mr-2 rounded-none bg-[var(--bone)] p-3 text-[1rem] shadow-sm sm:mr-4">
       <p className="font-medium text-[var(--ink)]">{answer.title}</p>
       {answer.summary ? (
         <p className="mt-2 text-[13px] leading-relaxed text-ink">{answer.summary}</p>
@@ -434,7 +434,7 @@ function AnswerCard({
           </li>
         ))}
       </ul>
-      {answer.cta ? <p className="mt-2 text-xs text-muted">{answer.cta}</p> : null}
+      {answer.cta ? <p className="mt-2 text-[0.95rem] text-muted">{answer.cta}</p> : null}
       {answer.links?.length ? (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {answer.links.map((l) => (

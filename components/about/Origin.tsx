@@ -7,12 +7,7 @@ export function Origin() {
       <div className="shell">
         <div className="grid gap-10 lg:grid-cols-[1fr_minmax(0,32rem)] lg:gap-16">
           <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:self-start">
-            <p className="eyebrow" data-rv>
-              <span className="eyebrow-accent">§01</span>
-              <span className="mx-2 opacity-40">/</span>
-              The company
-            </p>
-            <h2 className="display d-1 mt-6 max-w-[16ch]" data-rv style={{ ["--rv-d" as string]: "60ms" }}>
+            <h2 className="display d-1 max-w-[16ch]" data-rv>
               Two people, one licence, a coffee-country plant.
             </h2>
             <div className="mt-8 max-w-[46ch] space-y-5 prose-body" data-rv style={{ ["--rv-d" as string]: "120ms" }}>
@@ -63,9 +58,6 @@ export function Origin() {
                 sizes="(min-width: 1024px) 32rem, 100vw"
                 className="object-cover object-[50%_22%] lg:object-[50%_35%]"
               />
-              <figcaption className="eyebrow absolute bottom-0 left-0 bg-[color-mix(in_srgb,var(--void)_72%,transparent)] px-3 py-2 text-[var(--bone)] backdrop-blur-sm">
-                Founders · since 2013
-              </figcaption>
             </figure>
             <div className="grid grid-cols-2 gap-4">
               <figure className="frame zoomer aspect-[4/3]" data-rv="mask" style={{ ["--rv-d" as string]: "80ms" }}>

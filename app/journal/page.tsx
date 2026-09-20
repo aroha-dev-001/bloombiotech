@@ -10,22 +10,17 @@ export const metadata: Metadata = {
 export default function JournalPage() {
   return (
     <>
-      <header data-tone="dark" className="pt-[calc(var(--nav-h)+3rem)] pb-14">
+      <header data-tone="light" className="pt-[calc(var(--nav-h)+5rem)] pb-20">
         <div className="shell">
-          <p className="eyebrow">
-            <span className="eyebrow-accent">Field notes</span>
-            <span className="mx-2 opacity-40">/</span>
-            {articles.length} entries
-          </p>
-          <h1 className="display d-hero mt-6 max-w-[12ch]">Field notes.</h1>
-          <p className="lede mt-8">
-            Written the way the plant would brief a new agronomist — dose,
-            route, caution. Not search filler.
+          <h1 className="display d-hero max-w-[12ch]">Field notes.</h1>
+          <p className="lede lede-wide mt-8">
+            Written the way we would brief a new agronomist: dose, route,
+            caution.
           </p>
         </div>
       </header>
 
-      <section data-tone="light" className="band-tight">
+      <section data-tone="light" className="band">
         <div className="shell">
           <ul className="border-t border-[var(--line)]">
             {articles.map((a, i) => (
@@ -39,15 +34,8 @@ export default function JournalPage() {
                     <span className="display d-3 block transition-colors group-hover:text-[var(--accent)]">
                       {a.title}
                     </span>
-                    <span className="prose-body mt-2 block max-w-[60ch] text-[0.95rem]">
+                    <span className="prose-body mt-3 block max-w-[60ch]">
                       {a.excerpt}
-                    </span>
-                    <span className="mt-4 flex flex-wrap gap-1.5">
-                      {a.tags.map((t) => (
-                        <span key={t} className="tag">
-                          {t}
-                        </span>
-                      ))}
                     </span>
                   </span>
                   <span className="text-[var(--accent)] transition-transform duration-500 group-hover:translate-x-1" aria-hidden>

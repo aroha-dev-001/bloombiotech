@@ -34,17 +34,15 @@ export function FilmRoom({ heading = true }: { heading?: boolean }) {
       <div className="shell">
         {heading ? (
           <SectionHead
-            index="10"
-            kicker="Film room"
             title="The unit, unedited."
-            lede="Drone passes over Beekanahalli Village and footage from the fermentation floor, with the packs those vessels fill."
+            lede="Drone passes over the village and footage from the fermentation floor."
           />
         ) : null}
 
         <div className={`grid gap-4 md:grid-cols-2 ${heading ? "mt-14" : ""}`}>
           {films.map((f) => (
             <figure key={f.src} data-rv="mask">
-              <div className="ratio-box frame-ticks" style={{ aspectRatio: f.ratio }}>
+              <div className="ratio-box" style={{ aspectRatio: f.ratio }}>
                 <video
                   controls
                   muted
@@ -57,9 +55,8 @@ export function FilmRoom({ heading = true }: { heading?: boolean }) {
                   <source src={f.src} type="video/mp4" />
                 </video>
               </div>
-              <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-3">
+              <figcaption className="mt-4">
                 <span className="display d-3">{f.title}</span>
-                <span className="meta max-w-[38ch] text-[0.72rem]">{f.note}</span>
               </figcaption>
             </figure>
           ))}
@@ -82,7 +79,6 @@ export function FilmRoom({ heading = true }: { heading?: boolean }) {
                 sizes="(min-width: 700px) 25vw, 50vw"
                 className="object-cover"
               />
-              <span className="plate-label eyebrow text-[var(--bone)]">{p.label}</span>
               <span className="sr-only">Open larger</span>
             </button>
           ))}
@@ -92,9 +88,7 @@ export function FilmRoom({ heading = true }: { heading?: boolean }) {
       {plate ? (
         <div className="lightbox" role="dialog" aria-modal="true" aria-label={plate.label}>
           <div className="shell flex h-[var(--nav-h)] items-center justify-between">
-            <p className="eyebrow">
-              {String((open ?? 0) + 1).padStart(2, "0")} / {plates.length} · {plate.label}
-            </p>
+            <p className="eyebrow text-[var(--bone)]">{plate.label}</p>
             <button
               type="button"
               className="nav-toggle"
@@ -114,12 +108,12 @@ export function FilmRoom({ heading = true }: { heading?: boolean }) {
               width={plate.w}
               height={plate.h}
               sizes="92vw"
-              className="frame-ticks h-auto w-full object-contain"
+              className="h-auto w-full rounded-[var(--r)] object-contain"
               style={{ maxWidth: `min(92vw, ${Math.round(plate.w * 1.5)}px)`, maxHeight: "74svh" }}
             />
           </div>
           <div className="shell flex items-center justify-between gap-6 py-5">
-            <p className="meta max-w-[46ch]">{plate.caption}</p>
+            <p className="meta max-w-[52ch] text-[var(--dim)]">{plate.caption}</p>
             <div className="flex gap-2">
               <button type="button" className="nav-toggle" onClick={() => move(-1)} aria-label="Previous">
                 <span aria-hidden>←</span>

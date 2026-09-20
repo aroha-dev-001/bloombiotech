@@ -167,15 +167,15 @@ export type Film = {
 
 export const films: readonly Film[] = [
   {
-    src: "/media/plant-aerial.mp4",
-    poster: "/media/poster-plant-aerial.jpg",
+    src: "/film/plant-aerial-full.mp4",
+    poster: "/film/plant-aerial-full.jpg",
     title: "The unit from the air",
     note: "Beekanahalli Village, Chikkamagaluru. Production sheds, drying yard and the fields that surround them.",
     ratio: "20 / 11",
   },
   {
-    src: "/media/fermentation-hall.mp4",
-    poster: "/media/poster-fermentation.jpg",
+    src: "/film/fermentation-full.mp4",
+    poster: "/film/fermentation-full.jpg",
     title: "Inside the fermentation hall",
     note: "Stainless-steel fermenters, control panels and the gowning room where the liquid line is grown.",
     ratio: "53 / 30",
@@ -282,7 +282,7 @@ export const routes = [
     name: "Soil drench",
     dose: "1 kg in 40 L of water",
     body: "Mix and drench the entire root system. The standard route for Bio Sanjiveeni, Bio Astra and the biocontrol carriers.",
-    photo: "/photos/amc/amc-01-soil-drench.jpg",
+    photo: "/farm/application.jpg",
     alt: "Mixing carrier powder into water and drenching the root zone of a seedling",
   },
   {
@@ -290,7 +290,7 @@ export const routes = [
     name: "FYM or compost",
     dose: "5–10 kg in 1 MT of FYM",
     body: "Enrich farmyard manure or compost, then apply to the soil after 7 to 10 days. Biocontrols go in at 10 kg per tonne.",
-    photo: "/photos/amc/amc-02-fym-compost.jpg",
+    photo: "/farm/compost.jpg",
     alt: "Mixing carrier powder into a farmyard manure heap before field application",
   },
   {
@@ -298,7 +298,7 @@ export const routes = [
     name: "Drip fertigation",
     dose: "1 kg in 40 L, filtered",
     body: "Mix, filter the solution, then fertigate through the drip line. Filtering is not optional — it protects the emitters.",
-    photo: "/photos/amc/amc-03-drip-filter.jpg",
+    photo: "/farm/drip.jpg",
     alt: "Filtering mixed consortium through cloth into a tank feeding a drip line",
   },
   {
@@ -306,7 +306,7 @@ export const routes = [
     name: "Liquid",
     dose: "10 ml per litre",
     body: "Bhu Samruddhi as foliar spray or through drip. Same three AMC organisms as the powder, delivered in liquid.",
-    photo: "/photos/amc/amc-04-liquid-amc.jpg",
+    photo: "/farm/foliar.jpg",
     alt: "Measuring liquid consortium into a sprayer for foliar application",
   },
 ] as const;

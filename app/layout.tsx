@@ -4,7 +4,6 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ChatWidget } from "@/components/ChatWidget";
-import { EnquiryPulse } from "@/components/EnquiryPulse";
 import { MotionRoot } from "@/components/MotionRoot";
 import { site } from "@/lib/site";
 
@@ -81,7 +80,6 @@ export default function RootLayout({
           </main>
           <Footer />
           <ChatWidget />
-          <EnquiryPulse />
         </MotionRoot>
       </body>
     </html>

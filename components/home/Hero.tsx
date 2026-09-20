@@ -4,148 +4,169 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useMounted } from "@/hooks/useMounted";
 
-function isThrifty() {
-  const conn = (
-    navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
-  ).connection;
-  return conn?.saveData === true || /2g/.test(conn?.effectiveType ?? "");
-}
+/**
+ * The landing frame.
+ *
+ * It used to open on the same drone clip the film below opens on, under a
+ * headline that never moved. Now it is a still frame that holds, and the
+ * sentence finishes itself: "Beneficial microbes for —" and then the crop,
+ * wiping over as the picture behind it changes to match.
+ *
+ * The rotation is also the navigation. Each crop is a real link into the
+ * finder, so the thing that is moving is the thing you can click. Hovering a
+ * crop takes over from the timer; leaving hands it back.
+ */
+const slides = [
+  {
+    id: "coffee",
+    word: "coffee",
+    src: "/farm/hero-coffee.jpg",
+    alt: "A row of coffee bushes heavy with ripe red cherries on a Karnataka estate",
+  },
+  {
+    id: "black-pepper",
+    word: "black pepper",
+    src: "/farm/hero-pepper.jpg",
+    alt: "Black pepper vines climbing shade trees, green spikes hanging in the foreground",
+  },
+  {
+    id: "pomegranate",
+    word: "pomegranate",
+    src: "/farm/hero-pomegranate.jpg",
+    alt: "Ripe pomegranates on the tree in a sunlit orchard",
+  },
+  {
+    id: "floriculture",
+    word: "flowers",
+    src: "/farm/hero-flowers.jpg",
+    alt: "Rows of marigolds in full flower on an Indian flower farm",
+  },
+] as const;
 
-const facts = [
-  { k: "Est. 2013", v: "Own unit, Chikkamagaluru" },
-  { k: "First in India", v: "to licence IIHR AMC" },
-  { k: "15 packs", v: "consortia to nutrition" },
-  { k: "CFU printed", v: "on every pack" },
-];
+const HOLD = 3800;
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const mounted = useMounted();
-  const wide = useMediaQuery("(min-width: 768px)");
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false);
-  const [armed, setArmed] = useState(false);
+  const [i, setI] = useState(0);
+  const [held, setHeld] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
 
-  // Heavy footage is desktop-and-good-connection only; the still carries mobile.
-  const thrifty = mounted ? isThrifty() : true;
-  const allowVideo = mounted && wide && !reduce && !thrifty;
+  /**
+   * Which frames exist in the DOM. All four at once cost close to 2 MB on
+   * first paint for three pictures nobody was looking at yet, so the set
+   * carries the current frame and the one after it and grows from there —
+   * the next frame is always already decoded when the wipe reaches it.
+   */
+  const [live, setLive] = useState<ReadonlySet<number>>(() => new Set([0, 1]));
 
-  // Mount the video only after the still has had its moment, so the poster
-  // image keeps the LCP slot to itself.
+  const go = (n: number) => {
+    setI(n);
+    setLive((prev) => {
+      const after = (n + 1) % slides.length;
+      if (prev.has(n) && prev.has(after)) return prev;
+      const next = new Set(prev);
+      next.add(n);
+      next.add(after);
+      return next;
+    });
+  };
+
   useEffect(() => {
-    if (!allowVideo) return;
-    const t = window.setTimeout(() => setArmed(true), 700);
-    return () => window.clearTimeout(t);
-  }, [allowVideo]);
+    if (reduce || held) return;
+    timer.current = window.setTimeout(() => go((i + 1) % slides.length), HOLD);
+    return () => window.clearTimeout(timer.current);
+  }, [i, held, reduce]);
 
-  // Autoplay where the browser allows it, and stop burning frames once the
-  // hero has scrolled away.
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    void el.play().catch(() => {});
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) void el.play().catch(() => {});
-        else el.pause();
-      },
-      { threshold: 0.05 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [armed]);
+  const current = slides[i];
 
   return (
     <section className="hero" data-tone="dark" aria-labelledby="hero-title">
       <div className="hero-media">
-        <Image
-          src="/plant/aerial-wide.jpg"
-          alt="The Bloom Biotech production unit in Beekanahalli Village, Chikkamagaluru, seen from the air"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        {allowVideo && armed ? (
-          <video
-            ref={videoRef}
-            data-ready={ready ? "true" : "false"}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster="/media/poster-plant-aerial.jpg"
-            aria-hidden
-            onPlaying={() => setReady(true)}
-          >
-            <source src="/media/plant-aerial.mp4" type="video/mp4" />
-          </video>
-        ) : null}
+        {slides.map((s, n) =>
+          live.has(n) ? (
+            <Image
+              key={s.id}
+              src={s.src}
+              alt={n === i ? s.alt : ""}
+              fill
+              priority={n === 0}
+              sizes="100vw"
+              className="object-cover"
+              data-on={n === i ? "true" : undefined}
+              aria-hidden={n !== i}
+            />
+          ) : null,
+        )}
       </div>
       <div className="hero-veil" />
-      <div className="grain" aria-hidden />
 
       <div className="shell hero-copy">
-        <p className="eyebrow hero-line" style={{ ["--i" as string]: 0 }}>
-          <span className="text-[var(--lime)]">Green biotechnology</span>
-          <span className="mx-2 opacity-40">/</span>
-          Chikkamagaluru, Karnataka
-        </p>
-
-        <h1 id="hero-title" className="display d-hero mt-6 max-w-[14ch]">
-          <span className="hero-line" style={{ ["--i" as string]: 1 }}>
-            Microbes,
+        <h1 id="hero-title" className="display d-hero">
+          <span className="hero-line" style={{ ["--i" as string]: 0 }}>
+            Beneficial microbes
           </span>
-          <span className="hero-line" style={{ ["--i" as string]: 2 }}>
-            made to spec.
+          {/* The line that finishes the sentence, and the one that moves.
+              The whole line wipes rather than just the word, so there is no
+              reserved width to overflow a phone. */}
+          <span className="hero-line hero-rot-line" style={{ ["--i" as string]: 1 }}>
+            <span key={current.id} className="hero-rot-in">
+              for {current.word}.
+            </span>
           </span>
         </h1>
 
-        <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,32rem)_auto] md:items-end md:justify-between">
-          <p
-            className="lede hero-line text-[var(--dim)]"
-            style={{ ["--i" as string]: 3 }}
-          >
-            ICAR-IIHR licensed consortia, biocontrols and crop nutrition —
-            fermented, counted and packed at our own unit since 2013.
-          </p>
-          <div className="hero-line flex flex-wrap gap-3" style={{ ["--i" as string]: 4 }}>
-            <Link href="/products" className="btn btn-primary">
-              See the catalogue
-              <span className="arw" aria-hidden>
-                →
-              </span>
+        <p
+          className="lede lede-wide hero-line mt-8 text-[var(--bone)] opacity-90"
+          style={{ ["--i" as string]: 2 }}
+        >
+          ICAR-IIHR licensed consortia, biocontrols and crop nutrition,
+          fermented and packed at our own unit in Chikkamagaluru.
+        </p>
+
+        {/* The rotation, made clickable. */}
+        <nav
+          className="hero-crops hero-line"
+          style={{ ["--i" as string]: 3 }}
+          aria-label="Jump to a crop"
+          onMouseLeave={() => setHeld(false)}
+        >
+          {slides.map((s, n) => (
+            <Link
+              key={s.id}
+              href={`/solutions?crop=${s.id}`}
+              className="hero-crop"
+              data-on={n === i ? "true" : undefined}
+              onMouseEnter={() => {
+                setHeld(true);
+                go(n);
+              }}
+              onFocus={() => {
+                setHeld(true);
+                go(n);
+              }}
+            >
+              {s.word}
             </Link>
-            <Link href="#plant" className="btn btn-ghost">
-              Inside the plant
-              <span className="arw" aria-hidden>
-                →
-              </span>
-            </Link>
-          </div>
+          ))}
+        </nav>
+
+        <div className="hero-line mt-10 flex flex-wrap gap-3" style={{ ["--i" as string]: 4 }}>
+          <Link href="#find" className="btn btn-primary">
+            Find your solution
+            <span className="arw" aria-hidden>
+              →
+            </span>
+          </Link>
+          <Link href="/products" className="btn btn-ghost">
+            See the products
+          </Link>
         </div>
       </div>
 
-      <div className="relative">
-        <a href="#origin" className="hero-scroll eyebrow" aria-label="Scroll to the company story">
-          <i aria-hidden />
-          Scroll
-        </a>
-        <dl className="hero-bar">
-          {facts.map((f) => (
-            <div key={f.k}>
-              <dt className="display text-[1.05rem] tracking-[-0.02em] sm:text-[1.25rem]">
-                {f.k}
-              </dt>
-              <dd className="eyebrow mt-2">{f.v}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <a href="#intro" className="hero-cue" aria-label="Scroll to the next section">
+        <span aria-hidden>↓</span>
+      </a>
     </section>
   );
 }

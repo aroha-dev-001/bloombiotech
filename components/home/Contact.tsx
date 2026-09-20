@@ -6,44 +6,31 @@ export function Contact() {
   return (
     <section id="contact" data-tone="carbon" className="relative overflow-hidden band">
       <div className="shell">
-        <p className="eyebrow" data-rv>
-          <span className="eyebrow-accent">§09</span>
-          <span className="mx-2 opacity-40">/</span>
-          Quote desk
-        </p>
-
-        <h2 className="display d-hero mt-8 max-w-[16ch]" data-rv>
-          Tell us the crop. We&rsquo;ll tell you the pack.
+        <h2 className="display d-hero max-w-[14ch]" data-rv>
+          Tell us the crop.
         </h2>
 
-        <p className="lede mt-8 max-w-[52ch]" data-rv style={{ ["--rv-d" as string]: "80ms" }}>
-          There is no price list and no checkout. Send the crop, the area and
-          whether you need carrier or liquid, and the plant quotes it. Farmers,
-          dealers, estates and KVKs all come through the same desk.
+        <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "80ms" }}>
+          Send the crop, the area and how you apply it. We answer with a pack
+          and a price — farmers, dealers and estates through the same desk.
         </p>
 
         <div className="mt-12 flex flex-wrap gap-3" data-rv style={{ ["--rv-d" as string]: "140ms" }}>
           <Link href="/enquire" className="btn btn-primary">
-            Request a quote
+            Get in touch
             <span className="arw" aria-hidden>
               →
             </span>
           </Link>
           <a href={whatsappUrl()} className="btn btn-ghost">
-            WhatsApp the plant
-            <span className="arw" aria-hidden>
-              →
-            </span>
+            WhatsApp
           </a>
           <a href={telHref()} className="btn btn-ghost">
             {site.phoneDisplay}
-            <span className="arw" aria-hidden>
-              →
-            </span>
           </a>
         </div>
 
-        <dl className="spec mt-16 max-w-3xl" data-rv>
+        <dl className="spec mt-20 max-w-3xl" data-rv>
           <div>
             <dt>Production unit</dt>
             <dd>{plant.unitAddress}</dd>
@@ -51,10 +38,6 @@ export function Contact() {
           <div>
             <dt>Office</dt>
             <dd>{site.addressLines.join(", ")}</dd>
-          </div>
-          <div>
-            <dt>Hours</dt>
-            <dd>{site.hours}</dd>
           </div>
           <div>
             <dt>Email</dt>

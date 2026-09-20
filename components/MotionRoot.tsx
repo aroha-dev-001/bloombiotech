@@ -86,10 +86,5 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     };
   }, [reduce]);
 
-  return (
-    <>
-      <div className="scroll-progress" aria-hidden="true" />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }

@@ -204,8 +204,8 @@ export const crops: readonly Crop[] = [
     name: "Coffee",
     kn: "ಕಾಫಿ",
     glyph: "☕",
-    photo: "/photos/coffee.jpg",
-    alt: "Ripening coffee berries on the branch",
+    photo: "/farm/crop-coffee.jpg",
+    alt: "Ripening coffee cherries on the branch",
     basis:
       "The production unit sits in coffee land, Chikkamagaluru. Bio Hit prints coffee berry borer as a target, and Bloom Compost Culture prints a coffee pulp windrow dose of 2 kg per MT.",
     needs: ["composting", "pests", "soil-biology", "root-health"],
@@ -216,7 +216,7 @@ export const crops: readonly Crop[] = [
     name: "Black pepper",
     kn: "ಕಾಳು ಮೆಣಸು",
     glyph: "🌶",
-    photo: "/photos/pepper.jpg",
+    photo: "/farm/crop-pepper.jpg",
     alt: "Black pepper spike ripening on the vine",
     basis:
       "The brochure names black pepper among the commercial crops where AMC has been accepted as part of crop protection management.",
@@ -228,7 +228,7 @@ export const crops: readonly Crop[] = [
     name: "Pomegranate",
     kn: "ದಾಳಿಂಬೆ",
     glyph: "🍎",
-    photo: "/photos/pomegranate.jpg",
+    photo: "/farm/crop-pomegranate.jpg",
     alt: "Pomegranate fruit ripening on the tree",
     basis:
       "The brochure names pomegranate among the commercial crops where AMC has been accepted as part of crop protection management. The Bhu Samruddhi label carries a pomegranate.",
@@ -240,8 +240,8 @@ export const crops: readonly Crop[] = [
     name: "Floriculture",
     kn: "ಪುಷ್ಪ ಕೃಷಿ",
     glyph: "🌸",
-    photo: "/photos/seedling.jpg",
-    alt: "A young seedling raised in nursery media",
+    photo: "/farm/crop-flowers.jpg",
+    alt: "A young seedling held in a handful of soil",
     basis:
       "The brochure names floriculture among the commercial crops where AMC has been accepted as part of crop protection management.",
     needs: ["disease", "pests", "root-health", "nutrition"],
@@ -252,7 +252,7 @@ export const crops: readonly Crop[] = [
     name: "Other crops",
     kn: "ಇತರ ಬೆಳೆಗಳು",
     glyph: "🌾",
-    photo: "/plant/aerial-fields.jpg",
+    photo: "/farm/crop-other.jpg",
     alt: "Farmland around the Bloom Biotech production unit",
     basis:
       "Most Bloom packs print “suitable for all crops”. Fruit, vegetable, flower and field crops are named on the nutrition line.",
@@ -267,6 +267,10 @@ export function getCrop(id: string) {
 
 export function getNeed(id: string) {
   return needs.find((n) => n.id === id);
+}
+
+export function getApplication(id: string) {
+  return applications.find((a) => a.id === id);
 }
 
 /** True when the pack prints "All crops" rather than a named crop list. */

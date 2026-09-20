@@ -42,7 +42,7 @@ export function BeforeAfter({
   return (
     <figure>
       <div
-        className="compare frame-ticks"
+        className="compare"
         style={{ aspectRatio: ratio, ["--split" as string]: `${split}%` }}
       >
         <div className="compare-layer">

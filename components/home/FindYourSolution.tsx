@@ -1,19 +1,18 @@
-import { ProductFinder } from "../solutions/ProductFinder";
-import { SectionHead } from "../SectionHead";
+import { SolutionFinder } from "../solutions/SolutionFinder";
 
-/** The guided finder, framed for the homepage. */
+/** One interactive section: crop, need, packs. */
 export function FindYourSolution() {
   return (
-    <section id="find" data-tone="bone" className="band">
+    <section data-tone="bone" className="band">
       <div className="shell">
-        <SectionHead
-          index="02"
-          kicker="Find your solution"
-          title="Three questions. Then the packs."
-          lede="Crop, problem, and how you apply it. Nothing is submitted and nothing is required — change any answer and the list changes with it."
-        />
-        <div className="mt-12" data-rv>
-          <ProductFinder />
+        <div className="sec-head" data-rv>
+          <h2 className="display d-1 max-w-[16ch]">Find your solution.</h2>
+          <p className="lede">
+            Tell us the crop and what you are dealing with.
+          </p>
+        </div>
+        <div className="mt-16" data-rv>
+          <SolutionFinder />
         </div>
       </div>
     </section>
