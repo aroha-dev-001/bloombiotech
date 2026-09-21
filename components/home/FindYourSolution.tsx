@@ -1,4 +1,5 @@
 import { SolutionFinder } from "../solutions/SolutionFinder";
+import { Split } from "@/components/motion/Split";
 
 /** One interactive section: crop, need, packs. */
 export function FindYourSolution() {
@@ -6,7 +7,7 @@ export function FindYourSolution() {
     <section data-tone="bone" className="band">
       <div className="shell">
         <div className="sec-head" data-rv>
-          <h2 className="display d-1 max-w-[16ch]">Find your solution.</h2>
+          <Split as="h2" text="Find your solution." className="display d-1 max-w-[16ch]" />
           <p className="lede">
             Tell us the crop and what you are dealing with.
           </p>

@@ -236,24 +236,30 @@ export function SolutionFinder({
         </div>
       </div>
 
-      {/* ------------------------------------------------------ the route */}
+      {/* ------------------------------------------------------ the route
+          Shown rather than listed: four photographs of the product actually
+          reaching the root, each carrying the dose printed against it. */}
       <div className="finder-q" ref={routeStep} data-state={need ? undefined : "locked"}>
         <h3 className="display d-2">How will you apply it?</h3>
-        <div className="need-grid" role="group" aria-label="How will you apply it?">
+        <div className="route-grid" role="group" aria-label="How will you apply it?">
           {applications.map((a) => (
             <button
               key={a.id}
               type="button"
-              className="need-card"
+              className="route-card"
               disabled={!need}
               aria-pressed={route === a.id}
+              data-on={route === a.id ? "true" : undefined}
               onClick={() => {
                 setRoute(route === a.id ? undefined : a.id);
                 reveal(results);
               }}
             >
-              <span>{a.label}</span>
-              <i aria-hidden>→</i>
+              <Image src={a.photo} alt="" fill sizes="(min-width: 760px) 22vw, 50vw" />
+              <span className="route-card-body">
+                <span className="route-card-name">{a.label}</span>
+                <span className="route-card-dose">{a.dose}</span>
+              </span>
             </button>
           ))}
         </div>

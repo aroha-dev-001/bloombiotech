@@ -91,13 +91,46 @@ export type Application = {
   label: string;
   /** The printed route this maps to in the brochure usage block. */
   route: string;
+  /** What that route actually looks like in the field. */
+  photo: string;
+  alt: string;
+  /** The dose printed against this route, so the picture carries a fact. */
+  dose: string;
 };
 
 export const applications: readonly Application[] = [
-  { id: "soil", label: "Soil", route: "Soil drenching" },
-  { id: "drip", label: "Drip", route: "Drip fertigation" },
-  { id: "foliar", label: "Foliar", route: "Foliar spray" },
-  { id: "compost", label: "Compost", route: "FYM, compost or neem cake enrichment" },
+  {
+    id: "soil",
+    label: "Soil",
+    route: "Soil drenching",
+    photo: "/farm/application.jpg",
+    alt: "Pouring the mixed consortium around the base of a young plant",
+    dose: "1 kg in 40 L, at the root",
+  },
+  {
+    id: "drip",
+    label: "Drip",
+    route: "Drip fertigation",
+    photo: "/farm/drip.jpg",
+    alt: "Water dripping from an irrigation emitter onto red soil",
+    dose: "1 kg in 40 L, filtered",
+  },
+  {
+    id: "foliar",
+    label: "Foliar",
+    route: "Foliar spray",
+    photo: "/farm/foliar.jpg",
+    alt: "A knapsack sprayer applying a foliar spray over a crop",
+    dose: "10 ml per litre, on the leaf",
+  },
+  {
+    id: "compost",
+    label: "Compost",
+    route: "FYM, compost or neem cake enrichment",
+    photo: "/farm/compost.jpg",
+    alt: "Mixing carrier powder into a farmyard manure heap",
+    dose: "5–10 kg per tonne of FYM",
+  },
 ] as const;
 
 /* ------------------------------------------------------------- the index */

@@ -381,3 +381,371 @@ Type now sits on a picture rather than a flat ground, so: a text-shadow on the h
 `farm/hero-coffee.jpg`, `-pepper`, `-pomegranate`, `-flowers` — 16:9, generated bright and documentary, then lanczos-upscaled to 2016×1128 so a full-bleed frame is not soft on a wide display.
 
 The hero no longer loads any video, which also takes the drone clip off the critical path on first paint.
+
+---
+
+# Revision 5 — the product system, and the two sections the brief asked for
+
+## 1. The product photography was the quality ceiling, not the motion
+
+Fifteen packs arrived as **four different kinds of picture**, and the card that
+held them cropped through the label:
+
+| Group | What it actually was | Count |
+|---|---|---|
+| Pouches | silver pouches shot flat on a grey bench, back-of-pack showing | 6 |
+| Shelf crops | bottles cropped off a shelf, bleeding off all four edges, other bottles behind | 3 |
+| Label artwork | flat packaging artwork on white — a different visual language entirely | 4 |
+| Contents | **not packaging at all**: AscoGold is microscopy, Bloom Compost Culture is a petri dish | 2 |
+
+`.pcard-media` was `aspect-ratio: 4/3` with `object-fit: cover`. Every one of
+these is portrait, so the grid centre-cropped a 4:5 pack into a landscape box —
+cutting Bio Sanjiveeni's label in half and letting Bhu Samruddhi's bottle fill
+the frame edge to edge. Side by side they read as four different companies.
+
+**No amount of motion design fixes a catalogue that crops its own labels.**
+
+### What was built
+
+`public/plates/` — one normalized 4:5 plate per pack, built by
+`scripts/build-plates.sh`:
+
+- one canvas, so nothing is cropped to a landscape card any more
+- **contained, never cover-cropped** — the label always stays whole
+- per-product fill fraction, so a 5 L can and a 5 kg pouch carry the same mass
+- the ground is that photograph's *own* frame, blown up, blurred and pushed
+  toward neutral, with the pack feathered into it — so the pad join is
+  invisible and the ground tone can never clash with the product
+
+Three of the shelf crops had a better source already in the repo: the
+`packs/can-*.jpg` studio shots at 837×1100. Bhu Samruddhi, Bluderma and
+Blumonas now plate from those instead.
+
+**§28 held throughout.** No relighting, no label edits, no generated packaging.
+Only background, scale and crop changed — exactly the four things §28 lists as
+fair game. Nothing was passed to an image generator.
+
+`ProductMedia` is the one stage every product surface now draws: catalogue
+grid, home showcase, result rows, product page, explorer tab.
+
+### The two contents shots
+
+Confirmed with the client rather than invented around. They stay — they are
+real pictures of those two products — and the UI now says what they are
+("Pictured: the formulation, not the pack") instead of captioning microscopy as
+a pack. `shotOf()` in `lib/products.ts` carries this. **Both still want a real
+pack photograph.**
+
+## 2. Home: six equal cards → one pack as the subject
+
+`ProductRail` was six cards in a grid — precisely the "15 boring cards" §07
+rules out. It is now `ProductShowcase`: one pack large, the other five the way
+to reach it, with the marker behind the active name travelling on a `layoutId`
+shared-layout transition. Hover drives it on a pointer, tap on a phone.
+
+This is the first thing on the site to use **framer-motion**, which was in
+`package.json` and imported by nothing.
+
+## 3. Product page: the pack leads
+
+Was: headline left, a 22rem `object-contain` thumbnail right. Now the pack is
+30rem on the left and the words sit beside it (§10). The tinted pack stage
+reverted in `2c9cf28` was **not** reintroduced — the plate covers the stage
+entirely, so no tint shows.
+
+## 4. From culture to pack (§14) — on /about, not the homepage
+
+`chapters` in `lib/plant.ts` was already a complete, sourced five-step
+production sequence. **Nothing rendered it.** It is now a sticky-scroll section:
+the frame pins, the steps scroll past, the picture changes with the step.
+
+**Deviation from §33.** The brief puts this on the homepage as beat 04. It is on
+`/about` instead, because the homepage film already *is* the manufacturing beat
+— factory → fermentation → pack — and two long pinned sections back to back
+would have said the same thing twice at different speeds. `/about` is also
+where §26 asks for exactly this depth. Say the word and it moves.
+
+Active step is read from an observer with a centre band, not from container
+progress — progress across the whole container counts the heading and trailing
+space, which ran the picture a full step ahead of the words beside it.
+
+## 5. How it reaches the crop (§13)
+
+The finder's third question was four words in four boxes. It is now four
+photographs of the product actually reaching the root, each carrying the dose
+printed against that route. `applications` in `lib/solutions.ts` gained `photo`,
+`alt` and `dose`.
+
+## 6. Smaller corrections
+
+- **`factory-sign.jpg` is not the sign.** It is the building. The clip it was
+  cut from pans to the real wall-mounted sign at ~3.7s; that frame is now
+  `film/brand-sign.jpg` (1280×720, restored) and carries both story scene 01 and
+  chapter 01, whose captions both name the sign.
+- Chapter stills moved from `plant/*.jpg` (640×352 / 848×480) to the restored
+  `film/*.jpg` at 1280×720. A 4:5 crop of 1280×720 is a *downscale* into the
+  pinned frame instead of a 1.8× upscale.
+- Navbar now draws in 4rem → 3.5rem on scroll, completing §22. It already
+  thickened; it never shrank.
+- "15 of 15 packs" only prints once a filter has narrowed something. As a
+  standing line under an unfiltered grid it was the decorative statistic the
+  design rules rule out.
+- `.proc-ticks` shipped at `height: 0` and never rendered. Removed rather than
+  fixed — the step dimming already carries progress, and decoration with no job
+  fails §35.
+
+## 7. Verified
+
+Build passes, 41 static pages, all 15 product routes prerender. Every route
+200s. **No horizontal overflow at 375px on any page** (measured: `scrollWidth`
+=== `clientWidth` on all eleven). Desktop and mobile passes on the catalogue,
+showcase, product page, finder and process section. Reduced motion is covered by
+the existing global `prefers-reduced-motion` block.
+
+Two lint errors remain in `ChatWidget.tsx` (`set-state-in-effect`, `refs`).
+**Both predate this pass** and are untouched.
+
+## 8. Not done, deliberately
+
+- **Hero stayed stills.** §01 wants full-screen agricultural video; the only
+  real footage is factory/drone, and the client chose stills over commissioning
+  crop clips. The four hero stills are real and 2016×1128.
+- **14 MB of unreferenced assets still ship**: `public/story/` (5.4 MB),
+  `public/media/` (7 MB), `public/photos/amc/` (1.6 MB). Zero references in
+  `app/`, `components/` or `lib/`. They cost deploy size, not page load, so
+  they were left for the client to call. `media/` at the repo root is the source
+  archive and should stay.
+- **§12 crop interaction is partial.** Selecting a crop changes the results and
+  the heading, but no crop photograph accompanies the answer.
+
+
+---
+
+# Revision 6 — the experience half
+
+Revision 5 fixed the product photography and read the existing pinned film as
+already covering §02, §03 and §16. **That was wrong.** Reviewed against the
+brief beat by beat, the distinctly cinematic items did not exist at all:
+
+| Brief | Before this pass |
+|---|---|
+| §02 wide → crop → plant → root-zone camera move | not built |
+| §03 the biology layer, leaf → root → soil → microbial life | **not built** |
+| §16 scroll *drives* the video | clips cross-dissolved and looped on their own |
+| §21 3D where it makes conceptual sense | no three.js in the project at all |
+| §34 the page should read as one film | sections cut hard at every tone change |
+
+## 1. Biology — the missing beat, and the one honest place for 3D
+
+`components/home/Biology.tsx`. One continuous pinned descent: canopy → leaf →
+root → soil, each frame still pushing in as the next fades up through it, so it
+reads as a single camera move rather than four transitions. Then the
+photography runs out — and that is the point.
+
+Everything else on this site is a real picture of a real thing. The organisms
+inside the pack are the one subject with **no honest photograph**, so the
+descent hands over to `MicrobialField`: a three.js point culture on a custom
+shader, drifting on three incommensurate periods so it never visibly loops,
+with depth-of-field falloff so most bodies sit out of focus. The reference is
+darkfield microscopy, not science fiction — muted greens, no additive bloom, no
+flare, nothing pulsing. It closes on the real claim: *Azotobacter, phosphorus
+and zinc solubilisers, and Pseudomonas — alive in the pack, and counted per
+gram on the label.*
+
+This satisfies §21 on its own terms: 3D visualises what a photograph cannot,
+rather than decorating a section a photograph could have carried.
+
+**Cost control.** three.js + R3F is 230 KB gzipped, so it is dynamically
+imported and never touches first paint. Measured: at `scrollY 0` the chunk is
+absent and no canvas exists; one screen before the section it loads. It is
+skipped entirely on `save-data`, on 2g, and under `prefers-reduced-motion`,
+where the frames stack as a still sequence and the closing line still lands.
+Phones get 460 bodies at dpr ≤ 1.25; desktop gets 1400 at ≤ 1.75.
+
+Geometry is built from a fixed-seed PRNG rather than `Math.random`, so the
+culture is identical every load and building it stays a pure function.
+
+## 2. Scroll is now the transport (§16)
+
+The graded cuts in `public/film` carry **exactly one keyframe each** — seeking
+any point means decoding from frame zero, so scrubbing them was impossible.
+`scripts/build-scrub-clips.sh` re-encodes them at 960×540 with a keyframe every
+5 frames (~0.17s). Dropping the resolution pays for the extra keyframes: the
+sources are upscaled SD anyway, and the files come out the same size as the
+720p originals.
+
+The clip is now **paused** and its playhead written from how far through its
+scene the page is, so the camera move in the footage is the camera move on the
+page. Two guards keep the decoder out of trouble: nothing is asked of an
+off-screen clip, and a seek already in flight is allowed to finish.
+
+Desktop only — seeking costs a decode on every frame of a scroll, which is the
+wrong thing to ask of a phone, so phones keep the looping cut.
+
+Measured under a real scroll, one scene's playhead ramps
+`0 → 1.5 → 3.2 → 3.78 → 4.08 → 4.22 → 4.30` as the page moves. Monotonic.
+
+## 3. The arc, rebuilt — and a duplication removed
+
+The film's last three scenes were the plantation, the pour and the drip line —
+**the same four photographs the Biology descent travels through.** The film now
+stops where its own subject stops, at the pack it fills, and hands to the packs
+section. Seven scenes down to four.
+
+    Hero → Intro → Biology → StoryScroll → Packs → FindYourSolution → Questions → Contact
+    land   company  the life  where made   what we  find yours
+
+Despite adding a whole pinned section the page grew by ~700px, because the film
+lost three scenes it was duplicating.
+
+## 4. Seams (§34)
+
+A pinned run no longer cuts from the section above or into the section below.
+Each wash is the colour of the neighbour it is dissolving with, driven by the
+same scroll value as the frames: Biology rises out of the bone page above it,
+and the film — which ends on a packshot lit on white, against a carbon section
+— washes toward carbon across its last stretch.
+
+The entry wash is measured from how far the section has *risen*, not from
+pinned progress: pinned progress does not leave zero until the stage pins,
+which held a full viewport of flat bone before anything dissolved.
+
+## 5. Verified
+
+Build passes, 41 static pages. **No horizontal overflow at 375px on any of
+eleven routes.** Desktop and mobile passes on the descent, the handover, the
+scrub and the seams. three.js confirmed absent from first paint. Lint is back
+to the 2 pre-existing `ChatWidget.tsx` errors — the 7 the 3D scene introduced
+were real React Compiler findings and are fixed, not silenced, except for the
+`useFrame` mutation block, which is scoped and explained.
+
+## 6. Still not done
+
+- **The hero is still stills** — unchanged from the client's call in Revision 5.
+- **14 MB of unreferenced assets still ship** (`public/story/`, `public/media/`,
+  `public/photos/amc/`), plus 4.3 MB of new scrub clips that are used.
+- **§12 crop interaction is still partial.**
+
+---
+
+# Revision 7 — the entrance, and the motion layer across every page
+
+Reference: **udupitourism.com**, supplied as a target for "the animation effect
+and the intro", not the content.
+
+## What that site actually does
+
+Inspected rather than guessed at. It is Webflow running **GSAP + ScrollTrigger,
+SplitType and Splide** — no Lenis, no three.js, no page-transition curtain. Four
+devices carry it:
+
+1. an **aperture intro** — a hairline widens to a standing strip, becomes an
+   inset framed picture, then fills the screen; nav and headline follow
+2. **SplitType word/line reveals** on headings
+3. a **pinned horizontal card rail**
+4. a **Splide auto-scrolling marquee**
+
+Two of its habits were deliberately **not** copied: a small-caps eyebrow above
+every heading, and its dark navy ground. Both conflict with this project's
+standing rules — no micro-copy, and the sunny direction set in revision 3 — and
+the client confirmed: keep sunny, borrow the motion.
+
+## What Stash said, and why there is still no GSAP
+
+`ask_stash` was explicit: nothing saved does text splitting, nothing saved is a
+GSAP/ScrollTrigger helper, and with framer-motion, lenis and three.js already
+installed the brief is covered by **scroll-craft + what is already here**.
+That matches the call made in revision 1 — GSAP's weight was rejected for an
+audience on mobile data, and adding GSAP + ScrollTrigger + SplitType now would
+have been ~90 KB for effects that CSS and the existing observer already do.
+
+The `scroll-craft` skill was loaded and its interview step run. Its rules also
+vetoed the eyebrows.
+
+## 1. The way in
+
+`components/home/Aperture.tsx`. Four stages on one element, driven by a
+keyframe rather than JS, so the sequence cannot drift under a busy main thread.
+It opens on the coffee frame the hero is already showing, so when it finishes
+there is nothing to hand over to — the picture is simply already there. Nav and
+the chat launcher are held back and arrive after it.
+
+**First arrival of a session only.** Seeing it once is an entrance; seeing it
+every time someone comes back to look up a dose is an obstruction.
+
+Two bugs worth recording:
+
+- **StrictMode ate it.** The first effect wrote the "seen" flag, the teardown
+  ran, and the second effect read back the flag it had just written and
+  cancelled the entrance. The decision is now memoised at module scope, which
+  makes the question idempotent however many times the effect runs.
+- **A class-name hook would have unpinned the chat button.** `.chat-fab`
+  already existed inside `@layer components` with `position: relative`; adding
+  that class to the fixed launcher would have made it scroll away. It uses a
+  `data-chrome` attribute instead.
+
+## 2. Headings arrive a word at a time
+
+`components/motion/Split.tsx`. The reference needs SplitType and GSAP for this.
+Splitting a string is pure work, so this is a **server component that ships no
+JavaScript**: words sit in overflow-hidden boxes, CSS moves them, and the class
+that starts it comes from the single IntersectionObserver already running in
+MotionRoot. Nothing new observes the page.
+
+Applied to every page heading that is a plain string. Headings carrying markup
+— the hero's rotating crop — keep the ordinary fade. Ledes now trail their
+heading rather than arriving with it.
+
+## 3. Opening a pack moves the pack
+
+React's `<ViewTransition>`, which Next 16 supports with no configuration (its
+bundled React exports it; userland `react@19.2.8` does not, which is expected).
+The catalogue card and the product hero share a `pack-<slug>` name, so clicking
+a pack **moves that plate onto its own page** instead of replacing one picture
+with another. A blur mid-flight hides the interpolation between two crops.
+
+Only those two surfaces opt in: a view-transition name must be unique per page,
+and the same pack appears in the showcase and the finder results too.
+
+## 4. Pages, each opening differently
+
+The rule taken from scroll-craft is that variety is the product, so the pages
+deliberately do **not** all get the same full-bleed banner:
+
+| Page | Opening |
+|---|---|
+| `/` | aperture → full-bleed crop hero |
+| `/products` | **the whole catalogue drifting past**, then the heading |
+| `/solutions` | full-bleed plantation |
+| `/about` | full-bleed aerial |
+| `/field` | full-bleed estate |
+| `/enquire` | **split** — invitation left, field portrait right |
+| `/faq`, `/journal`, `/gallery` | quiet by design; the type carries them |
+
+`/products` changed most. It opened on a heading over empty bone with the first
+pack a screen and a half below and a photograph of the fermentation hall in
+between. The packs are the subject, so they are the opening:
+`PlateMarquee` runs all fifteen plates across the top, each one a link. The
+track is the list twice and travels exactly half its width, so the loop has no
+seam — a CSS transform animation, no carousel library, no measurement, nothing
+on the main thread. It pauses on hover and focus, and becomes an ordinary
+scroller under reduced motion. The fermenter photograph moved to the foot of
+the page, where it answers "where does this come from" after the packs have
+been seen.
+
+## 5. Verified
+
+Build passes, 41 static pages. **No horizontal overflow at 375px on any of
+twelve routes** — the marquee was the obvious risk and it clears. Aperture
+verified frame by frame at desktop and phone width; marquee, morph and word
+reveals verified live. Lint is back to the 2 pre-existing `ChatWidget.tsx`
+errors: the one this pass introduced (setState in an effect) was fixed by
+reading the decision through `useSyncExternalStore` rather than silenced.
+
+## 6. Not done
+
+- No pinned horizontal card rail. The reference uses one for its explore
+  section; here the catalogue marquee and the existing pinned runs already
+  carry that weight, and a third pinned section would have been the same device
+  a third time.
+- The hero is still stills, and the 14 MB of unreferenced assets still ship.

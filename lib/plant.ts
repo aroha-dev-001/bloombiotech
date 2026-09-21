@@ -35,8 +35,8 @@ export const chapters: readonly Chapter[] = [
     lede: "The biology is not ours to invent. It is licensed.",
     detail:
       "Arka Microbial Consortium, Arka Actino Consortium and Arka Fermented Cocopeat are ICAR-IIHR technologies. Bloom Biotech was the first company in India to licence AMC and Arka Fermented Cocopeat, in 2013, and the first to licence ACT, in 2015.",
-    still: "/plant/sign.jpg",
-    alt: "Bloom Biotech signboard at the production unit on Hampapura Bypass Road",
+    still: "/film/brand-sign.jpg",
+    alt: "The Bloom Biotech sign mounted on the production unit at Beekanahalli",
   },
   {
     index: "02",
@@ -44,8 +44,8 @@ export const chapters: readonly Chapter[] = [
     lede: "Stainless steel, jacketed, instrumented.",
     detail:
       "The hall runs banks of Scigenics stainless-steel fermenters with their own control panels, sterile air lines and a gowning room off the floor. Liquid consortia are grown here before they ever meet a bottle.",
-    still: "/plant/reactor.jpg",
-    alt: "Stainless steel Scigenics fermenter with control panel inside the Bloom Biotech hall",
+    still: "/film/fermentation.jpg",
+    alt: "Stainless steel fermenters in the Bloom Biotech production hall",
   },
   {
     index: "03",
@@ -53,8 +53,8 @@ export const chapters: readonly Chapter[] = [
     lede: "Carrier for the soil. Liquid for the line.",
     detail:
       "Every consortium leaves the plant in one of two forms: a carrier powder for drenching and FYM enrichment, or a liquid for foliar spray and drip fertigation. The same organisms, two delivery routes.",
-    still: "/plant/panel.jpg",
-    alt: "Control panels and process piping on the fermentation floor",
+    still: "/film/products-lineup.jpg",
+    alt: "Carrier and liquid packs photographed together: Blumonas, Bhu Samruddhi, Bio Astra and Root Care",
   },
   {
     index: "04",
@@ -62,8 +62,8 @@ export const chapters: readonly Chapter[] = [
     lede: "Every pack states its colony count.",
     detail:
       "CFU is printed on the pack, per gram for carrier and per millilitre for liquid — 1 × 10⁷ for Bio Astra carrier, 1 × 10⁹ for Bluderma liquid, and so on down the line. Bio Sanjiveeni and Bio Astra carry a six-month expiry from the month of manufacture.",
-    still: "/plant/hall-row.jpg",
-    alt: "Row of fermentation vessels and instrument cabinets in the production hall",
+    still: "/film/fermentation-vessels.jpg",
+    alt: "Fermentation vessels and their control panels on the production floor",
   },
   {
     index: "05",

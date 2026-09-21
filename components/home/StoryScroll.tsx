@@ -7,14 +7,18 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useMounted } from "@/hooks/useMounted";
 
 /**
- * The Bloom Biotech film: factory → drone → fermentation → the packs →
- * plantation → application → soil and water.
+ * The Bloom Biotech film: the sign, the unit, the fermentation hall, the packs.
+ *
+ * It used to run on to the plantation, the pour and the drip line. Those are
+ * the same photographs the Biology descent above now travels through, so the
+ * film stops where its own subject stops — at the pack it fills — and hands
+ * straight to the packs section under it.
  *
  * Scroll is the camera. Scroll position is a continuous value; every scene's
  * opacity and scale are written from it each frame, so neighbouring scenes
  * genuinely cross-dissolve rather than a fixed transition firing on a cut.
  *
- * Four of the seven scenes are real Bloom footage, restored from the original
+ * Three of the four scenes are real Bloom footage, restored from the original
  * SD source. The scrim is deliberately light — the footage is sunny and the
  * point is to keep it that way, so only the strip behind the caption darkens.
  *
@@ -29,7 +33,13 @@ type Scene = {
   srcPortrait?: string;
   alt: string;
   /** Real footage, played in place of the still on capable screens. */
-  video?: { src: string; poster: string; srcPortrait?: string };
+  video?: {
+    src: string;
+    poster: string;
+    srcPortrait?: string;
+    /** Dense-keyframe cut that scroll can seek through. See §16. */
+    scrub?: string;
+  };
   /** Packshots are the wrong shape to bleed off the frame. */
   fit?: "cover" | "contain";
   /** A bright frame needs dark type on it, not white. */
@@ -41,9 +51,13 @@ const scenes: readonly Scene[] = [
     key: "sign",
     label: "Bloom Biotech.",
     line: "Green biotechnology, made in Karnataka.",
-    src: "/film/factory-sign.jpg",
-    alt: "The Bloom Biotech sign on the production unit",
-    video: { src: "/film/factory-sign.mp4", poster: "/film/factory-sign.jpg" },
+    src: "/film/brand-sign.jpg",
+    alt: "The Bloom Biotech sign mounted on the production unit",
+    video: {
+      src: "/film/factory-sign.mp4",
+      poster: "/film/brand-sign.jpg",
+      scrub: "/film/scrub/factory-sign.mp4",
+    },
   },
   {
     key: "factory",
@@ -51,7 +65,11 @@ const scenes: readonly Scene[] = [
     line: "Beekanahalli Village, Chikkamagaluru.",
     src: "/film/factory-exterior.jpg",
     alt: "The Bloom Biotech production unit in bright sunlight",
-    video: { src: "/film/factory-exterior.mp4", poster: "/film/factory-exterior.jpg" },
+    video: {
+      src: "/film/factory-exterior.mp4",
+      poster: "/film/factory-exterior.jpg",
+      scrub: "/film/scrub/factory-exterior.mp4",
+    },
   },
   {
     key: "fermentation",
@@ -64,6 +82,7 @@ const scenes: readonly Scene[] = [
       src: "/film/fermentation.mp4",
       poster: "/film/fermentation.jpg",
       srcPortrait: "/film/fermentation-portrait.mp4",
+      scrub: "/film/scrub/fermentation.mp4",
     },
   },
   {
@@ -74,30 +93,6 @@ const scenes: readonly Scene[] = [
     srcPortrait: "/film/products-lineup-portrait.jpg",
     alt: "Blumonas, Bhu Samruddhi, Bio Astra and Root Care cans photographed together",
     ink: "dark",
-  },
-  {
-    key: "plantation",
-    label: "Then it goes to the estates.",
-    line: "Coffee, pepper, pomegranate and more.",
-    src: "/farm/plantation.jpg",
-    srcPortrait: "/farm/plantation-portrait.jpg",
-    alt: "A sunlit coffee plantation under shade trees in Karnataka",
-  },
-  {
-    key: "application",
-    label: "Poured at the root.",
-    line: "One kilogram in forty litres of water.",
-    src: "/farm/application.jpg",
-    srcPortrait: "/farm/application-portrait.jpg",
-    alt: "A farmer pouring the mixed consortium around the base of a young coffee plant",
-  },
-  {
-    key: "water",
-    label: "Or run through the drip line.",
-    line: "Filtered, then straight to the root zone.",
-    src: "/farm/drip.jpg",
-    srcPortrait: "/farm/drip-portrait.jpg",
-    alt: "Water dripping from an irrigation emitter onto red soil beside green plants",
   },
 ];
 
@@ -137,6 +132,7 @@ export function StoryScroll() {
   const wide = useMediaQuery("(min-width: 760px)");
   const wrap = useRef<HTMLElement>(null);
   const sceneEls = useRef<(HTMLDivElement | null)[]>([]);
+  const videoEls = useRef<(HTMLVideoElement | null)[]>([]);
   const [active, setActive] = useState(0);
 
   const portrait = mounted && !wide;
@@ -165,6 +161,13 @@ export function StoryScroll() {
   }, [near]);
 
   const allowVideo = canPlay && near;
+  /**
+   * Scroll drives playback rather than the clip running on its own (§16).
+   * Only on a pointer-sized screen: seeking costs a decode on every frame of a
+   * scroll, which is the wrong thing to ask of a phone, so phones keep the
+   * looping cut they had.
+   */
+  const scrubbing = allowVideo && wide;
 
   useEffect(() => {
     if (reduce) return;
@@ -195,7 +198,29 @@ export function StoryScroll() {
         // The supporting line trails the headline by a beat.
         const c2In = smooth(clamp01((t + 0.06) / 0.2));
         node.style.setProperty("--c2", String(c2In * (1 - cOut)));
+
+        /* Scroll is the transport. The clip is paused; its playhead is written
+           from how far through this scene the page is, so the camera move in
+           the footage is the camera move on the page.
+
+           Two guards keep the decoder out of trouble: nothing is asked of a
+           clip that is not on screen, and a seek already in flight is left to
+           finish rather than being replaced every frame. */
+        const vid = videoEls.current[i];
+        if (vid && vid.duration && !vid.seeking) {
+          const o = presence(p, i, i === scenes.length - 1);
+          if (o > 0.02) {
+            const want = clamp01(t) * (vid.duration - 0.05);
+            if (Math.abs(vid.currentTime - want) > 0.03) vid.currentTime = want;
+          }
+        }
       }
+
+      /* The film ends on a packshot lit on white and the section under it is
+         carbon. Left alone that is the hardest cut on the page, so the last
+         stretch of the run washes toward the colour it is about to become. */
+      const leave = smooth(clamp01((p / scenes.length - 0.93) / 0.07));
+      el.style.setProperty("--leave", String(leave));
 
       const i = Math.min(scenes.length - 1, Math.max(0, Math.floor(p)));
       setActive((v) => (v === i ? v : i));
@@ -228,7 +253,14 @@ export function StoryScroll() {
       <div className="story-stage">
         {scenes.map((s, i) => {
           const near = Math.abs(active - i) <= 1;
-          const vsrc = portrait && s.video?.srcPortrait ? s.video.srcPortrait : s.video?.src;
+          // Scrubbing takes the dense-keyframe cut; everything else takes the
+          // graded one, portrait where a portrait crop exists.
+          const scrubThis = scrubbing && Boolean(s.video?.scrub);
+          const vsrc = scrubThis
+            ? s.video?.scrub
+            : portrait && s.video?.srcPortrait
+              ? s.video.srcPortrait
+              : s.video?.src;
           return (
             <div
               key={s.key}
@@ -243,11 +275,17 @@ export function StoryScroll() {
               {allowVideo && s.video && near ? (
                 <video
                   key={vsrc}
-                  autoPlay
+                  ref={(n) => {
+                    videoEls.current[i] = n;
+                  }}
+                  // A scrubbed clip never plays itself — scroll is its
+                  // transport — and it has to be buffered before it can be
+                  // seeked, so this is the one case that preloads.
+                  autoPlay={!scrubThis}
+                  loop={!scrubThis}
+                  preload={scrubThis ? "auto" : "none"}
                   muted
-                  loop
                   playsInline
-                  preload="none"
                   poster={s.video.poster}
                   aria-hidden
                 >
@@ -277,6 +315,8 @@ export function StoryScroll() {
             </div>
           );
         })}
+
+        <div className="story-seam" aria-hidden />
 
         <div className="story-ticks" aria-hidden>
           {scenes.map((s, i) => (

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import type { Product } from "@/lib/products";
+import { plateOf, type Product } from "@/lib/products";
 import { applicationsOf } from "@/lib/solutions";
 
 /**
@@ -82,8 +82,10 @@ export function ProductExplorer({ product }: { product: Product }) {
     {
       key: "contains",
       label: "What's in it",
-      media: { src: product.photo, alt: `${product.name} pack` },
-      fit: "contain",
+      // The normalized plate, not the raw photograph: contained on the page's
+      // own ground, the source frame's grey bench showed as a rectangle.
+      media: { src: plateOf(product), alt: `${product.name} pack` },
+      fit: "cover",
     },
     {
       key: "does",

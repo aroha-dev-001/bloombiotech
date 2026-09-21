@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
-import type { Product } from "@/lib/products";
+import { shotOf, type Product } from "@/lib/products";
+import { ProductMedia } from "./products/ProductMedia";
 
 export function PackCard({
   product,
@@ -19,17 +19,13 @@ export function PackCard({
       data-rv={reveal ? "" : undefined}
       style={reveal ? { ["--rv-d" as string]: `${(index % 4) * 60}ms` } : undefined}
     >
-      <div className="pcard-media">
-        <Image
-          src={product.photo}
-          alt={`${product.name} pack`}
-          fill
-          sizes="(min-width: 1100px) 20rem, (min-width: 760px) 30vw, 46vw"
-        />
-      </div>
+      <ProductMedia product={product} morph />
       <div className="pcard-body">
         <h3 className="display d-3">{product.name}</h3>
         <p className="meta">{product.technology}</p>
+        {shotOf(product) === "contents" ? (
+          <p className="pcard-shot">Pictured: the formulation, not the pack.</p>
+        ) : null}
       </div>
     </Link>
   );

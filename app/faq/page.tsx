@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { faqs } from "@/lib/faq";
 import { site, telHref, whatsappUrl } from "@/lib/site";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "Questions",
@@ -15,8 +16,8 @@ export default function FaqPage() {
     <>
       <header data-tone="light" className="pt-[calc(var(--nav-h)+5rem)] pb-20">
         <div className="shell">
-          <h1 className="display d-hero max-w-[14ch]">Questions.</h1>
-          <p className="lede lede-wide mt-8">
+          <Split as="h1" text="Questions." className="display d-hero max-w-[14ch]" />
+          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
             Where this page and the label on your pack disagree, the pack wins.
           </p>
         </div>

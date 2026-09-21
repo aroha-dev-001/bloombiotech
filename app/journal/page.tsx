@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { articles } from "@/lib/articles";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "Field notes",
@@ -12,8 +13,8 @@ export default function JournalPage() {
     <>
       <header data-tone="light" className="pt-[calc(var(--nav-h)+5rem)] pb-20">
         <div className="shell">
-          <h1 className="display d-hero max-w-[12ch]">Field notes.</h1>
-          <p className="lede lede-wide mt-8">
+          <Split as="h1" text="Field notes." className="display d-hero max-w-[12ch]" />
+          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
             Written the way we would brief a new agronomist: dose, route,
             caution.
           </p>

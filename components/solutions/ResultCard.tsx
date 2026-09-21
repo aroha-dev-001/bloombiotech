@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/products";
+import { ProductMedia } from "@/components/products/ProductMedia";
 import type { Tier } from "@/lib/solutions";
 
 /**
@@ -26,9 +26,7 @@ export function ResultCard({
       className="result-card group pop"
       style={{ ["--pop-d" as string]: `${Math.min(index, 8) * 45}ms` }}
     >
-      <div className="result-card-media">
-        <Image src={product.photo} alt="" fill sizes="4.5rem" className="object-cover" />
-      </div>
+      <ProductMedia product={product} size="thumb" className="result-card-media" />
       <div className="min-w-0">
         <h3 className="display text-[1.3rem] leading-tight tracking-[-0.025em]">
           {product.name}

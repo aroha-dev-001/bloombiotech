@@ -380,6 +380,7 @@ export function ChatWidget() {
           e.stopPropagation();
           setOpen(true);
         }}
+        data-chrome="chat"
         className={`fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[91] flex items-center gap-2 rounded-full bg-[var(--bone)] py-2.5 pr-4 pl-2 text-[1rem] font-medium shadow-lg ring-1 ring-forest/10 ${open ? "hidden sm:flex" : "flex"}`}
         aria-expanded={open}
         aria-label="Open Ask Bloom AI"

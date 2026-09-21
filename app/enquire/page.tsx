@@ -5,6 +5,7 @@ import { audienceFromSlug } from "@/lib/audience";
 import { Button } from "@/components/Button";
 import { site, whatsappUrl, telHref } from "@/lib/site";
 import { plant } from "@/lib/plant";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "Contact Bloom",
@@ -20,30 +21,45 @@ export default async function EnquirePage({ searchParams }: Props) {
 
   return (
     <>
-      <header data-tone="light" className="pt-[calc(var(--nav-h)+5rem)] pb-20">
-        <div className="shell">
-          <h1 className="display d-hero max-w-[12ch]">Talk to us.</h1>
-          <p className="lede lede-wide mt-8">
-            No price list, no checkout. Tell us what you grow and we quote
-            against it.
-          </p>
-        </div>
-      </header>
+      {/* Split rather than another full-bleed banner: two pages already open
+          on one, and a contact page reads warmer with the field beside the
+          invitation than under it. */}
+      <header data-tone="light" className="pt-[calc(var(--nav-h)+4rem)] pb-20">
+        <div className="shell grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
+          <div>
+            <Split as="h1" text="Talk to us." className="display d-hero max-w-[12ch]" />
+            <p
+              className="lede lede-wide mt-8"
+              data-rv
+              style={{ ["--rv-d" as string]: "240ms" }}
+            >
+              No price list, no checkout. Tell us what you grow and we quote
+              against it.
+            </p>
+            <div
+              className="mt-10 flex flex-wrap gap-3"
+              data-rv
+              style={{ ["--rv-d" as string]: "320ms" }}
+            >
+              <Button href={whatsappUrl()}>WhatsApp us</Button>
+              <Button href={telHref()} variant="ghost" arrow={false}>
+                {site.phoneDisplay}
+              </Button>
+            </div>
+          </div>
 
-      {/* A real field rather than a black rectangle behind the contact page. */}
-      <section data-tone="light" className="pb-4">
-        <div className="shell">
-          <figure className="page-band" data-rv="mask">
+          <figure className="frame aspect-[4/5]" data-rv="mask">
             <Image
-              src="/farm/plantation.jpg"
+              src="/farm/plantation-portrait.jpg"
               alt="A sunlit coffee plantation in Karnataka"
               fill
-              sizes="100vw"
+              priority
+              sizes="(min-width: 1024px) 26rem, 100vw"
               className="object-cover"
             />
           </figure>
         </div>
-      </section>
+      </header>
 
       <section data-tone="light" className="band">
         <div className="shell grid gap-14 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-20">

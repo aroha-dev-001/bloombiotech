@@ -528,3 +528,29 @@ export const products: Product[] = [
 export function getProduct(slug: string) {
   return products.find((p) => p.slug === slug);
 }
+
+/* --------------------------------------------------------- presentation */
+
+/**
+ * Two of the fifteen photographs are not packaging: AscoGold's is microscopy of
+ * the extract and Bloom Compost Culture's is a petri dish of the granules. They
+ * are real pictures of those products, so they stay — but the UI says what they
+ * are rather than captioning them as a pack.
+ */
+const contentsShot = new Set(["ascogold", "bloom-compost-culture"]);
+
+export type PackShot = "pack" | "contents";
+
+export function shotOf(product: Product): PackShot {
+  return contentsShot.has(product.slug) ? "contents" : "pack";
+}
+
+/**
+ * The normalized 4:5 plate every product surface draws, built by
+ * `scripts/build-plates.sh` from the source photograph in `public/catalogue/`
+ * or, where a higher-resolution studio shot of the same pack exists, from
+ * `public/packs/`. `product.photo` is still the untouched original.
+ */
+export function plateOf(product: Product) {
+  return `/plates/${product.slug}.jpg`;
+}

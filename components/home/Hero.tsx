@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { Aperture } from "./Aperture";
 
 /**
  * The landing frame.
@@ -82,6 +83,11 @@ export function Hero() {
 
   return (
     <section className="hero" data-tone="dark" aria-labelledby="hero-title">
+      {/* The lens opens on the same frame the hero is already showing, so when
+          it finishes there is nothing to hand over to — the picture is simply
+          already there. */}
+      <Aperture src={slides[0].src} alt={slides[0].alt} />
+
       <div className="hero-media">
         {slides.map((s, n) =>
           live.has(n) ? (

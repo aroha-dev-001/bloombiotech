@@ -6,6 +6,7 @@ import { FieldRecord } from "@/components/field/FieldRecord";
 import { BeforeAfter } from "@/components/field/BeforeAfter";
 import { Button } from "@/components/Button";
 import { whatsappUrl } from "@/lib/site";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "In the field",
@@ -30,8 +31,8 @@ export default function FieldPage() {
         />
         <div className="hero-veil -z-10" />
         <div className="shell">
-          <h1 className="display d-hero max-w-[13ch]">In the field.</h1>
-          <p className="lede lede-wide mt-8">
+          <Split as="h1" text="In the field." className="display d-hero max-w-[13ch]" />
+          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
             A record per crop: the challenge, the pack, the route and what the
             grower saw. We publish the frame before the findings.
           </p>
@@ -92,7 +93,7 @@ export default function FieldPage() {
 
       <section data-tone="light" className="band">
         <div className="shell flex flex-wrap items-end justify-between gap-10">
-          <h2 className="display d-1 max-w-[16ch]">Growing one of these crops?</h2>
+          <Split as="h2" text="Growing one of these crops?" className="display d-1 max-w-[16ch]" />
           <div className="flex flex-wrap gap-3">
             <Link href="/solutions#find" className="btn btn-primary">
               Find your solution

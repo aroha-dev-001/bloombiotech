@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { site, telHref, whatsappUrl } from "@/lib/site";
 import { plant } from "@/lib/plant";
+import { Split } from "@/components/motion/Split";
 
 export function Contact() {
   return (
     <section id="contact" data-tone="carbon" className="relative overflow-hidden band">
       <div className="shell">
-        <h2 className="display d-hero max-w-[14ch]" data-rv>
-          Tell us the crop.
-        </h2>
+        <Split as="h2" text="Tell us the crop." className="display d-hero max-w-[14ch]" />
 
         <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "80ms" }}>
           Send the crop, the area and how you apply it. We answer with a pack

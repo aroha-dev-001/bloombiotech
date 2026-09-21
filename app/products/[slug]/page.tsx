@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getProduct, products } from "@/lib/products";
+import { getProduct, products, shotOf } from "@/lib/products";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { Button } from "@/components/Button";
 import { BackLink } from "@/components/BackLink";
 import { ProductExplorer } from "@/components/products/ProductExplorer";
+import { ProductMedia } from "@/components/products/ProductMedia";
 import { whatsappUrl } from "@/lib/site";
+import { Split } from "@/components/motion/Split";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -35,11 +36,19 @@ export default async function ProductPage({ params }: Props) {
         <div className="shell">
           <BackLink />
 
-          <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-end">
+          {/* The pack leads, at the size it deserves; the words sit beside it. */}
+          <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)] lg:items-center lg:gap-20">
+            <ProductMedia product={product} size="hero" priority morph />
+
             <div>
-              <h1 className="display d-hero">{product.name}</h1>
-              <p className="mt-5 text-[1.15rem] text-[var(--lime)]">{product.technology}</p>
+              <Split as="h1" text={product.name} className="display d-hero" />
+              <p className="mt-5 text-[1.15rem] text-[var(--accent)]">{product.technology}</p>
               <p className="lede lede-wide mt-7">{product.short}</p>
+              <p className="mt-6 text-[var(--dim)]">
+                {shotOf(product) === "contents"
+                  ? `Pictured: the formulation, not the pack. Supplied as ${product.pack.toLowerCase()}`
+                  : product.pack}
+              </p>
               <div className="mt-10 flex flex-wrap gap-3">
                 <Button href="#enquire">Ask for this pack</Button>
                 <Button
@@ -51,17 +60,6 @@ export default async function ProductPage({ params }: Props) {
                   WhatsApp
                 </Button>
               </div>
-            </div>
-
-            <div className="frame aspect-[4/5] bg-[color-mix(in_srgb,var(--bone)_6%,transparent)]">
-              <Image
-                src={product.photo}
-                alt={`${product.name} pack`}
-                fill
-                priority
-                sizes="(min-width: 1024px) 22rem, 100vw"
-                className="object-contain p-8"
-              />
             </div>
           </div>
         </div>

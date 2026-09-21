@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Split } from "@/components/motion/Split";
 
 /**
  * The company in one screen: a statement, a photograph of the unit, and a way
@@ -10,9 +11,7 @@ export function Intro() {
     <section id="intro" data-tone="light" className="band">
       <div className="shell grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:items-center lg:gap-20">
         <div>
-          <h2 className="display d-1 max-w-[14ch]" data-rv>
-            Licensed biology, made where it is used.
-          </h2>
+          <Split as="h2" text="Licensed biology, made where it is used." className="display d-1 max-w-[14ch]" />
           <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "80ms" }}>
             Bloom Biotech was the first company in India to licence Arka
             Microbial Consortium from ICAR-IIHR. We have been fermenting it in

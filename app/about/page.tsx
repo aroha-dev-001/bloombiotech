@@ -6,6 +6,9 @@ import { plant } from "@/lib/plant";
 import { Origin } from "@/components/about/Origin";
 import { Capabilities } from "@/components/about/Capabilities";
 import { Assurance } from "@/components/about/Assurance";
+import { ProcessScroll } from "@/components/about/ProcessScroll";
+import { SectionHead } from "@/components/SectionHead";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "About Bloom",
@@ -31,10 +34,8 @@ export default function AboutPage() {
         <div className="hero-veil -z-10" />
         <div className="grain" aria-hidden />
         <div className="shell">
-          <h1 className="display d-hero max-w-[13ch]">
-            Growing microbes in Chikkamagaluru since 2013.
-          </h1>
-          <p className="lede lede-wide mt-8">
+          <Split as="h1" text="Growing microbes in Chikkamagaluru since 2013." className="display d-hero max-w-[13ch]" />
+          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
             An agri-biotechnology company in technological collaboration with
             ICAR-IIHR, making licensed microbial inputs at its own unit in
             Chikkamagaluru.
@@ -43,6 +44,21 @@ export default function AboutPage() {
       </header>
 
       <Origin />
+
+      {/* From culture to pack — the five steps, with the frame pinned beside
+          them. The copy is the plant's own chapter list. */}
+      <section id="process" data-tone="bone" className="band">
+        <div className="shell">
+          <SectionHead
+            title="From culture to pack."
+            lede="What is licensed, what is grown, and what is printed on the label."
+          />
+          <div className="mt-16">
+            <ProcessScroll />
+          </div>
+        </div>
+      </section>
+
       <Capabilities />
       <Assurance />
 

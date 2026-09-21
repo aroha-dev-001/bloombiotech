@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "Ask Bloom AI",
@@ -9,7 +10,7 @@ export default function AssistantPage() {
   return (
     <section data-tone="dark" className="pt-[calc(var(--nav-h)+5rem)] pb-28">
       <div className="shell-narrow px-0">
-        <h1 className="display d-hero">Ask Bloom AI.</h1>
+        <Split as="h1" text="Ask Bloom AI." className="display d-hero" />
         <p className="lede lede-wide mt-8">
           Open the assistant from the button at the bottom right. It answers from
           the same notes this site is built on — packs, organisms, dose, mixing

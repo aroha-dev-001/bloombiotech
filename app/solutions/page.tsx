@@ -12,6 +12,7 @@ import {
   type ApplicationId,
 } from "@/lib/solutions";
 import { site, telHref } from "@/lib/site";
+import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
   title: "Solutions by crop",
@@ -49,8 +50,8 @@ export default async function SolutionsPage({ searchParams }: Props) {
         <div className="hero-veil -z-10" />
         <div className="grain" aria-hidden />
         <div className="shell">
-          <h1 className="display d-hero max-w-[13ch]">Start with what you grow.</h1>
-          <p className="lede lede-wide mt-8">
+          <Split as="h1" text="Start with what you grow." className="display d-hero max-w-[13ch]" />
+          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
             Every pack sorted by the two things you already know: the crop in
             the ground and the problem in front of you.
           </p>
@@ -71,7 +72,7 @@ export default async function SolutionsPage({ searchParams }: Props) {
 
       <section data-tone="carbon" className="band">
         <div className="shell flex flex-wrap items-end justify-between gap-10">
-          <h2 className="display d-1 max-w-[16ch]">Still not sure?</h2>
+          <Split as="h2" text="Still not sure?" className="display d-1 max-w-[16ch]" />
           <div className="flex flex-wrap gap-3">
             <Link href="/enquire" className="btn btn-primary">
               Get in touch

@@ -116,12 +116,16 @@ export function CatalogueBrowser() {
         ))}
       </div>
 
+      {/* The count is only worth printing once a filter has narrowed something
+          — as a standing line under an unfiltered grid it is decoration. */}
       <div
         className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-6"
         aria-live="polite"
       >
         <p className="meta">
-          {list.length} of {products.length} packs
+          {active
+            ? `${list.length} of ${products.length} packs`
+            : "Filter by type, crop or problem."}
         </p>
         {active ? (
           <button
