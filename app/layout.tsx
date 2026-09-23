@@ -5,7 +5,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ChatWidget } from "@/components/ChatWidget";
 import { MotionRoot } from "@/components/MotionRoot";
+import { entranceScript } from "@/lib/entrance";
 import { site } from "@/lib/site";
+import { siteUrl } from "@/lib/site-url";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -28,7 +30,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.website),
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${site.name} — ${site.tagline}`,
     template: `%s · ${site.name}`,
@@ -65,6 +67,10 @@ export default function RootLayout({
       className={`${archivo.variable} ${plex.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Decides the home page entrance before the first paint; see lib/entrance.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: entranceScript }} />
+      </head>
       <body className="flex min-h-svh flex-col" suppressHydrationWarning>
         <noscript>
           {/* Reveals are JS-driven; without it, show everything immediately. */}

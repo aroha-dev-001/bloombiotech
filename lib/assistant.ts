@@ -1,5 +1,6 @@
+import { articles } from "./articles";
 import { products, type Product } from "./products";
-import { site, whatsappUrl } from "./site";
+import { site, telHref, whatsappUrl } from "./site";
 
 export type ChatLink = { label: string; href: string };
 
@@ -34,8 +35,17 @@ const nav = {
     label: p.name,
     href: `/products/${p.slug}`,
   }),
+  /** The enquiry form on the pack's own page, with the pack already filled in. */
+  ask: (p: Product): ChatLink => ({
+    label: `Ask for ${p.name}`,
+    href: `/products/${p.slug}#enquire`,
+  }),
   quote: { label: "Request a quote", href: "/enquire" },
+  finder: { label: "Find your solution", href: "/solutions#find" },
   whatsapp: { label: "WhatsApp", href: whatsappUrl() },
+  call: { label: `Call ${site.phoneDisplay}`, href: telHref() },
+  email: { label: "Email", href: `mailto:${site.email}` },
+  maps: { label: "Directions", href: site.maps },
   about: { label: "Company", href: "/about" },
   products: { label: "All products", href: "/products" },
 };
@@ -73,7 +83,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
         site.addressLines.join(", "),
         `${site.hours} · ${site.website}`,
       ],
-      links: [nav.whatsapp, nav.quote, { label: "Maps", href: site.maps }],
+      links: [nav.call, nav.whatsapp, nav.email, nav.maps, nav.quote],
       followUps: ["How do I get a quote?", "What is AMC?", "List of products"],
     };
   }
@@ -89,7 +99,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
         "Pouch and bottle labels still win on dose and CFU.",
         "Jackpot, Fulcare, Calcare, NutriCare C2 are imported; no repacking in India.",
       ],
-      links: [nav.quote, nav.whatsapp, nav.products],
+      links: [nav.quote, nav.whatsapp, nav.call, nav.products],
       followUps: ["What is AMC?", "List of products", "Plant address & phone"],
     };
   }
@@ -141,7 +151,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
         ...astra.usage.map((u) => `${u.title}: ${u.text}`),
         astra.precaution,
       ],
-      links: [nav.product(astra), nav.quote],
+      links: [nav.product(astra), nav.ask(astra)],
       followUps: ["What is AMC?", "Bluderma", "Get a quote"],
     };
   }
@@ -151,7 +161,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
       title: compost.name,
       summary: explain(compost),
       bullets: compost.usage.map((u) => `${u.title}: ${u.text}`),
-      links: [nav.product(compost), nav.quote],
+      links: [nav.product(compost), nav.ask(compost)],
       followUps: ["What is AMC?", "Get a quote"],
     };
   }
@@ -161,7 +171,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
       title: hit.name,
       summary: explain(hit),
       bullets: [hit.targets, ...hit.usage.map((u) => `${u.title}: ${u.text}`), hit.precaution],
-      links: [nav.product(hit), nav.quote],
+      links: [nav.product(hit), nav.ask(hit)],
       followUps: ["Bio Ace for sucking pests", "Get a quote"],
     };
   }
@@ -182,8 +192,8 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
       title: "Product range",
       summary:
         "IIHR line: Bio Sanjiveeni (AMC powder), Bhu Samruddhi (AMC liquid), Bio Astra (ACT), Bluderma, Blumonas, Bio Vanish, Bio Erase, Bio Hit, Bio Ace, Bloom Compost Culture. Imported nutrition: Jackpot, Fulcare, Calcare, NutriCare C2. AscoGold is amino acids plus seaweed at 3 ml/L.",
-      bullets: products.slice(0, 8).map((p) => `${p.name}: ${p.technology}`),
-      links: [nav.products, nav.quote],
+      bullets: products.map((p) => `${p.name}: ${p.technology}`),
+      links: [nav.products, nav.finder, nav.quote],
       followUps: ["What is AMC?", "Imported products", "Get a quote"],
     };
   }
@@ -210,7 +220,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
         `${site.addressLines.join(", ")}`,
         `${site.phoneDisplay} · ${site.email}`,
       ],
-      links: [nav.about, nav.products],
+      links: [nav.about, nav.products, nav.call],
       followUps: ["What is AMC?", "Plant address & phone", "List of products"],
     };
   }
@@ -234,7 +244,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
         ...p.usage.map((u) => `${u.title}: ${u.text}`),
         p.precaution,
       ],
-      links: [nav.product(p), nav.quote, nav.whatsapp],
+      links: [nav.product(p), nav.ask(p), nav.whatsapp],
       followUps: ["How do I get a quote?", "Other products", "What is AMC?"],
     };
   }
@@ -260,9 +270,39 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
       "Ask AMC dose for the 1 kg / 40 L and 10 ml/L figures.",
       "Imported line: Jackpot, Fulcare, Calcare, NutriCare C2.",
     ],
-    links: [nav.products, nav.quote, nav.whatsapp],
+    links: [nav.products, nav.finder, nav.whatsapp],
     followUps: ["List of products", "What is AMC?", "Plant address & phone"],
   };
+}
+
+const pages = new Set([
+  "/",
+  "/products",
+  "/solutions",
+  "/about",
+  "/enquire",
+  "/faq",
+  "/field",
+  "/gallery",
+  "/journal",
+  "/assistant",
+]);
+
+/**
+ * Whether a link the model wrote goes somewhere real. The model is told to
+ * link site paths, and will happily invent /products/amc; a chip that lands
+ * on a 404 is worse than no chip.
+ */
+export function isKnownHref(href: string) {
+  if (/^(tel|mailto):/i.test(href)) return true;
+  if (href === site.maps || href.startsWith("https://wa.me/")) return true;
+  const path = href.split(/[?#]/)[0];
+  if (pages.has(path)) return true;
+  const m = path.match(/^\/(products|journal)\/([\w-]+)$/);
+  if (!m) return false;
+  return m[1] === "products"
+    ? products.some((p) => p.slug === m[2])
+    : articles.some((a) => a.slug === m[2]);
 }
 
 export function parseModelAnswer(raw: string, fallback: ChatAnswer): ChatAnswer {
@@ -272,6 +312,10 @@ export function parseModelAnswer(raw: string, fallback: ChatAnswer): ChatAnswer 
     if (jsonStart < 0 || jsonEnd < 0) return compactText(raw, fallback);
     const parsed = JSON.parse(raw.slice(jsonStart, jsonEnd + 1)) as Partial<ChatAnswer>;
     const bullets = (parsed.bullets ?? []).map(String).filter(Boolean).slice(0, 7);
+    const links = (Array.isArray(parsed.links) ? parsed.links : []).filter(
+      (l): l is ChatLink =>
+        !!l && typeof l.label === "string" && typeof l.href === "string" && isKnownHref(l.href),
+    );
     const summary = String(parsed.summary || "").trim();
     if (!summary && !bullets.length) return compactText(raw, fallback);
     return {
@@ -279,7 +323,7 @@ export function parseModelAnswer(raw: string, fallback: ChatAnswer): ChatAnswer 
       summary: summary || fallback.summary,
       bullets: bullets.length ? bullets : fallback.bullets,
       cta: parsed.cta ? String(parsed.cta).slice(0, 180) : fallback.cta,
-      links: Array.isArray(parsed.links) && parsed.links.length ? parsed.links : fallback.links,
+      links: links.length ? links : fallback.links,
       followUps:
         Array.isArray(parsed.followUps) && parsed.followUps.length
           ? parsed.followUps.map(String).slice(0, 4)
@@ -321,4 +365,6 @@ Rules:
 - Bio Sanjiveeni = AMC powder. Bhu Samruddhi = AMC liquid. Bio Astra = ACT (Streptomyces), licensed 2015.
 - Compost Culture doses: coffee pulp 2 kg/MT; FYM 3 kg/MT; green leaf 1 kg/MT; coco-peat 4 kg culture + 4 kg urea / MT.
 - href must be a site path. No em dashes. Do not claim to place an order.
+- Product pages are /products/<slug>, with slug one of: ${products.map((p) => p.slug).join(", ")}. Each has an enquiry form at /products/<slug>#enquire. Other pages: /products, /solutions#find, /enquire, /about, /faq.
+- Write pack names exactly as listed, and the phone ${site.phoneDisplay} and email ${site.email} in full: they become links on screen.
 `;

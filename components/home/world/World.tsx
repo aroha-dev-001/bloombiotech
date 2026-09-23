@@ -308,6 +308,7 @@ export function World() {
           go there is nothing to hand over: the canopy is already there. */}
       <Aperture
         src={media("/world/leg00.jpg")}
+        portrait={{ src: media("/world/leg00-m.jpg"), media: PORTRAIT_MQ }}
         alt="A shade-grown coffee estate in the hills of Chikkamagaluru, seen from above"
       />
 

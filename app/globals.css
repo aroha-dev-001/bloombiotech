@@ -647,8 +647,11 @@ textarea.field {
   box-shadow: inset 0 1px 0 0 color-mix(in srgb, #fff 18%, transparent);
 }
 
+/* No pointer-events of its own: it inherits them. The closed menu sheet has
+   one of these as its close button, invisible and right over the header's
+   menu button, and while it forced pointer-events back on it swallowed every
+   tap meant to open the menu. */
 .nav-toggle {
-  pointer-events: auto;
   display: grid;
   place-items: center;
   height: 2.75rem;
@@ -3225,16 +3228,28 @@ textarea.field {
    fills the view. One keyframe on one element; see components/home/Aperture.tsx.
 
    Four stages, and the shape is the whole point: tall and narrow first, so the
-   widening reads as a lens rather than a box being resized. */
+   widening reads as a lens rather than a box being resized.
+
+   The element is always in the page and shown only while <html> carries
+   `entering`, which lib/entrance.ts sets before the first paint. It holds on
+   the hairline until `lens-open` says the picture has arrived. */
 
 .ap {
   position: fixed;
   inset: 0;
   z-index: 200;
-  display: grid;
+  display: none;
   place-items: center;
   background: var(--bone);
   animation: ap-out 0.5s var(--ease-out) 1.8s both;
+}
+
+.entering .ap {
+  display: grid;
+}
+
+.entering:not(.lens-open) :is(.ap, .ap-frame, .ap-img) {
+  animation-play-state: paused;
 }
 
 .ap-frame {
@@ -3605,5 +3620,101 @@ textarea.field {
 @media (min-width: 900px) {
   .bio-field {
     opacity: max(0.5, var(--field));
+  }
+}
+
+/* ---------- still in doubt ----------
+   The WhatsApp card on the product pages; see
+   components/products/WhatsAppNudge.tsx. Bottom left on a wide screen, clear
+   of the assistant's button; on a phone, full width just above it. Its own
+   palette, because it floats over light and dark sections alike. */
+
+.nudge {
+  --bg: var(--bone);
+  --fg: var(--ink);
+  position: fixed;
+  z-index: 89;
+  left: 1rem;
+  right: 1rem;
+  bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 4.25rem);
+  padding: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, #fff 55%, var(--bone));
+  color: var(--ink);
+  box-shadow: 0 28px 70px -24px rgb(7 10 8 / 0.45);
+  animation: nudge-in 0.7s var(--spring-out) both;
+}
+
+@media (min-width: 640px) {
+  .nudge {
+    left: 1.5rem;
+    right: auto;
+    bottom: 1.5rem;
+    width: 23.5rem;
+  }
+}
+
+.nudge[data-leaving] {
+  animation: nudge-out 0.28s var(--ease-out) both;
+}
+
+.nudge-title {
+  padding-right: 2.5rem;
+  font-size: 1.65rem;
+  line-height: 1.05;
+}
+
+.nudge-body {
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.nudge-cta {
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+.nudge-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--r-pill);
+  color: var(--muted);
+  transition:
+    background-color 0.25s var(--ease-out),
+    color 0.25s var(--ease-out);
+}
+
+.nudge-close:hover {
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  color: var(--ink);
+}
+
+@keyframes nudge-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.97);
+  }
+}
+
+@keyframes nudge-out {
+  to {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+}
+
+/* Still ends, so the card still leaves; it just does not travel. */
+@media (prefers-reduced-motion: reduce) {
+  .nudge,
+  .nudge[data-leaving] {
+    animation-duration: 1ms;
   }
 }

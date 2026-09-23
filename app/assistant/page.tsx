@@ -19,11 +19,11 @@ export default function AssistantPage() {
         <dl className="spec mt-12">
           <div>
             <dt>New chat</dt>
-            <dd>The + button clears the thread.</dd>
+            <dd>The + button clears the conversation. Nothing is kept after you leave.</dd>
           </div>
           <div>
-            <dt>History</dt>
-            <dd>The ☰ button reopens earlier threads.</dd>
+            <dt>Links</dt>
+            <dd>Pack names, the phone number, email and address in an answer all open.</dd>
           </div>
           <div>
             <dt>Close</dt>

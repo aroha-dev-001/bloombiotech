@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { products } from "@/lib/products";
 import { articles } from "@/lib/articles";
-
-const host = "https://bloom-biotech.vercel.app";
+import { siteUrl as host } from "@/lib/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

@@ -1,24 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ThinkingOrb } from "thinking-orbs";
 import { welcomeAnswer, type ChatAnswer } from "@/lib/assistant";
+import { isExternal, isHandoff, linkify } from "@/lib/chat-links";
 import { AiMark } from "./AiMark";
 
 type RoleMsg =
   | { id: string; role: "user"; content: string }
   | { id: string; role: "assistant"; answer: ChatAnswer };
 
-type Thread = {
-  id: string;
-  title: string;
-  updatedAt: number;
-  messages: RoleMsg[];
-};
-
-const STORAGE_KEY = "bloom-chat-threads-v2";
-const ACTIVE_KEY = "bloom-chat-active-v2";
+/**
+ * The conversation lives only as long as the page does. Earlier versions kept
+ * every thread in localStorage; farmers ask from shared family phones, and a
+ * dealer's questions are nobody else's business, so nothing is kept now.
+ * These are the keys that used to hold it, cleared from browsers that still
+ * have them.
+ */
+const RETIRED_KEYS = ["bloom-chat-threads-v2", "bloom-chat-active-v2"];
 
 const nav = [
   { href: "/", label: "Home" },
@@ -46,88 +46,32 @@ function asAnswer(raw: unknown): ChatAnswer {
   };
 }
 
-function readThreads(raw: unknown): Thread[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .map((t) => {
-      const thread = t as Partial<Thread>;
-      if (!thread?.id || !Array.isArray(thread.messages)) return null;
-      return {
-        id: String(thread.id),
-        title: String(thread.title || "Chat"),
-        updatedAt: Number(thread.updatedAt) || 0,
-        messages: thread.messages
-          .map((m) => {
-            const msg = m as RoleMsg;
-            if (msg?.role === "user" && "content" in msg) {
-              return { id: String(msg.id || uid()), role: "user" as const, content: String(msg.content) };
-            }
-            if (msg?.role === "assistant") {
-              return { id: String(msg.id || uid()), role: "assistant" as const, answer: asAnswer(msg.answer) };
-            }
-            return null;
-          })
-          .filter((m): m is RoleMsg => m !== null),
-      };
-    })
-    .filter((t): t is Thread => t !== null && t.messages.length > 0);
-}
-
-function freshThread(): Thread {
-  return {
-    id: uid(),
-    title: "New chat",
-    updatedAt: Date.now(),
-    messages: [{ id: uid(), role: "assistant", answer: welcomeAnswer }],
-  };
-}
-
-const BOOT_THREAD: Thread = {
-  id: "boot",
-  title: "New chat",
-  updatedAt: 0,
-  messages: [{ id: "welcome", role: "assistant", answer: welcomeAnswer }],
-};
+const welcome = (): RoleMsg[] => [{ id: "welcome", role: "assistant", answer: welcomeAnswer }];
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [threads, setThreads] = useState<Thread[]>([BOOT_THREAD]);
-  const [activeId, setActiveId] = useState("boot");
+  const [messages, setMessages] = useState<RoleMsg[]>(welcome);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const activeIdRef = useRef(activeId);
-  activeIdRef.current = activeId;
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const saved = readThreads(raw ? JSON.parse(raw) : []);
-      const lastId = localStorage.getItem(ACTIVE_KEY);
-      if (saved.length) {
-        setThreads(saved);
-        setActiveId(saved.some((t) => t.id === lastId) ? (lastId as string) : saved[0].id);
-      } else {
-        const t = freshThread();
-        setThreads([t]);
-        setActiveId(t.id);
-      }
+      for (const key of RETIRED_KEYS) localStorage.removeItem(key);
     } catch {
-      const t = freshThread();
-      setThreads([t]);
-      setActiveId(t.id);
+      // Blocked storage has nothing in it to clear.
     }
-    setReady(true);
   }, []);
 
   useEffect(() => {
-    if (!ready || !threads.length) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(threads.slice(0, 30)));
-    if (activeId) localStorage.setItem(ACTIVE_KEY, activeId);
-  }, [threads, activeId, ready]);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -152,11 +96,6 @@ export function ChatWidget() {
     };
   }, [open]);
 
-  const active = useMemo(
-    () => threads.find((t) => t.id === activeId) ?? threads[0] ?? BOOT_THREAD,
-    [threads, activeId],
-  );
-
   useEffect(() => {
     if (!open) return;
     const pane = listRef.current;
@@ -164,42 +103,27 @@ export function ChatWidget() {
     if (window.matchMedia("(min-width: 640px)").matches) {
       inputRef.current?.focus({ preventScroll: true });
     }
-  }, [active.messages, open, busy]);
-
-  function patchThread(id: string, updater: (t: Thread) => Thread) {
-    setThreads((all) => all.map((t) => (t.id === id ? updater(t) : t)));
-  }
+  }, [messages, open, busy]);
 
   function newChat() {
-    const t = freshThread();
-    setThreads((all) => [t, ...all]);
-    setActiveId(t.id);
-    setHistoryOpen(false);
+    setMessages(welcome());
     setInput("");
   }
 
   function closePanel() {
     setOpen(false);
-    setHistoryOpen(false);
   }
 
   async function send(text: string) {
     const q = text.trim();
-    if (!q || busy || !ready) return;
-    const threadId = activeIdRef.current;
+    if (!q || busy) return;
     const userMsg: RoleMsg = { id: uid(), role: "user", content: q };
-    const current = threads.find((t) => t.id === threadId) ?? active;
-    const title = current.title === "New chat" ? q.slice(0, 36) : current.title;
-    patchThread(threadId, (t) => ({
-      ...t,
-      title,
-      updatedAt: Date.now(),
-      messages: [...t.messages, userMsg],
-    }));
+    const add = (m: RoleMsg) => setMessages((all) => [...all, m]);
+    add(userMsg);
     setInput("");
     setBusy(true);
     try {
-      const history = [...current.messages, userMsg]
+      const history = [...messages, userMsg]
         .filter((m): m is Extract<RoleMsg, { role: "user" }> => m.role === "user")
         .slice(-6)
         .map((m) => ({ role: "user" as const, content: m.content }));
@@ -223,29 +147,23 @@ export function ChatWidget() {
           followUps: [],
         },
       );
-      patchThread(threadId, (t) => ({
-        ...t,
-        updatedAt: Date.now(),
-        messages: [...t.messages, { id: uid(), role: "assistant", answer }],
-      }));
+      add({ id: uid(), role: "assistant", answer });
     } catch {
-      patchThread(threadId, (t) => ({
-        ...t,
-        messages: [
-          ...t.messages,
-          {
-            id: uid(),
-            role: "assistant",
-            answer: asAnswer({
-              title: "Offline",
-              summary: "The chat could not reach the server. Call or WhatsApp the plant.",
-              bullets: ["Network error.", "Call +91 88845 68019."],
-              links: [{ label: "Quote form", href: "/enquire" }],
-              followUps: [],
-            }),
-          },
-        ],
-      }));
+      add({
+        id: uid(),
+        role: "assistant",
+        answer: asAnswer({
+          title: "Offline",
+          summary: "The chat could not reach the server. Call or WhatsApp the plant.",
+          bullets: ["Network error.", "Call +91 88845 68019."],
+          links: [
+            { label: "Call +91 88845 68019", href: "tel:+918884568019" },
+            { label: "WhatsApp", href: "https://wa.me/918884568019" },
+            { label: "Quote form", href: "/enquire" },
+          ],
+          followUps: [],
+        }),
+      });
     } finally {
       setBusy(false);
     }
@@ -255,55 +173,11 @@ export function ChatWidget() {
     <>
       {open ? (
         <div className="pointer-events-auto fixed inset-0 z-[90] flex h-[100dvh] w-full flex-col overflow-hidden border border-[var(--line)] bg-[var(--bone)] shadow-2xl overscroll-none sm:inset-auto sm:right-4 sm:bottom-20 sm:h-[min(36rem,78vh)] sm:w-[26rem] sm:rounded-none">
-          {historyOpen ? (
-            <div className="absolute inset-0 z-10 flex flex-col bg-[var(--bone)]">
-              <div className="flex items-center justify-between border-b border-[var(--line)] px-3 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-                <p className="text-[1rem] font-medium">Chat history</p>
-                <button
-                  type="button"
-                  className="grid h-11 min-w-11 place-items-center text-[0.95rem] text-muted"
-                  onClick={() => setHistoryOpen(false)}
-                >
-                  Back
-                </button>
-              </div>
-              <ul className="flex-1 overflow-y-auto p-2">
-                {threads.map((t) => (
-                  <li key={t.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveId(t.id);
-                        setHistoryOpen(false);
-                      }}
-                      className={`mb-1 w-full rounded-xl px-3 py-3 text-left text-[0.95rem] ${
-                        t.id === activeId ? "bg-lime/30" : "hover:bg-cream"
-                      }`}
-                    >
-                      <span className="block truncate font-medium text-ink">
-                        {t.title}
-                      </span>
-                      <span className="text-[0.95rem] text-muted">
-                        {t.updatedAt ? new Date(t.updatedAt).toLocaleString() : "Current"}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
           <div className="flex items-center gap-2 border-b border-[var(--line)] px-2 py-2 pt-[max(0.5rem,env(safe-area-inset-top))]">
             <AiMark />
-            <div className="min-w-0 flex-1">
-              <p className="text-[1rem] font-medium leading-tight">Ask Bloom AI</p>
-              <p className="truncate text-[11px] text-muted">{active.title}</p>
-            </div>
+            <p className="min-w-0 flex-1 text-[1rem] font-medium leading-tight">Ask Bloom AI</p>
             <IconBtn label="New chat" onClick={newChat}>
               +
-            </IconBtn>
-            <IconBtn label="History" onClick={() => setHistoryOpen(true)}>
-              ☰
             </IconBtn>
             <IconBtn label="Close chat" onClick={closePanel}>
               ×
@@ -327,7 +201,7 @@ export function ChatWidget() {
             ref={listRef}
             className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-cream/70 p-3"
           >
-            {active.messages.map((m) =>
+            {messages.map((m) =>
               m.role === "user" ? (
                 <div
                   key={m.id}
@@ -336,7 +210,7 @@ export function ChatWidget() {
                   {m.content}
                 </div>
               ) : (
-                <AnswerCard key={m.id} answer={m.answer} onAsk={send} />
+                <AnswerCard key={m.id} answer={m.answer} onAsk={send} onNavigate={closePanel} />
               ),
             )}
             {busy ? (
@@ -364,7 +238,7 @@ export function ChatWidget() {
             />
             <button
               type="submit"
-              disabled={busy || !ready}
+              disabled={busy}
               className="btn btn-primary min-h-11 shrink-0 px-4"
             >
               Send
@@ -399,7 +273,7 @@ function IconBtn({
 }: {
   label: string;
   onClick: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button
@@ -414,38 +288,100 @@ function IconBtn({
   );
 }
 
+/**
+ * One link, whatever kind: a page on this site moves there and closes the
+ * chat (on a phone the chat covers the page it would have opened); a call or
+ * an email hands off without leaving; anything else opens in a new tab.
+ */
+function ChatHref({
+  href,
+  className,
+  onNavigate,
+  children,
+}: {
+  href: string;
+  className: string;
+  onNavigate: () => void;
+  children: ReactNode;
+}) {
+  if (isHandoff(href)) {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+  if (isExternal(href)) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} onClick={onNavigate} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+const inline = "font-medium text-[var(--leaf)] underline decoration-[var(--brand)]/50 underline-offset-2";
+
+function Linked({ text, onNavigate }: { text: string; onNavigate: () => void }) {
+  return linkify(text).map((seg, i) =>
+    typeof seg === "string" ? (
+      seg
+    ) : (
+      <ChatHref key={i} href={seg.href} className={inline} onNavigate={onNavigate}>
+        {seg.text}
+      </ChatHref>
+    ),
+  );
+}
+
 function AnswerCard({
   answer,
   onAsk,
+  onNavigate,
 }: {
   answer: ChatAnswer;
   onAsk: (q: string) => void;
+  onNavigate: () => void;
 }) {
   return (
     <div className="mr-2 rounded-none bg-[var(--bone)] p-3 text-[1rem] shadow-sm sm:mr-4">
       <p className="font-medium text-[var(--ink)]">{answer.title}</p>
       {answer.summary ? (
-        <p className="mt-2 text-[13px] leading-relaxed text-ink">{answer.summary}</p>
+        <p className="mt-2 text-[13px] leading-relaxed text-ink">
+          <Linked text={answer.summary} onNavigate={onNavigate} />
+        </p>
       ) : null}
       <ul className="mt-3 space-y-1.5 text-[13px] leading-snug text-ink">
         {(answer.bullets ?? []).map((b) => (
           <li key={b} className="flex gap-2">
             <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />
-            <span>{b}</span>
+            <span>
+              <Linked text={b} onNavigate={onNavigate} />
+            </span>
           </li>
         ))}
       </ul>
-      {answer.cta ? <p className="mt-2 text-[0.95rem] text-muted">{answer.cta}</p> : null}
+      {answer.cta ? (
+        <p className="mt-2 text-[0.95rem] text-muted">
+          <Linked text={answer.cta} onNavigate={onNavigate} />
+        </p>
+      ) : null}
       {answer.links?.length ? (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {answer.links.map((l) => (
-            <Link
+            <ChatHref
               key={l.href + l.label}
               href={l.href}
+              onNavigate={onNavigate}
               className="rounded-full bg-cream px-3 py-1.5 text-[12px] text-[var(--leaf)]"
             >
               {l.label}
-            </Link>
+            </ChatHref>
           ))}
         </div>
       ) : null}

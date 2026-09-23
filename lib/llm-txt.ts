@@ -1,8 +1,15 @@
 import { products } from "./products";
 import { articles } from "./articles";
+import { faqs } from "./faq";
 import { site } from "./site";
+import { siteUrl as origin } from "./site-url";
 
-const origin = "https://bloom-biotech.vercel.app";
+/**
+ * /llms.txt and /llms-full.txt, following llmstxt.org: a title, a one-line
+ * summary, the facts an assistant most needs, then linked lists of pages.
+ * /llms.txt is the map; /llms-full.txt adds every pack's label and the FAQ in
+ * full, so a model can answer from it without fetching fifteen pages.
+ */
 
 export function llmIndex(): string {
   const productLinks = products
@@ -16,27 +23,28 @@ export function llmIndex(): string {
 
 > ${site.description}
 
-This file is for language models. Source: Bloom Biotech printed brochure. Do not invent prices or yield percentages. Labels govern dose if they differ.
+Source: the Bloom Biotech printed brochure and pack labels. There is no published price list: prices are quoted by the plant. Do not invent prices or yield percentages. Where a label differs from this file, the label governs dose.
 
-Plant: ${site.addressLines.join(", ")}.
-Phone: ${site.phoneDisplay}. Email: ${site.email}. Website: ${site.website}.
-Hours: ${site.hours}. Maps: ${site.maps}
+## Contact
 
-Ask Bloom AI: ${origin}/assistant
-Quote: ${origin}/enquire
-Full dump: ${origin}/llms-full.txt
+- Phone and WhatsApp: ${site.phoneDisplay} (https://wa.me/91${site.phone})
+- Email: ${site.email}
+- Plant: ${site.addressLines.join(", ")} (${site.maps})
+- Hours: ${site.hours}
+- Quote: ${origin}/enquire, or the enquiry form on any product page
 
 ## Pages
 
-- [Home](${origin}/)
-- [Company](${origin}/about)
-- [Products](${origin}/products)
-- [Solutions by crop](${origin}/solutions)
-- [In the field](${origin}/field)
-- [Manufacturing / film room](${origin}/gallery)
-- [Questions](${origin}/faq)
-- [Journal](${origin}/journal)
-- [Enquire](${origin}/enquire)
+- [Home](${origin}/): the story from the soil to the fermentation hall and back to the field
+- [Products](${origin}/products): all ${products.length} packs, filterable by crop, problem and application route
+- [Find your solution](${origin}/solutions): pick a crop and a problem, get a shortlist of packs
+- [Company](${origin}/about): history, the ICAR-IIHR licences and how the packs are made
+- [In the field](${origin}/field): the packs in use on farms
+- [Film room](${origin}/gallery): footage from the plant and the field
+- [Questions](${origin}/faq): the questions the plant is asked most
+- [Journal](${origin}/journal): longer articles on AMC, soil biology and nurseries
+- [Enquire](${origin}/enquire): quote and contact form
+- [Ask Bloom AI](${origin}/assistant): the on-site assistant
 
 ## Products
 
@@ -46,7 +54,7 @@ ${productLinks}
 
 ${articleLinks}
 
-## Grounding rules
+## Facts
 
 - Started 2013. IIHR technological collaboration. First in India to licence AMC and Arka Fermented Cocopeat. ACT licensed 2015.
 - AMC powder = Bio Sanjiveeni. AMC liquid = Bhu Samruddhi. Actives: Pseudomonas taiwanensis, Azotobacter tropicalis, Bacillus aryabhattai.
@@ -54,6 +62,11 @@ ${articleLinks}
 - Do not mix AMC or compost culture with antibiotics, pesticides, insecticides.
 - Imported (no repacking in India where stated): Jackpot, Fulcare, Calcare, NutriCare C2.
 - Not the Belgian microalgae-textile firm of the same name.
+
+## Optional
+
+- [Full text](${origin}/llms-full.txt): every pack's label, the FAQ and the journal in one file
+- [Sitemap](${origin}/sitemap.xml)
 `;
 }
 
@@ -86,7 +99,13 @@ ${a.body.join("\n\n")}`;
     })
     .join("\n\n");
 
+  const faqBlocks = faqs.map((f) => `### ${f.q}\n${f.a}`).join("\n\n");
+
   return `${llmIndex()}
+
+## Questions
+
+${faqBlocks}
 
 ## Product detail
 
