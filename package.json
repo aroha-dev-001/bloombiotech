@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prebuild": "node scripts/media.mjs guard",
+    "media:build": "node scripts/media.mjs build",
+    "media:deploy": "node scripts/media.mjs deploy",
+    "media:check": "node scripts/media.mjs check"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",

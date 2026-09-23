@@ -140,6 +140,7 @@ export function Biology() {
          viewport of flat bone before anything started to dissolve. */
       const risen = clamp01(1 - rect.top / Math.max(1, window.innerHeight));
       el.style.setProperty("--enter", String(1 - smooth(risen)));
+      el.style.setProperty("--risen", String(smooth(risen)));
 
       // The last photograph hands over to the culture rather than cutting.
       const handover = smooth(clamp01((p - PHOTO_SPAN + 0.12) / 0.18));
@@ -182,6 +183,10 @@ export function Biology() {
       aria-label="From the canopy to the biology in the pack"
     >
       <div className="bio-stage">
+        {/* On a wide screen the words hold the left and the picture arrives
+            from the right, turned slightly away and straightening as it lands.
+            The soil underneath it is always full bleed, so when the photography
+            hands over there is nothing framed about it. */}
         <div className="bio-photos">
           {beats.map((b, i) => (
             <div

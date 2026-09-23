@@ -4,6 +4,10 @@
 
 [build.environment]
   NODE_VERSION = "24"
+  # The film and gallery clips are served from Cloudflare Pages, not from this
+  # deploy (lib/media.ts, docs/media-cdn.md). Before every build, the prebuild
+  # guard checks this host is serving the files in lib/media-manifest.json.
+  NEXT_PUBLIC_MEDIA_URL = "https://bloom-biotech-media.pages.dev"
 
 # Required for App Router SSR, route handlers and ISR.
 # Without this the build publishes static files only and no functions.

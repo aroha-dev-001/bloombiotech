@@ -219,8 +219,19 @@ export function StoryScroll() {
       /* The film ends on a packshot lit on white and the section under it is
          carbon. Left alone that is the hardest cut on the page, so the last
          stretch of the run washes toward the colour it is about to become. */
-      const leave = smooth(clamp01((p / scenes.length - 0.93) / 0.07));
+      const np = p / scenes.length;
+      const leave = smooth(clamp01((np - 0.93) / 0.07));
       el.style.setProperty("--leave", String(leave));
+
+      /* How far the frame has opened. Inset on arrival, full bleed across the
+         body of the run, drawn back in as it leaves — so the section reads as
+         a picture taking over the page and then giving it back, rather than a
+         full-screen block that starts and stops. */
+      const open = Math.min(
+        smooth(clamp01(np / 0.1)),
+        smooth(clamp01((1 - np) / 0.1)),
+      );
+      el.style.setProperty("--open", String(open));
 
       const i = Math.min(scenes.length - 1, Math.max(0, Math.floor(p)));
       setActive((v) => (v === i ? v : i));
@@ -251,6 +262,10 @@ export function StoryScroll() {
       aria-label="From the unit in Chikkamagaluru to the field"
     >
       <div className="story-stage">
+        {/* The film sits in a frame rather than bleeding to the edges. It
+            arrives inset on the page, opens to full bleed as the section takes
+            over, and draws back in as it hands on. */}
+        <div className="story-frame">
         {scenes.map((s, i) => {
           const near = Math.abs(active - i) <= 1;
           // Scrubbing takes the dense-keyframe cut; everything else takes the
@@ -317,6 +332,7 @@ export function StoryScroll() {
         })}
 
         <div className="story-seam" aria-hidden />
+        </div>
 
         <div className="story-ticks" aria-hidden>
           {scenes.map((s, i) => (

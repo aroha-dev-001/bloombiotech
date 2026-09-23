@@ -1,0 +1,7 @@
+# Build intermediates: source renders, stills, reference uploads. Heavy and
+# regenerable; the shipped clips and posters live in public/world.
+builds/*/raw/
+builds/*/stills/
+builds/*/out/
+builds/*/frames/
+builds/*/refs/

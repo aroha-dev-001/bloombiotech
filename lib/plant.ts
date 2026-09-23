@@ -1,3 +1,5 @@
+import { media } from "./media";
+
 /**
  * Facts about the Chikkamagaluru production unit.
  *
@@ -167,15 +169,15 @@ export type Film = {
 
 export const films: readonly Film[] = [
   {
-    src: "/film/plant-aerial-full.mp4",
-    poster: "/film/plant-aerial-full.jpg",
+    src: media("/film/plant-aerial-full.mp4"),
+    poster: media("/film/plant-aerial-full.jpg"),
     title: "The unit from the air",
     note: "Beekanahalli Village, Chikkamagaluru. Production sheds, drying yard and the fields that surround them.",
     ratio: "20 / 11",
   },
   {
-    src: "/film/fermentation-full.mp4",
-    poster: "/film/fermentation-full.jpg",
+    src: media("/film/fermentation-full.mp4"),
+    poster: media("/film/fermentation-full.jpg"),
     title: "Inside the fermentation hall",
     note: "Stainless-steel fermenters, control panels and the gowning room where the liquid line is grown.",
     ratio: "53 / 30",

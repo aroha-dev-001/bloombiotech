@@ -3089,11 +3089,13 @@ textarea.field {
   position: absolute;
   inset: 0;
   opacity: var(--field);
-  /* The culture sits in the dark the photography faded into. */
+  /* Wet earth, not a green void — the ground the grains are suspended in.
+     Slightly lighter where the camera is pointed, as if lit from the lens. */
   background: radial-gradient(
-    120% 90% at 50% 55%,
-    color-mix(in srgb, var(--moss) 22%, var(--void)) 0%,
-    var(--void) 72%
+    115% 85% at 50% 52%,
+    #241b0e 0%,
+    #17120a 45%,
+    #0b0905 100%
   );
 }
 
@@ -3474,4 +3476,134 @@ textarea.field {
   color: var(--bone);
   font-size: 1.02rem;
   background: linear-gradient(0deg, rgba(7, 10, 8, 0.72), transparent);
+}
+
+/* ---------- the film, framed ----------
+   The run used to be a full-bleed block that started and stopped at a hard
+   edge. It now arrives as a picture inset on the page, opens to full bleed as
+   it takes the page over, and draws back in as it hands on — the frame is
+   driven by the same scroll value as the scenes inside it (`--open`).
+
+   The stage keeps the page's own colour, so at the ends you see the film sat
+   on the page rather than replacing it. */
+
+.story {
+  --open: 1;
+  background: var(--bone);
+}
+
+.story-stage {
+  background: var(--bone);
+}
+
+.story-frame {
+  position: absolute;
+  /* At --open 0 the frame is inset; at 1 it is the whole stage. */
+  inset: calc((1 - var(--open)) * 4.5svh) calc((1 - var(--open)) * 5vw);
+  overflow: hidden;
+  border-radius: calc((1 - var(--open)) * var(--r-lg));
+  background: var(--void);
+  /* A soft lift while it is a card on the page; gone once it is full bleed. */
+  box-shadow: 0 40px 90px -60px rgba(7, 10, 8, calc((1 - var(--open)) * 0.85));
+}
+
+@media (min-width: 760px) {
+  .story-frame {
+    inset: calc((1 - var(--open)) * 7svh) calc((1 - var(--open)) * 7vw);
+  }
+}
+
+/* The caption is anchored to the frame, so it draws in with it rather than
+   sitting against the viewport edge while the picture pulls away. */
+.story-frame .story-copy {
+  padding-inline: calc((1 - var(--open)) * 1.5rem);
+}
+
+.reduce-motion .story-frame,
+.story:not(:has(.story-scene[style])) .story-frame {
+  inset: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ---------- the descent, split ----------
+   Wide screens only: the words hold the left of the stage and the photography
+   arrives from the right, turned a few degrees away and straightening as it
+   lands. The perspective is on the stage, so the frame really is rotating in
+   depth rather than being skewed.
+
+   The soil underneath is deliberately NOT framed — when the photography hands
+   over, the medium takes the whole screen, and that contrast is the point. */
+
+@media (min-width: 900px) {
+  .bio-stage {
+    perspective: 1600px;
+    perspective-origin: 30% 50%;
+  }
+
+  .bio-photos {
+    left: auto;
+    width: 54%;
+    /* Clear of the header, and off the right edge so it reads as a plate laid
+       on the page rather than a bleed. */
+    top: calc(var(--nav-h) + 2.5rem);
+    right: clamp(1.5rem, 3vw, 3.5rem);
+    bottom: clamp(3rem, 6vh, 5.5rem);
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    transform-style: preserve-3d;
+    /* --risen is 0 while the section is still climbing and 1 once it has
+       arrived, so the plate slides and untwists on the way in. */
+    transform: translateX(calc((1 - var(--risen, 1)) * 16%))
+      rotateY(calc((1 - var(--risen, 1)) * -11deg));
+    box-shadow: 0 50px 110px -60px rgba(0, 0, 0, 0.95);
+  }
+
+  .bio-copy {
+    inset: auto auto 0 0;
+    width: 42%;
+    padding-bottom: clamp(4rem, 12vh, 9rem);
+  }
+
+  .bio-copy .shell {
+    max-width: none;
+    padding-right: 0;
+  }
+
+  .bio-line {
+    max-width: 14ch;
+  }
+
+  /* The veil exists to keep type legible over a photograph. With the type on
+     its own ground beside the picture, it only has to lift the left edge. */
+  .bio-veil {
+    background: linear-gradient(
+      90deg,
+      rgba(7, 10, 8, 0.72) 0%,
+      rgba(7, 10, 8, 0.25) 38%,
+      transparent 60%
+    );
+  }
+}
+
+.reduce-motion .bio-photos {
+  transform: none;
+}
+
+/* The medium sits behind the photograph rather than over it, so on a wide
+   screen it fills the column beside the plate from the moment the section
+   arrives. You are already underground looking up at the surface, and the
+   handover then brings it forward rather than introducing it. */
+.bio-field {
+  z-index: 0;
+}
+
+.bio-photos {
+  z-index: 1;
+}
+
+@media (min-width: 900px) {
+  .bio-field {
+    opacity: max(0.5, var(--field));
+  }
 }

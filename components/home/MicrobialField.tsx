@@ -5,48 +5,64 @@ import { useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
 
 /**
- * The part of the product you cannot photograph.
+ * Inside the root zone.
  *
  * Everything else on this site is a real picture of a real thing — the estate,
- * the hall, the fermenters, the pack. The organisms inside the pack are the one
- * subject there is no honest photograph of, so this is the one place 3D earns
- * its place (§21): it visualises what the pack contains rather than decorating
- * a section that a photograph could have carried.
+ * the hall, the fermenters, the pack. What lives in the soil around a root is
+ * the one subject there is no honest photograph of, so this is the one place
+ * 3D earns its place (§21): it shows what the pack contains rather than
+ * decorating a section a photograph could have carried.
  *
- * It is deliberately not a sci-fi particle field. The reference is darkfield
- * microscopy of a liquid culture — bodies of slightly different sizes drifting
- * at different depths, most of them out of focus, a few catching the light.
- * Muted greens, no additive bloom, no lens flare, nothing pulsing.
+ * It is not a particle field in empty space. The brief is a camera *inside a
+ * medium*, and three things sell that and nothing else does:
  *
- * Scroll drives it through a ref rather than React state: the value changes on
- * every frame of a scroll and re-rendering the tree that often would be wasted
- * work. `useFrame` reads the ref directly.
+ *   · two populations, not one — warm mineral grains carrying most of the
+ *     frame, with the biology as smaller, brighter bodies among them. All
+ *     green reads as bokeh; grit and ochre read as soil.
+ *   · the medium itself — everything fades into a warm brown murk with
+ *     distance, because you are looking *through* something, not across a void.
+ *   · debris close to the lens — a few grains sit almost on the glass, huge and
+ *     completely out of focus, drifting across. This is the cue that says
+ *     "inside" rather than "looking at", and it is why the z coordinate
+ *     streams and wraps instead of holding still.
+ *
+ * Reference is a wet-mount under a microscope, not science fiction: no additive
+ * bloom, no flare, nothing pulsing.
  */
 
 const VERT = /* glsl */ `
   attribute float aSeed;
   attribute float aSize;
+  attribute float aKind;   // 0 mineral grain, 1 organism
   varying float vSeed;
+  varying float vKind;
   varying float vDepth;
   uniform float uTime;
   uniform float uSpread;
+  uniform float uRange;
 
   void main() {
     vSeed = aSeed;
+    vKind = aKind;
     vec3 p = position;
 
-    // Three incommensurate periods, so the field never visibly loops.
-    float t = uTime;
-    p.x += sin(t * 0.17 + aSeed * 6.283) * 0.42;
-    p.y += cos(t * 0.13 + aSeed * 4.117) * 0.36;
-    p.z += sin(t * 0.11 + aSeed * 3.301) * 0.30;
+    // The camera is travelling through the medium, so the medium streams past
+    // it. Wrapping in z keeps the column endless without more particles.
+    float speed = mix(0.42, 0.62, aSeed);
+    p.z = mod(p.z + uTime * speed + uRange * 0.5, uRange) - uRange * 0.5;
 
-    // The field opens out as the section is entered.
+    // Three incommensurate periods, so no drift ever visibly loops. Organisms
+    // are lighter than grains and wander more.
+    float wander = mix(0.30, 0.85, aKind);
+    p.x += sin(uTime * 0.17 + aSeed * 6.283) * 0.42 * wander;
+    p.y += cos(uTime * 0.13 + aSeed * 4.117) * 0.36 * wander;
+
     p.xy *= uSpread;
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     vDepth = -mv.z;
-    gl_PointSize = aSize * (260.0 / max(vDepth, 0.1));
+    // Grains near the lens blow up enormously — that is the point of them.
+    gl_PointSize = aSize * (300.0 / max(vDepth, 0.35));
     gl_Position = projectionMatrix * mv;
   }
 `;
@@ -54,35 +70,53 @@ const VERT = /* glsl */ `
 const FRAG = /* glsl */ `
   precision mediump float;
   varying float vSeed;
+  varying float vKind;
   varying float vDepth;
-  uniform vec3 uNear;
-  uniform vec3 uFar;
+  uniform vec3 uGrainA;
+  uniform vec3 uGrainB;
+  uniform vec3 uLifeA;
+  uniform vec3 uLifeB;
+  uniform vec3 uMedium;
   uniform float uOpacity;
 
   void main() {
-    // A soft round body with a slightly brighter centre — a cell under a
-    // microscope, not a glowing dot.
-    float d = length(gl_PointCoord - vec2(0.5));
+    vec2 uv = gl_PointCoord - vec2(0.5);
+    float d = length(uv);
     if (d > 0.5) discard;
-    float edge = smoothstep(0.5, 0.18, d);
-    float core = smoothstep(0.30, 0.02, d);
 
-    vec3 col = mix(uNear, uFar, vSeed);
-    col += core * 0.18;
+    // How sharply this body is resolved. Anything very close to the lens or
+    // far back in the murk is soft; only the middle distance is in focus.
+    float near = 1.0 - smoothstep(0.4, 3.0, vDepth);
+    float far = smoothstep(4.0, 12.0, vDepth);
+    float blur = clamp(near + far, 0.0, 1.0);
 
-    // Anything far from the lens falls out of focus and loses contrast.
-    float focus = 1.0 - smoothstep(3.5, 11.0, vDepth);
-    float a = edge * uOpacity * (0.20 + core * 0.55) * (0.30 + focus * 0.70);
+    float edge = smoothstep(0.5, mix(0.14, 0.48, blur), d);
+    float core = smoothstep(mix(0.26, 0.5, blur), 0.0, d);
+
+    vec3 grain = mix(uGrainA, uGrainB, vSeed);
+    vec3 life = mix(uLifeA, uLifeB, vSeed);
+    vec3 col = mix(grain, life, vKind);
+    col += core * mix(0.06, 0.22, vKind) * (1.0 - blur);
+
+    // The medium. Distance does not just dim a body, it tints it toward the
+    // colour of the soil you are looking through.
+    col = mix(col, uMedium, far * 0.66);
+
+    // Grains carry the frame but must never compete with the organisms.
+    float weight = mix(0.78, 1.0, vKind);
+    float a = edge * uOpacity * weight * (0.24 + core * 0.58) * (1.0 - far * 0.38);
+    // The lens debris is a shadow, not a subject — present, never readable.
+    a *= mix(1.0, 0.44, near);
 
     gl_FragColor = vec4(col, a);
   }
 `;
 
 /**
- * A fixed-seed PRNG rather than Math.random, for two reasons: the layout of
- * the culture is then identical on every load and between server and client,
- * and building the geometry stays a pure function of `count`, which is what
- * useMemo is allowed to be.
+ * A fixed-seed PRNG rather than Math.random, for two reasons: the soil is then
+ * identical on every load and between server and client, and building the
+ * geometry stays a pure function of `count`, which is what useMemo is allowed
+ * to be.
  */
 function mulberry32(seed: number) {
   let a = seed >>> 0;
@@ -94,7 +128,10 @@ function mulberry32(seed: number) {
   };
 }
 
-function Culture({ progress, count }: { progress: RefObject<number>; count: number }) {
+/** The depth of the column the camera travels through, in world units. */
+const RANGE = 16;
+
+function Soil({ progress, count }: { progress: RefObject<number>; count: number }) {
   const mat = useRef<THREE.ShaderMaterial>(null);
   const points = useRef<THREE.Points>(null);
   const { camera } = useThree();
@@ -104,20 +141,30 @@ function Culture({ progress, count }: { progress: RefObject<number>; count: numb
     const pos = new Float32Array(count * 3);
     const seed = new Float32Array(count);
     const size = new Float32Array(count);
+    const kind = new Float32Array(count);
     const rand = mulberry32(0x1f0f2b1d);
 
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (rand() - 0.5) * 13;
-      pos[i * 3 + 1] = (rand() - 0.5) * 13;
-      pos[i * 3 + 2] = (rand() - 0.5) * 11 - 1;
+      // A third of the bodies are the biology; the rest is the soil it lives
+      // in. Weighted this way the frame reads as earth with life in it rather
+      // than as a cloud of green.
+      const organism = rand() < 0.34 ? 1 : 0;
+
+      pos[i * 3] = (rand() - 0.5) * 15;
+      pos[i * 3 + 1] = (rand() - 0.5) * 15;
+      pos[i * 3 + 2] = (rand() - 0.5) * RANGE;
       seed[i] = rand();
-      // Mostly small bodies with a few larger ones, as in a real culture.
-      size[i] = 0.5 + Math.pow(rand(), 3) * 2.6;
+      kind[i] = organism;
+      // Mostly fine material with a few coarse grains, as in real soil.
+      size[i] = organism
+        ? 0.4 + Math.pow(rand(), 2.2) * 1.5
+        : 0.7 + Math.pow(rand(), 3) * 4.2;
     }
 
     g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     g.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
     g.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
+    g.setAttribute("aKind", new THREE.BufferAttribute(kind, 1));
     return g;
   }, [count]);
 
@@ -126,8 +173,15 @@ function Culture({ progress, count }: { progress: RefObject<number>; count: numb
       uTime: { value: 0 },
       uSpread: { value: 1 },
       uOpacity: { value: 0 },
-      uNear: { value: new THREE.Color("#5f9c35") },
-      uFar: { value: new THREE.Color("#a6d45b") },
+      uRange: { value: RANGE },
+      // Wet mineral grit and organic matter.
+      uGrainA: { value: new THREE.Color("#8a6f45") },
+      uGrainB: { value: new THREE.Color("#ac8d5c") },
+      // The consortium.
+      uLifeA: { value: new THREE.Color("#6aa63c") },
+      uLifeB: { value: new THREE.Color("#a6d45b") },
+      // What the far distance turns into.
+      uMedium: { value: new THREE.Color("#1d1609") },
     }),
     [],
   );
@@ -142,13 +196,19 @@ function Culture({ progress, count }: { progress: RefObject<number>; count: numb
     if (!u) return;
 
     u.uTime.value += delta;
-    // Holds back while the photography is still on screen, then takes over.
-    u.uOpacity.value = THREE.MathUtils.clamp((p - 0.42) / 0.3, 0, 1);
+    /* Never fully absent. On a wide screen the medium fills the column beside
+       the photograph from the moment the section arrives, so the ground there
+       is soil rather than flat black — then it comes forward at the handover.
+       Behind a full-bleed photograph, as on a phone, the floor is unseen. */
+    u.uOpacity.value = Math.max(
+      0.3,
+      THREE.MathUtils.clamp((p - 0.42) / 0.3, 0, 1),
+    );
     u.uSpread.value = 1.18 - THREE.MathUtils.clamp(p, 0, 1) * 0.22;
 
-    // One slow push toward the culture, never two moves at once.
-    camera.position.z = 9.4 - THREE.MathUtils.clamp(p, 0, 1) * 3.6;
-    if (points.current) points.current.rotation.z = p * 0.12;
+    // One slow descent into the medium, never two moves at once.
+    camera.position.z = 7.2 - THREE.MathUtils.clamp(p, 0, 1) * 2.8;
+    if (points.current) points.current.rotation.z = p * 0.1;
   });
   /* eslint-enable react-hooks/immutability */
 
@@ -179,9 +239,9 @@ export default function MicrobialField({
       className="bio-canvas"
       dpr={dense ? [1, 1.75] : [1, 1.25]}
       gl={{ antialias: false, alpha: true, powerPreference: "low-power" }}
-      camera={{ fov: 42, position: [0, 0, 9.4] }}
+      camera={{ fov: 48, position: [0, 0, 7.2] }}
     >
-      <Culture progress={progress} count={dense ? 1400 : 460} />
+      <Soil progress={progress} count={dense ? 2400 : 760} />
     </Canvas>
   );
 }

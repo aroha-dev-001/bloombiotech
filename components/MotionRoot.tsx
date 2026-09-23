@@ -1,6 +1,7 @@
 "use client";
 
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -52,6 +53,9 @@ function useRevealObserver(reduce: boolean) {
 
 export function MotionRoot({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
+  // The home page is a scroll-driven film with its own playhead smoothing.
+  // Lenis smoothing the scroll underneath it would put two lags in series.
+  const smoothScroll = usePathname() !== "/";
 
   useEffect(() => {
     document.documentElement.classList.toggle("reduce-motion", reduce);
@@ -63,7 +67,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     let frame = 0;
     let lenis: Lenis | undefined;
 
-    if (!reduce) {
+    if (!reduce && smoothScroll) {
       lenis = new Lenis({ autoRaf: true, anchors: true, duration: 1.05 });
       lenis.on("scroll", (instance: { scroll: number }) => paintScroll(instance.scroll));
       paintScroll(window.scrollY);
@@ -84,7 +88,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
       window.removeEventListener("scroll", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [reduce]);
+  }, [reduce, smoothScroll]);
 
   return <>{children}</>;
 }

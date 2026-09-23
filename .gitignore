@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,3 +43,8 @@ next-env.d.ts
 
 # local brochure extract
 /.tmp-brochure
+
+# The home page film is served from Cloudflare Pages (lib/media.ts,
+# scripts/media.mjs), not from the repo.
+/public/world/
+/.media-dist/

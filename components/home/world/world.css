@@ -1,0 +1,403 @@
+/* ============================================================================
+   The home page flight.
+
+   One fixed stage, one fixed copy layer, one spacer. Everything here is the
+   page's own markup on top of the engine: tokens mapped onto the site's
+   palette and faces, the copy blocks and their scrims, the chapter rail, and
+   the specimen canvas.
+
+   The engine's stylesheet is imported alongside this one. Its reset only ever
+   lives in the home page's document: leaving this page is a full navigation
+   (see World.tsx), so none of it reaches the rest of the site.
+   ========================================================================== */
+
+:root {
+  --sc-canvas: #070a08;
+  --sc-surface: #0d1210;
+  --sc-ink: #f4f3ee;
+  --sc-ink-soft: #dcded4;
+  --sc-accent: #a6d45b;
+  --sc-accent-ink: #070a08;
+  --sc-font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --sc-font-text: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --sc-shadow-color: 150 20% 3%;
+
+  --w-gut: clamp(1.25rem, 5vw, 4rem);
+  --w-rail: 3.75rem;
+  --w-copy-bottom: clamp(5rem, 11vh, 8rem);
+}
+
+/* The flight is the whole page. The site footer would scroll up over the
+   fixed stage and put a seam at the one moment the page has to land. */
+body:has([data-sc-mode="worldflight"]) footer {
+  display: none;
+}
+
+/* The engine's reset inks the body for a dark page. Only the flight is dark;
+   the chrome around it (the chat button, its panel) keeps the site's ink. */
+body {
+  color: var(--ink);
+}
+
+.world {
+  --fg: var(--sc-ink);
+  --bg: var(--sc-canvas);
+  color: var(--sc-ink);
+}
+
+/* ---------------------------------------------------------------- legs --- */
+
+/* The poster is a <picture> so phones get a portrait frame that matches the
+   portrait clip. The engine positions direct children; the picture is one
+   level up, so it is positioned here. */
+.world-leg > picture {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.world-leg > picture > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------- copy --- */
+
+.wcopy {
+  position: absolute;
+  bottom: var(--w-copy-bottom);
+  max-width: min(40rem, 46vw);
+  text-shadow:
+    0 1px 2px rgb(4 6 5 / 0.35),
+    0 6px 28px rgb(4 6 5 / 0.35);
+}
+
+.wcopy--lead {
+  left: calc(var(--w-gut) + var(--w-rail));
+}
+
+.wcopy--trail {
+  right: var(--w-gut);
+}
+
+.wtitle {
+  margin: 0;
+  font-family: var(--sc-font-display);
+  font-weight: 600;
+  font-size: clamp(2.1rem, 4.2vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.034em;
+  text-wrap: balance;
+  max-width: 15ch;
+}
+
+.wtitle--hero {
+  font-size: clamp(2.75rem, 6.2vw, 6rem);
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+  max-width: 11ch;
+}
+
+.wbody {
+  margin: 1.1rem 0 0;
+  font-size: clamp(1.05rem, 1.2vw, 1.22rem);
+  line-height: 1.58;
+  letter-spacing: 0.002em;
+  color: var(--sc-ink-soft);
+  max-width: 36ch;
+  text-wrap: pretty;
+}
+
+.wactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.world .btn-ghost {
+  border-color: color-mix(in srgb, var(--sc-ink) 45%, transparent);
+  background: color-mix(in srgb, var(--sc-canvas) 28%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Scrims are siblings of the copy, never children, and never windowed
+   themselves, so the contrast pass can hide the copy and still measure what it
+   was sitting on. World.tsx keeps each one at its copy block's opacity. */
+.wscrim {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* One shape, mirrored: an ellipse of density centred on where the copy sits,
+   so the headline's top edge is covered as well as the corner, and the rest of
+   the frame keeps its full contrast. */
+.wscrim--lead {
+  background: radial-gradient(
+    ellipse 56% 52% at 27% 76%,
+    rgb(7 10 8 / 0.8) 0%,
+    rgb(7 10 8 / 0.72) 42%,
+    rgb(7 10 8 / 0.36) 72%,
+    transparent 100%
+  );
+}
+
+.wscrim--trail {
+  background: radial-gradient(
+    ellipse 56% 52% at 73% 76%,
+    rgb(7 10 8 / 0.8) 0%,
+    rgb(7 10 8 / 0.72) 42%,
+    rgb(7 10 8 / 0.36) 72%,
+    transparent 100%
+  );
+}
+
+/* The same shape, denser, for the white fermentation hall. */
+.wscrim--deep.wscrim--lead {
+  background: radial-gradient(
+    ellipse 58% 54% at 27% 76%,
+    rgb(7 10 8 / 0.9) 0%,
+    rgb(7 10 8 / 0.84) 44%,
+    rgb(7 10 8 / 0.46) 74%,
+    transparent 100%
+  );
+}
+
+.wscrim--deep.wscrim--trail {
+  background: radial-gradient(
+    ellipse 58% 54% at 73% 76%,
+    rgb(7 10 8 / 0.9) 0%,
+    rgb(7 10 8 / 0.84) 44%,
+    rgb(7 10 8 / 0.46) 74%,
+    transparent 100%
+  );
+}
+
+/* ---------------------------------------------------------------- rail --- */
+
+/* Upper left, under the nav, so it never shares height with the copy, which
+   always sits low. */
+.wrail {
+  position: fixed;
+  z-index: 40;
+  left: clamp(0.75rem, 1.4vw, 1.5rem);
+  top: calc(var(--nav-h, 5.25rem) + 1.25rem);
+}
+
+.wrail ol {
+  margin: 0;
+  padding: 0.6rem 0.35rem;
+  list-style: none;
+  border-radius: var(--r-pill, 999px);
+  background: color-mix(in srgb, var(--sc-canvas) 30%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, #fff 10%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #fff 7%, transparent);
+}
+
+.wrail li {
+  position: relative;
+}
+
+.wrail button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sc-ink);
+  cursor: pointer;
+}
+
+.wrail__tick {
+  display: block;
+  width: 0.75rem;
+  height: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--sc-ink) 50%, transparent);
+  transition:
+    width 240ms var(--sc-ease-out),
+    background-color 240ms var(--sc-ease-out);
+}
+
+.wrail button[aria-current="step"] .wrail__tick {
+  width: 1.25rem;
+  background: var(--sc-accent);
+}
+
+/* The chapter's name, shown for the current chapter and on hover or focus.
+   It sits on the same glass as the rail so it reads over any frame. */
+.wrail__name {
+  position: absolute;
+  left: calc(100% + 0.9rem);
+  top: 50%;
+  translate: 0 -50%;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill, 999px);
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--sc-ink);
+  background: color-mix(in srgb, var(--sc-canvas) 52%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 8%, transparent);
+  opacity: 0;
+  transform: translateX(-0.35rem);
+  pointer-events: none;
+  transition:
+    opacity 200ms var(--sc-ease-out),
+    transform 200ms var(--sc-ease-out);
+}
+
+/* The current chapter is named as it arrives, then the name gets out of the
+   way. Hover and focus bring any name back. */
+.wrail[data-flash] button[aria-current="step"] .wrail__name,
+.wrail button:focus-visible .wrail__name {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wrail button:hover .wrail__name {
+    opacity: 1;
+    transform: none;
+  }
+  .wrail button:hover .wrail__tick {
+    background: var(--sc-ink);
+  }
+}
+
+.wrail button:active .wrail__tick {
+  transform: scaleX(0.85);
+}
+
+/* The ground. One hairline between the last chapter above the surface and the
+   first one below it, so the rail reads as a cross-section. */
+.wrail__ground {
+  display: block;
+  width: 1.6rem;
+  height: 1px;
+  margin: 0.3rem auto;
+  background: color-mix(in srgb, #c98a4b 85%, transparent);
+}
+
+/* ------------------------------------------------------------ specimen --- */
+
+.wspecimen {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------- phones --- */
+
+@media (max-width: 860px) {
+  :root {
+    --w-rail: 0rem;
+    --w-copy-bottom: calc(5.75rem + env(safe-area-inset-bottom));
+  }
+
+  .wcopy,
+  .wcopy--lead,
+  .wcopy--trail {
+    left: var(--w-gut);
+    right: var(--w-gut);
+    max-width: none;
+  }
+
+  .wtitle {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+    max-width: 16ch;
+  }
+
+  .wtitle--hero {
+    font-size: clamp(2.4rem, 11vw, 3.3rem);
+  }
+
+  .wbody {
+    font-size: 1.05rem;
+    max-width: 34ch;
+  }
+
+  .wscrim--lead,
+  .wscrim--trail {
+    background: linear-gradient(
+      to top,
+      rgb(7 10 8 / 0.9) 0%,
+      rgb(7 10 8 / 0.74) 26%,
+      rgb(7 10 8 / 0.34) 48%,
+      transparent 66%
+    );
+  }
+
+  .wscrim--deep.wscrim--lead,
+  .wscrim--deep.wscrim--trail {
+    background: linear-gradient(
+      to top,
+      rgb(7 10 8 / 0.94) 0%,
+      rgb(7 10 8 / 0.86) 34%,
+      rgb(7 10 8 / 0.5) 54%,
+      transparent 72%
+    );
+  }
+
+  /* The rail moves to the right edge and up, out of the copy's way. */
+  .wrail {
+    left: auto;
+    right: 0.4rem;
+    top: calc(var(--nav-h, 5.25rem) + 0.25rem);
+  }
+
+  .wrail ol {
+    padding: 0.35rem 0.2rem;
+  }
+
+  /* 24px targets: the floor for a control this small, and it keeps the
+     whole map inside the top third of a phone. */
+  .wrail button {
+    width: 1.75rem;
+    height: 1.5rem;
+  }
+
+  .wrail__tick {
+    width: 0.6rem;
+  }
+
+  .wrail button[aria-current="step"] .wrail__tick {
+    width: 1rem;
+  }
+
+  .wrail__ground {
+    width: 1.1rem;
+    margin: 0.2rem auto;
+  }
+
+  .wrail__name {
+    left: auto;
+    right: calc(100% + 0.6rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrail__tick,
+  .wrail__name {
+    transition-duration: 1ms;
+  }
+}
