@@ -1,4 +1,5 @@
 import { articles } from "./articles";
+import { faqs } from "./faq";
 import { products } from "./products";
 import { site } from "./site";
 
@@ -54,18 +55,16 @@ export function companyKnowledge(): KnowledgeChunk[] {
       text: `Field records are published at /field, one per crop (pomegranate, black pepper, coffee). The structure is published but the observations are placeholders in square brackets until a grower has reported and verified them. Bloom publishes no trial data, no yield percentages, no testimonials and no result claims. Never state a result, yield increase or field outcome for any Bloom product.`,
     },
     {
-      id: "faq",
-      title: "Common questions",
-      href: "/faq",
-      text: `Six answers are published at /faq and on the homepage: which pack to use, how to apply it, why it must not be tank-mixed with pesticides or fungicides, what it costs, powder versus liquid, and shelf life and storage.`,
-    },
-    {
       id: "audiences",
       title: "Who to contact and how",
       href: "/enquire",
       text: `One contact form at /enquire for everyone. It asks once whether you are a farmer, distributor, retailer or other, then name, phone, product of interest and what you need. Estates, KVKs and institutions use the same desk. WhatsApp ${site.phoneDisplay} is fastest during working hours.`,
     },
   ];
+
+  faqs.forEach((f, i) => {
+    chunks.push({ id: `faq:${i}`, title: f.q, href: "/faq", text: `${f.q} ${f.a}` });
+  });
 
   for (const p of products) {
     chunks.push({

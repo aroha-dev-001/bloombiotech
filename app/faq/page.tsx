@@ -8,7 +8,7 @@ import { Split } from "@/components/motion/Split";
 export const metadata: Metadata = {
   title: "Questions",
   description:
-    "Choosing a pack, applying it, mixing, price and storage — the questions Bloom Biotech is asked most.",
+    "Choosing and applying a pack, mixing, storage and expiry, spotting a genuine pack, buying as a farmer or dealer, and technical help — the questions Bloom Biotech is asked most.",
 };
 
 export default function FaqPage() {
