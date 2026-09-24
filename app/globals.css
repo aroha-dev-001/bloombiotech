@@ -3262,14 +3262,21 @@ textarea.field {
 }
 
 /* The picture is held at the size it will be when the frame is full, and
-   scaled down to meet it — so the image never squashes as the frame grows. */
+   scaled down to meet it — so the image never squashes as the frame grows.
+
+   max-width: none undoes the global img rule, which otherwise shrank the
+   picture to the frame's width on every frame of the opening. It is centred
+   by offsets rather than translate(-50%): Safari resolves a percentage
+   translate once, when the scale animation starts, so with the width
+   changing under it the picture sat with its left edge on the frame's centre
+   line and the box opened as its right half only. */
 .ap-img {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: calc(50% - 50svh);
+  left: calc(50% - 50vw);
   height: 100svh;
   width: 100vw;
-  translate: -50% -50%;
+  max-width: none;
   object-fit: cover;
   animation: ap-settle 1.85s cubic-bezier(0.76, 0, 0.24, 1) both;
 }
