@@ -106,11 +106,11 @@ export function CatalogueBrowser() {
   ];
 
   return (
-    <div>
-      <div className="grid gap-8 md:grid-cols-3">
+    <div className="cat">
+      <div className="grid gap-4 md:grid-cols-3 md:gap-8">
         {groups.map((g) => (
           <div key={g.label}>
-            <p className="eyebrow mb-4">{g.label}</p>
+            <p className="eyebrow mb-2.5">{g.label}</p>
             <div className="chip-rail">{g.node}</div>
           </div>
         ))}
@@ -119,7 +119,7 @@ export function CatalogueBrowser() {
       {/* The count is only worth printing once a filter has narrowed something
           — as a standing line under an unfiltered grid it is decoration. */}
       <div
-        className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-6"
+        className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-4"
         aria-live="polite"
       >
         <p className="meta">
@@ -143,7 +143,7 @@ export function CatalogueBrowser() {
       </div>
 
       {list.length ? (
-        <div className="shop-grid mt-10">
+        <div className="shop-grid mt-5">
           {list.map((p, i) => (
             <div
               key={`${category ?? ""}${crop ?? ""}${need ?? ""}-${p.slug}`}

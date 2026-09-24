@@ -2151,74 +2151,384 @@ textarea.field {
   box-shadow: 0 0 0 1px var(--accent);
 }
 
-/* ---------- product explorer ----------
-   Four questions instead of one vertical wall of specification, with the
-   picture answering alongside the text. Type is deliberately larger here:
-   this is the page people read to decide, and the old spec set too small. */
+/* ---------- product page ----------
+   Compact on purpose. The pack and its name open the page, the key points
+   follow straight after, then the enquiry. Type is a step smaller than the
+   site's display scale: this is a page people read to decide, not a poster. */
 
-.pex {
-  container-type: inline-size;
-  display: grid;
-  gap: clamp(1.75rem, 3vw, 2.75rem);
+.pp-hero {
+  padding-top: calc(var(--nav-h) + clamp(1rem, 2.5vw, 2rem));
+  padding-bottom: clamp(1.75rem, 3.5vw, 3rem);
 }
 
-.pex-tabs {
+/* Phone: the pack beside its name, the rest below both.
+   Wider: the pack on the left, the words centred beside it. */
+.pp-top {
+  display: grid;
+  grid-template-columns: 7.25rem minmax(0, 1fr);
+  grid-template-areas:
+    "plate head"
+    "more more";
+  align-items: center;
+  column-gap: 1.1rem;
+  row-gap: 1.35rem;
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.pp-plate {
+  grid-area: plate;
+}
+
+.pp-head {
+  grid-area: head;
+}
+
+.pp-more {
+  grid-area: more;
+}
+
+@media (max-width: 759px) {
+  .pp-plate.pstage-hero {
+    border-radius: var(--r);
+  }
+}
+
+@media (min-width: 760px) {
+  .pp-top {
+    grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+    grid-template-areas:
+      "plate head"
+      "plate more";
+    grid-template-rows: auto auto;
+    align-items: start;
+    column-gap: clamp(2rem, 5vw, 4.5rem);
+    row-gap: 1.35rem;
+  }
+
+  .pp-head {
+    align-self: end;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pp-top {
+    grid-template-columns: minmax(0, 23rem) minmax(0, 1fr);
+  }
+}
+
+.pp-kind {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--accent);
+}
+
+.pp-name {
+  margin-top: 0.4rem;
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.pp-tagline {
+  max-width: 40ch;
+  font-size: clamp(1.08rem, 1.45vw, 1.25rem);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+.pp-pack {
+  margin-top: 0.6rem;
+  max-width: 52ch;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.pp-cta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 1rem;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
 }
 
-.pex-tab {
-  padding: 0.75rem 1.35rem;
+/* Both on one row on a phone. */
+@media (max-width: 559px) {
+  .pp-cta .btn {
+    padding-inline: 1.15rem;
+  }
+}
+
+.pp-band {
+  padding-block: clamp(2.25rem, 4.5vw, 4rem);
+}
+
+/* The key points follow the hero on the same ground, so they need no gap of
+   their own above them. */
+.pp-band-points {
+  padding-top: 0;
+}
+
+.pp-band-next {
+  padding-top: 0;
+}
+
+.pp-h2 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.pp-note {
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.pp-ask {
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 900px) {
+  .pp-ask {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 31rem);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+}
+
+.pp-form {
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.pp-next {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.4rem 0.7rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  transition:
+    background-color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+}
+
+.pp-next:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.pp-next-plate {
+  flex: none;
+  width: 3.75rem;
+}
+
+.pp-next-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.pp-next-text .pp-note {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.pp-next-name {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1.1;
+}
+
+.pp-next-arw {
+  font-size: 1.3rem;
+  color: var(--accent);
+  transition: transform 0.4s var(--spring-out);
+}
+
+.pp-next:hover .pp-next-arw {
+  transform: translateX(4px);
+}
+
+/* ---------- catalogue ----------
+   Same idea as the product page: a step down from the display scale, and the
+   packs close under the words rather than a screen below them. */
+
+.cat-hero {
+  padding-top: calc(var(--nav-h) + clamp(1rem, 2.5vw, 2rem));
+}
+
+.cat-intro {
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.cat-title {
+  max-width: 16ch;
+  font-size: clamp(2.1rem, 4.6vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.cat-lede {
+  max-width: 40ch;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--dim);
+  text-wrap: pretty;
+}
+
+.cat-band {
+  padding-block: clamp(1.25rem, 3vw, 2.5rem) clamp(2.5rem, 5vw, 4rem);
+}
+
+.cat-cta {
+  font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+  line-height: 1.02;
+}
+
+.cat .chip {
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  gap: 0.45rem;
+  font-size: 0.95rem;
+}
+
+/* On a phone each filter group is one row that scrolls sideways, instead of
+   three stacked blocks of wrapped chips a screen tall. */
+@media (max-width: 759px) {
+  .cat .chip-rail {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--gut) * -1);
+    padding-inline: var(--gut);
+    scrollbar-width: none;
+  }
+
+  .cat .chip-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cat .chip {
+    flex: none;
+  }
+}
+
+.cat .pcard {
+  gap: 0.8rem;
+  padding: 0.75rem;
+}
+
+.cat .pcard-body {
+  gap: 0.3rem;
+  padding-inline: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.cat .pcard .d-3 {
+  font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.cat .pcard .meta {
+  line-height: 1.45;
+}
+
+.cat .pcard-shot {
+  line-height: 1.45;
+}
+
+/* The loop's keyframe is written against the 1rem gap, so only the cells
+   shrink. */
+@media (max-width: 759px) {
+  .cat-hero .marquee-cell {
+    width: 10.5rem;
+  }
+}
+
+/* ---------- key points (product page) ----------
+   Four questions, each answered in short lines. On a phone the picture is
+   left out: the pack is already at the top of the page. */
+
+.pk {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+/* A phone gets the four as a 2 x 2 grid, so none is hidden off the edge. */
+.pk-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 560px) {
+  .pk-tabs {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.pk-tab {
+  flex: none;
+  min-height: 2.6rem;
+  padding: 0 1.1rem;
   border: 1px solid var(--line);
   border-radius: var(--r-pill);
   background: transparent;
   color: var(--dim);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
   cursor: pointer;
   transition:
-    background-color 0.35s var(--ease-out),
-    border-color 0.35s var(--ease-out),
-    color 0.35s var(--ease-out),
-    transform 0.35s var(--spring-out);
+    background-color 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out);
 }
 
-.pex-tab:hover {
+.pk-tab:hover {
   color: var(--fg);
   border-color: color-mix(in srgb, var(--fg) 34%, transparent);
-  transform: translateY(-2px);
 }
 
-.pex-tab[data-on="true"] {
+.pk-tab[aria-selected="true"] {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--bg);
 }
 
-.pex-body {
+.pk-body {
   display: grid;
-  gap: clamp(2rem, 4vw, 3.5rem);
+  gap: 2rem;
   align-items: start;
 }
 
-@container (min-width: 52rem) {
-  .pex-body {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+@media (min-width: 900px) {
+  .pk-body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+    gap: clamp(2rem, 4vw, 3.5rem);
   }
 }
 
-.pex-panel {
-  animation: pex-in 0.45s var(--ease-out) both;
+.pk-panel {
+  animation: pk-in 0.4s var(--ease-out) both;
 }
 
-@keyframes pex-in {
+@keyframes pk-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 8px, 0);
   }
   to {
     opacity: 1;
@@ -2226,140 +2536,218 @@ textarea.field {
   }
 }
 
-/* Readable specification: label small-but-legible, value large. */
-.pspec {
+/* What it does: one card per point, the point in bold and how in a line. */
+.pk-points {
   display: grid;
-  gap: 0;
+  gap: 0.7rem;
 }
 
-.pspec > div {
-  padding-block: 1.3rem;
-  border-top: 1px solid var(--line-soft);
+@media (min-width: 640px) {
+  .pk-points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.pspec > div:first-child {
-  border-top: 0;
-  padding-top: 0;
+.pk-points li,
+.pk-doses li {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r);
+  background: var(--surface);
 }
 
-.pspec dt {
-  font-size: 1rem;
+.pk-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.pk-points h3 {
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.06rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+}
+
+.pk-points p {
+  margin-top: 0.25rem;
+  font-size: 0.975rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.pk-tick {
+  flex: none;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-top: 0.05rem;
+}
+
+.pk-tick circle {
+  fill: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.pk-tick path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pk-group {
+  margin-top: 1.5rem;
+}
+
+.pk-sub {
+  margin-bottom: 0.65rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--dim);
 }
 
-.pspec dd {
-  margin-top: 0.4rem;
-  font-size: 1.3rem;
-  line-height: 1.45;
-  letter-spacing: -0.015em;
-  color: var(--fg);
-  overflow-wrap: anywhere;
+.pk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-.pex-lead {
-  font-size: 1.25rem;
-  line-height: 1.6;
+.pk-chips li {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  font-size: 0.95rem;
+  line-height: 1.4;
   color: var(--fg);
-  text-wrap: pretty;
 }
 
-.pex-list {
+.pk-chips-lg li {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+/* How to use: the dose is the thing people look for, so it is the big line. */
+.pk-doses {
   display: grid;
-  gap: 0.9rem;
-  margin-block: 1.75rem;
+  gap: 0.7rem;
 }
 
-.pex-list li {
-  position: relative;
-  padding-left: 1.6rem;
-  font-size: 1.15rem;
-  line-height: 1.6;
+@media (min-width: 640px) {
+  .pk-doses {
+    grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  }
+}
+
+.pk-dose-way {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.35;
   color: var(--dim);
 }
 
-.pex-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  height: 0.45rem;
-  width: 0.45rem;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.pex-steps {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.pex-steps li {
-  display: flex;
-  gap: 1.1rem;
-  align-items: flex-start;
-}
-
-.pex-step-n {
-  flex: none;
-  display: grid;
-  place-items: center;
-  height: 2.4rem;
-  width: 2.4rem;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  font-size: 1.05rem;
-  color: var(--accent);
-}
-
-.pex-steps h4 {
+.pk-dose {
+  margin-top: 0.35rem;
   font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
+  line-height: 1.2;
   letter-spacing: -0.02em;
   color: var(--fg);
 }
 
-.pex-steps p {
-  margin-top: 0.45rem;
-  font-size: 1.15rem;
-  line-height: 1.65;
+.pk-dose-note {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
   color: var(--dim);
 }
 
-.pex-note {
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-.pex-crops {
+.pk-caution {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-.pex-crops li {
-  padding: 0.7rem 1.25rem;
-  border: 1px solid var(--line);
-  border-radius: var(--r-pill);
-  font-size: 1.1rem;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--r);
+  background: color-mix(in srgb, var(--amber) 11%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.5;
   color: var(--fg);
 }
 
-.pex-media {
-  position: relative;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border-radius: var(--r-lg);
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
+.pk-caution svg {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.12rem;
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.pex-media[data-fit="contain"] {
-  padding: clamp(1.5rem, 3vw, 2.5rem);
+/* What's inside: label over value, two to a row, a long value on its own. */
+.pk-spec {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1rem, 3vw, 2rem);
 }
 
-.pex-media img {
+.pk-spec > [data-wide] {
+  grid-column: 1 / -1;
+}
+
+.pk-spec > div {
+  padding-block: 0.8rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.pk-spec dt {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--dim);
+}
+
+.pk-spec dd {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.pk-more {
+  margin-top: 1.25rem;
+  font-size: 1rem;
+  color: var(--dim);
+}
+
+.pk-more a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.pk-media {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .pk-media {
+    position: relative;
+    display: block;
+    aspect-ratio: 5 / 4;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+  }
+}
+
+.pk-media img {
   opacity: 0;
   transform: scale(1.03);
   transition:
@@ -2367,13 +2755,17 @@ textarea.field {
     transform 0.8s var(--ease-out);
 }
 
-.pex-media[data-fit="contain"] img {
-  padding: inherit;
-}
-
-.pex-media img[data-on="true"] {
+.pk-media img[data-on="true"] {
   opacity: 1;
   transform: none;
+}
+
+/* Still used by the About page's capabilities. */
+.pex-lead {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--fg);
+  text-wrap: pretty;
 }
 
 /* A wide, bright strip of real footage used to break up light pages.

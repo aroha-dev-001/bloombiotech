@@ -7,17 +7,18 @@ import { plateOf, type Product } from "@/lib/products";
 import { applicationsOf } from "@/lib/solutions";
 
 /**
- * A pack, explored rather than read top to bottom.
+ * A pack, in key points.
  *
- * The old page listed specification, usage, benefits and body copy as one
- * vertical wall — a PDF with a web address. Here the same facts are four
- * questions a grower actually asks, and the picture changes with the answer:
- * the pack itself for what is inside it, the crop for what it does, the
- * matching application route for how it is used.
+ * Four questions a grower actually asks, each answered in a few short lines
+ * rather than a paragraph: what it does and how, how much to use, what is in
+ * the pack, and which crops. On a wide screen the picture changes with the
+ * answer; on a phone it is left out, because the pack is already at the top of
+ * the page and a second tall picture only pushes the answer down.
  *
- * Nothing is invented. Every field comes from the product record.
+ * Nothing is invented. The key points, doses and targets are the product
+ * record's own (lib/products.ts), shortened.
  */
-type TabKey = "contains" | "does" | "use" | "crops";
+type TabKey = "does" | "use" | "inside" | "crops";
 
 const routePhotos = {
   drip: { src: "/farm/drip.jpg", alt: "Drip irrigation line watering the root zone" },
@@ -73,65 +74,81 @@ function routeVisual(product: Product) {
   return routePhotos.soil;
 }
 
+const microbial = (p: Product) => p.cfu !== "Not a microbial product";
+
+function Tick() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden className="pk-tick">
+      <circle cx="10" cy="10" r="10" />
+      <path d="M5.8 10.4l2.7 2.7 5.7-6" />
+    </svg>
+  );
+}
+
 export function ProductExplorer({ product }: { product: Product }) {
-  const [tab, setTab] = useState<TabKey>("contains");
+  const [tab, setTab] = useState<TabKey>("does");
 
-  const route = routeVisual(product);
+  const compost = product.category === "Compost";
 
-  const tabs: { key: TabKey; label: string; media: { src: string; alt: string }; fit: "contain" | "cover" }[] = [
-    {
-      key: "contains",
-      label: "What's in it",
-      // The normalized plate, not the raw photograph: contained on the page's
-      // own ground, the source frame's grey bench showed as a rectangle.
-      media: { src: plateOf(product), alt: `${product.name} pack` },
-      fit: "cover",
-    },
+  const tabs: { key: TabKey; label: string; media: { src: string; alt: string } }[] = [
     {
       key: "does",
       label: "What it does",
       media: { src: "/farm/leaves.jpg", alt: "Healthy green coffee leaves in full sunlight" },
-      fit: "cover",
     },
-    { key: "use", label: "How to use it", media: route, fit: "cover" },
+    { key: "use", label: "How to use", media: routeVisual(product) },
+    {
+      key: "inside",
+      label: "What's inside",
+      // Bloom's own microbes are grown in the hall; the imported nutrition
+      // range is not, so it shows its pack instead.
+      media: microbial(product)
+        ? {
+            src: "/film/fermentation-vessels.jpg",
+            alt: "Stainless steel fermenters in the Bloom Biotech production hall",
+          }
+        : { src: plateOf(product), alt: `${product.name} pack` },
+    },
     {
       key: "crops",
-      label: "Which crops",
+      label: compost ? "Works with" : "Crops",
       media: {
         src: "/farm/plantation.jpg",
         alt: "A sunlit coffee plantation under shade trees",
       },
-      fit: "cover",
     },
   ];
 
-  const current = tabs.find((t) => t.key === tab) ?? tabs[0];
+  const inside = [
+    { label: microbial(product) ? "Organisms" : "Contains", value: product.actives },
+    ...(microbial(product) ? [{ label: "Live count", value: product.cfu }] : []),
+    { label: "Pack", value: product.pack },
+    ...(product.specs ?? []),
+  ];
 
   return (
-    <div className="pex">
+    <div className="pk">
       {/* ------------------------------------------------ the four questions */}
-      <div className="pex-tabs" role="tablist" aria-label={`About ${product.name}`}>
+      <div className="pk-tabs" role="tablist" aria-label={`About ${product.name}`}>
         {tabs.map((t) => (
           <button
             key={t.key}
             role="tab"
             type="button"
+            id={`pk-tab-${t.key}`}
             aria-selected={tab === t.key}
-            aria-controls={`pex-${t.key}`}
+            aria-controls={`pk-${t.key}`}
             tabIndex={tab === t.key ? 0 : -1}
-            data-on={tab === t.key ? "true" : undefined}
-            className="pex-tab"
+            className="pk-tab"
             onClick={() => setTab(t.key)}
             onKeyDown={(e) => {
               const i = tabs.findIndex((x) => x.key === tab);
-              if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-                e.preventDefault();
-                setTab(tabs[(i + 1) % tabs.length].key);
-              }
-              if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-                e.preventDefault();
-                setTab(tabs[(i - 1 + tabs.length) % tabs.length].key);
-              }
+              const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+              if (!step) return;
+              e.preventDefault();
+              const nextKey = tabs[(i + step + tabs.length) % tabs.length].key;
+              setTab(nextKey);
+              document.getElementById(`pk-tab-${nextKey}`)?.focus();
             }}
           >
             {t.label}
@@ -139,29 +156,69 @@ export function ProductExplorer({ product }: { product: Product }) {
         ))}
       </div>
 
-      <div className="pex-body">
+      <div className="pk-body">
         {/* ------------------------------------------------------ the answer */}
-        <div className="pex-panel" id={`pex-${tab}`} role="tabpanel" key={tab}>
-          {tab === "contains" ? (
-            <dl className="pspec">
-              <div>
-                <dt>Organisms</dt>
-                <dd>{product.actives}</dd>
+        <div
+          className="pk-panel"
+          id={`pk-${tab}`}
+          role="tabpanel"
+          aria-labelledby={`pk-tab-${tab}`}
+          key={tab}
+        >
+          {tab === "does" ? (
+            <>
+              <ul className="pk-points">
+                {product.points.map((p) => (
+                  <li key={p.title}>
+                    <Tick />
+                    <div>
+                      <h3>{p.title}</h3>
+                      <p>{p.how}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {product.against?.length ? (
+                <div className="pk-group">
+                  <h3 className="pk-sub">Works against</h3>
+                  <ul className="pk-chips">
+                    {product.against.map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </>
+          ) : null}
+
+          {tab === "use" ? (
+            <>
+              <ul className="pk-doses">
+                {product.usage.map((u) => (
+                  <li key={u.title}>
+                    <p className="pk-dose-way">{u.title}</p>
+                    <p className="pk-dose">{u.dose ?? u.text}</p>
+                    {u.note ? <p className="pk-dose-note">{u.note}</p> : null}
+                  </li>
+                ))}
+              </ul>
+              <div className="pk-caution">
+                <svg viewBox="0 0 20 20" aria-hidden>
+                  <path d="M10 2.5l8 14.5H2z" />
+                  <path d="M10 8v4M10 14.2v.3" />
+                </svg>
+                <p>
+                  {product.precaution} {product.storage}
+                </p>
               </div>
-              <div>
-                <dt>Colony count</dt>
-                <dd>{product.cfu}</dd>
-              </div>
-              <div>
-                <dt>Formulation</dt>
-                <dd>{product.technology}</dd>
-              </div>
-              <div>
-                <dt>Pack</dt>
-                <dd>{product.pack}</dd>
-              </div>
-              {product.specs?.map((s) => (
-                <div key={s.label}>
+            </>
+          ) : null}
+
+          {tab === "inside" ? (
+            <dl className="pk-spec">
+              {/* Short values pair up two to a row; a long one takes the row. */}
+              {inside.map((s) => (
+                <div key={s.label} data-wide={s.value.length > 30 || undefined}>
                   <dt>{s.label}</dt>
                   <dd>{s.value}</dd>
                 </div>
@@ -169,75 +226,33 @@ export function ProductExplorer({ product }: { product: Product }) {
             </dl>
           ) : null}
 
-          {tab === "does" ? (
-            <>
-              <p className="pex-lead">{product.short}</p>
-              {product.benefits?.length ? (
-                <ul className="pex-list">
-                  {product.benefits.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-              ) : null}
-              <dl className="pspec">
-                <div>
-                  <dt>Works against</dt>
-                  <dd>{product.targets}</dd>
-                </div>
-              </dl>
-            </>
-          ) : null}
-
-          {tab === "use" ? (
-            <>
-              <ol className="pex-steps">
-                {product.usage.map((u, n) => (
-                  <li key={u.title}>
-                    <span className="pex-step-n" aria-hidden>
-                      {n + 1}
-                    </span>
-                    <div>
-                      <h4>{u.title}</h4>
-                      <p>{u.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <div className="note-caution mt-10">
-                <p className="pex-note">{product.precaution}</p>
-                <p className="pex-note mt-3">{product.storage}</p>
-              </div>
-            </>
-          ) : null}
-
           {tab === "crops" ? (
             <>
-              <ul className="pex-crops">
+              <ul className="pk-chips pk-chips-lg">
                 {product.crops.map((c) => (
                   <li key={c}>{c}</li>
                 ))}
               </ul>
-              <p className="pex-lead mt-8">
-                Not sure this is the right pack for your crop?{" "}
-                <Link href="/solutions#find" className="underline underline-offset-4">
-                  Find your solution
-                </Link>
-                .
-              </p>
+              {compost ? null : (
+                <p className="pk-more">
+                  Not sure it suits your crop?{" "}
+                  <Link href="/solutions#find">Find your solution</Link>
+                </p>
+              )}
             </>
           ) : null}
         </div>
 
         {/* ------------------------------------------------------- the visual */}
-        <figure className="pex-media" data-fit={current.fit}>
+        <figure className="pk-media">
           {tabs.map((t) => (
             <Image
               key={t.key}
               src={t.media.src}
               alt={t.key === tab ? t.media.alt : ""}
               fill
-              sizes="(min-width: 1024px) 30rem, 100vw"
-              className={t.fit === "contain" ? "object-contain" : "object-cover"}
+              sizes="(min-width: 900px) 24rem, 100vw"
+              className="object-cover"
               data-on={t.key === tab ? "true" : undefined}
               aria-hidden={t.key !== tab}
             />

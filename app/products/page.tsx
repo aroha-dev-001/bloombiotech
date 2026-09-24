@@ -27,13 +27,13 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <header data-tone="light" className="pt-[calc(var(--nav-h)+3.5rem)]">
+      <header data-tone="light" className="cat-hero">
         <PlateMarquee />
 
-        <div className="shell mt-16 pb-20">
-          <Split as="h1" text="Every product we make." className="display d-hero max-w-[13ch]" />
-          <div className="mt-10 grid gap-10 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
-            <p className="lede lede-wide" data-rv style={{ ["--rv-d" as string]: "220ms" }}>
+        <div className="shell cat-intro">
+          <Split as="h1" text="Every product we make." className="display cat-title" />
+          <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
+            <p className="cat-lede" data-rv style={{ ["--rv-d" as string]: "220ms" }}>
               Organisms, dose and mixing rule on every pack. Prices are quoted
               from the plant.
             </p>
@@ -52,14 +52,14 @@ export default function ProductsPage() {
         </div>
       </header>
 
-      <section data-tone="light" className="band-tight">
+      <section data-tone="light" className="cat-band">
         <div className="shell">
           <CatalogueBrowser />
         </div>
       </section>
 
       {/* Where every pack above is filled. Real footage, no scrim. */}
-      <section data-tone="light" className="pb-20">
+      <section data-tone="light" className="pb-10 md:pb-14">
         <div className="shell">
           <figure className="page-band" data-rv="mask">
             <Image
@@ -76,12 +76,12 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section data-tone="carbon" className="band">
-        <div className="shell flex flex-wrap items-end justify-between gap-10">
+      <section data-tone="carbon" className="pp-band">
+        <div className="shell flex flex-wrap items-end justify-between gap-6">
           <Split
             as="h2"
             text="Not sure which pack fits your crop?"
-            className="display d-1 max-w-[16ch]"
+            className="display cat-cta max-w-[18ch]"
           />
           <div className="flex flex-wrap gap-3" data-rv style={{ ["--rv-d" as string]: "260ms" }}>
             <Button href="/solutions#find">Find your solution</Button>

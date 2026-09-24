@@ -1,4 +1,15 @@
-export type UsageStep = { title: string; text: string };
+export type UsageStep = {
+  title: string;
+  /** The full instruction, as on the label. The assistant quotes this. */
+  text: string;
+  /** The dose on its own, for the page. Falls back to `text`. */
+  dose?: string;
+  /** What to do with it, in a few words. */
+  note?: string;
+};
+
+/** One thing a pack does, and in a line how it does it. */
+export type Point = { title: string; how: string };
 
 export type Product = {
   slug: string;
@@ -7,6 +18,12 @@ export type Product = {
   category: "Consortium" | "Biocontrol" | "Compost" | "Nutrition";
   technology: string;
   short: string;
+  /** One plain sentence: what the pack is for. Leads the product page. */
+  tagline: string;
+  /** What it does and how, as short key points. Stays inside the record. */
+  points: Point[];
+  /** Plain names of what it controls, where the label gives them. */
+  against?: string[];
   crops: string[];
   use: string;
   pack: string;
@@ -38,26 +55,36 @@ const noFung =
 const drench40 = (name: string) => ({
   title: "Soil drenching",
   text: `Mix 1 kg of ${name} in 40 L of water and drench the entire root system.`,
+  dose: "1 kg in 40 L water",
+  note: "Drench the whole root zone.",
 });
 
 const fym10 = (name: string) => ({
   title: "FYM or compost enrichment",
   text: `Mix 10 kg of ${name} in 1 MT of FYM or compost and apply to soil after 7-10 days.`,
+  dose: "10 kg per tonne of FYM",
+  note: "Mix in, then apply to soil after 7-10 days.",
 });
 
 const fym5to10 = (name: string) => ({
   title: "FYM or compost enrichment",
   text: `Mix 5-10 kg of ${name} in 1 MT of FYM or compost and apply to soil after 7-10 days.`,
+  dose: "5-10 kg per tonne of FYM",
+  note: "Mix in, then apply to soil after 7-10 days.",
 });
 
 const drip40 = (name: string) => ({
   title: "Drip fertigation",
   text: `Mix 1 kg of ${name} in 40 L of water, filter the solution, and apply through drip irrigation.`,
+  dose: "1 kg in 40 L water",
+  note: "Filter, then run it through the drip.",
 });
 
 const neem = (name: string) => ({
   title: "Neem cake enrichment",
   text: `Mix 1 kg of ${name} in 50 kg of neem cake and apply to soil after 1 week.`,
+  dose: "1 kg per 50 kg neem cake",
+  note: "Mix in, then apply to soil after a week.",
 });
 
 export const products: Product[] = [
@@ -69,6 +96,13 @@ export const products: Product[] = [
     technology: "Arka Microbial Consortium (AMC) · carrier",
     short:
       "Powder AMC from IIHR: Azotobacter, P and Zn solubilizers, and Pseudomonas in one pack. Bloom was the first company in India to licence AMC.",
+    tagline: "One pack instead of three biofertilisers. It feeds the roots and protects them from disease.",
+    points: [
+      { title: "Adds nitrogen", how: "Azotobacter draws it from the air into the soil." },
+      { title: "Frees phosphorus and zinc", how: "Bacillus unlocks what is held in the soil." },
+      { title: "Protects the roots", how: "Pseudomonas helps control soil-borne disease." },
+      { title: "Certified organic", how: "Carries the organic marks on the pack." },
+    ],
     crops: ["All crops", "Pomegranate", "Black pepper", "Floriculture", "Coffee"],
     use: "Soil drench, FYM or compost enrichment, drip fertigation",
     pack: "Carrier pouch (label pack 5 kg). Expiry 6 months from manufacture.",
@@ -93,6 +127,13 @@ export const products: Product[] = [
     technology: "Liquid Arka Microbial Consortium (AMC)",
     short:
       "Liquid AMC from IIHR. Same consortium idea as Bio Sanjiveeni, applied at 10 ml per litre as foliar spray or drip.",
+    tagline: "The liquid form of Bio Sanjiveeni, to spray on the crop or run through drip.",
+    points: [
+      { title: "Adds nitrogen", how: "Azotobacter draws it from the air into the soil." },
+      { title: "Frees phosphorus and zinc", how: "Bacillus unlocks what is held in the soil." },
+      { title: "Protects the roots", how: "Works against soil-borne fungal and bacterial disease." },
+      { title: "Safe and organic", how: "Non-hazardous to people, livestock and wildlife." },
+    ],
     crops: ["All crops"],
     use: "Foliar spray and drip fertigation at 10 ml/L",
     pack: "Liquid bottle",
@@ -104,6 +145,8 @@ export const products: Product[] = [
       {
         title: "Foliar spray and drip fertigation",
         text: "10 ml per litre.",
+        dose: "10 ml per litre",
+        note: "Spray on the crop, or run it through the drip.",
       },
     ],
     precaution: noChem,
@@ -128,6 +171,12 @@ export const products: Product[] = [
     technology: "Arka Actino Consortium (ACT)",
     short:
       "Three compatible Streptomyces strains from IIHR. Antibiotics in the root zone plus IAA and gibberellins for rooting. Licensed by Bloom in 2015.",
+    tagline: "Three Streptomyces strains that guard the root zone and grow more roots.",
+    points: [
+      { title: "Guards the root zone", how: "The strains release natural antibiotics around the roots." },
+      { title: "Grows more roots", how: "They make IAA and gibberellins, the plant's rooting hormones." },
+      { title: "Licensed from IIHR", how: "Bloom was the first in India to licence it, in 2015." },
+    ],
     crops: ["All crops"],
     use: "Soil drench, FYM enrichment, drip fertigation",
     pack: "Carrier pouch (label pack 5 kg) and liquid. Expiry 6 months from manufacture.",
@@ -151,6 +200,12 @@ export const products: Product[] = [
     technology: "Trichoderma harzianum / viride",
     short:
       "Trichoderma that outgrows and parasitizes soil fungi behind damping-off, wilt, root rot, charcoal rot, and collar rot.",
+    tagline: "A friendly fungus that stops the soil fungi behind root rot and wilt.",
+    points: [
+      { title: "Crowds out disease", how: "It outgrows harmful soil fungi and takes their place." },
+      { title: "Attacks the pathogen", how: "It coils round the harmful fungus and feeds on it." },
+    ],
+    against: ["Damping-off", "Wilt", "Root rot", "Charcoal rot", "Collar rot"],
     crops: ["All crops"],
     use: "Soil drench, FYM enrichment, neem cake enrichment",
     pack: "Carrier and liquid",
@@ -173,6 +228,26 @@ export const products: Product[] = [
     technology: "Pseudomonas fluorescens",
     short:
       "Pseudomonas for soil-borne and foliar disease (leaf spots, blights, blast) and as a growth promoter via hormones and organic acids.",
+    tagline: "Helpful bacteria that fight disease on the leaf and in the soil, and help the plant grow.",
+    points: [
+      { title: "Fights leaf disease", how: "Leaf spots, blights, blast and mildews." },
+      { title: "Fights soil disease", how: "Root rot, collar rot and seedling rot." },
+      { title: "Boosts growth", how: "Releases growth hormones and organic acids." },
+    ],
+    against: [
+      "Downy mildew",
+      "Powdery mildew",
+      "Anthracnose",
+      "Blast",
+      "Leaf spot",
+      "Collar rot",
+      "Fruit rot",
+      "Root rot",
+      "Seedling rot",
+      "Botrytis",
+      "Early blight",
+      "Late blight",
+    ],
     crops: ["All crops"],
     use: "Soil drench, FYM enrichment, neem cake enrichment",
     pack: "Carrier and liquid",
@@ -196,6 +271,13 @@ export const products: Product[] = [
     technology: "Pochonia chlamydosporia · bio nematicide",
     short:
       "Entomopathogenic soil fungus that infects larvae and adults of plant-parasitic nematodes. Approved for organic agriculture.",
+    tagline: "A natural soil fungus that kills the nematodes feeding on your roots.",
+    points: [
+      { title: "Kills nematodes", how: "It infects both young and adult nematodes." },
+      { title: "Works where they feed", how: "A soil fungus, applied to the root zone." },
+      { title: "Approved for organic", how: "Cleared for use in organic farming." },
+    ],
+    against: ["Root-knot", "Reniform", "Cyst", "Burrowing", "Lesion nematodes"],
     crops: ["All crops"],
     use: "Soil drench, FYM enrichment, neem cake enrichment",
     pack: "Carrier and liquid",
@@ -219,6 +301,12 @@ export const products: Product[] = [
     technology: "Metarhizium anisopliae",
     short:
       "Contact biological insecticide for root grubs, termites, ants, locusts, and other soil insects. Infection in 24-48 hours.",
+    tagline: "A natural fungus that kills termites, root grubs and other soil insects on contact.",
+    points: [
+      { title: "Works on contact", how: "The insect does not need to eat it. Spores stick and get in." },
+      { title: "Acts fast", how: "Infection sets in within 24-48 hours." },
+    ],
+    against: ["Termites", "Root grubs", "Locusts", "Root weevils", "Ants", "Beetles", "Caterpillars"],
     crops: ["All crops"],
     use: "Soil drench, FYM enrichment, neem cake enrichment",
     pack: "Carrier and liquid",
@@ -241,6 +329,12 @@ export const products: Product[] = [
     technology: "Beauveria bassiana",
     short:
       "Beauveria for coffee berry borer, lepidopterous pests, caterpillars, and mealy bugs. Produces beauvericin.",
+    tagline: "A natural fungus against coffee berry borer, caterpillars and mealy bugs.",
+    points: [
+      { title: "Gets through the shell", how: "Its enzymes dissolve the insect's outer skin." },
+      { title: "Weakens the pest", how: "It makes beauvericin, which breaks down the insect's defences." },
+    ],
+    against: ["Coffee berry borer", "Caterpillars", "Mealy bugs"],
     crops: ["All crops", "Coffee"],
     use: "Soil drench, FYM enrichment, neem cake enrichment",
     pack: "Carrier and liquid",
@@ -263,6 +357,12 @@ export const products: Product[] = [
     technology: "Verticillium lecanii (Lecanicillium)",
     short:
       "Biological insecticide for mealy bugs and sucking pests: thrips, jassids, aphids, whiteflies, and mites.",
+    tagline: "A natural fungus against mealy bugs and sucking pests like thrips and whitefly.",
+    points: [
+      { title: "Stops sucking pests", how: "Controls the pests that drain sap from the leaves." },
+      { title: "Weakens the pest", how: "Its toxins break down the insect's defences." },
+    ],
+    against: ["Mealy bugs", "Thrips", "Jassids", "Aphids", "Whiteflies", "Mites"],
     crops: ["All crops"],
     use: "Soil drench, FYM enrichment, neem cake enrichment",
     pack: "Carrier and liquid",
@@ -292,6 +392,12 @@ export const products: Product[] = [
     technology: "Arka Fermented Cocopeat (AFC) culture",
     short:
       "Aspergillus culture from IIHR to finish compost in 30-45 days: coffee pulp, FYM, green leaf, or raw coco-peat.",
+    tagline: "Turns coffee pulp, manure and green waste into ready compost in 30-45 days.",
+    points: [
+      { title: "Fast compost", how: "Ready in 30-45 days." },
+      { title: "Uses farm waste", how: "Coffee pulp, FYM, green leaves or raw coco-peat." },
+      { title: "From IIHR", how: "Arka Fermented Cocopeat technology. Bloom licensed it first in India." },
+    ],
     crops: ["Coffee pulp", "FYM", "Green leaf / waste", "Coco-peat"],
     use: "Windrow composting of pulp, FYM, green waste, or coco-peat",
     pack: "Powder",
@@ -303,18 +409,26 @@ export const products: Product[] = [
       {
         title: "Coffee pulp",
         text: "Mix 2 kg of culture in 1 MT of coffee pulp waste; prepare windrow beds. Matures in 30-45 days.",
+        dose: "2 kg per tonne of pulp",
+        note: "Windrow beds. Ready in 30-45 days.",
       },
       {
         title: "FYM composting",
         text: "Mix 3 kg of culture in 1 MT of FYM; prepare windrow beds. Matures in 45 days.",
+        dose: "3 kg per tonne of FYM",
+        note: "Windrow beds. Ready in 45 days.",
       },
       {
         title: "Green leaf compost",
         text: "Mix 1 kg of culture in 1 MT of green leaves or agricultural waste. Matures in 30-40 days.",
+        dose: "1 kg per tonne of green waste",
+        note: "Ready in 30-40 days.",
       },
       {
         title: "Coco-peat composting",
         text: "Mix 4 kg of culture and 4 kg of urea in 1 MT of raw moist coco-peat. Matures in 30-40 days.",
+        dose: "4 kg + 4 kg urea per tonne",
+        note: "Raw, moist coco-peat. Ready in 30-40 days.",
       },
     ],
     precaution: noChem,
@@ -331,6 +445,13 @@ export const products: Product[] = [
     technology: "High-grade potassium humate",
     short:
       "100% water-soluble humic acid with potassium, extracted from leonardite. Imported. 1 kg and 5 kg. No repacking in India.",
+    tagline: "Humic acid with potassium that builds roots and helps the plant take up more.",
+    points: [
+      { title: "Builds roots", how: "Promotes root growth and seed germination." },
+      { title: "Better uptake", how: "The plant takes up more of what you feed it." },
+      { title: "Handles dry spells", how: "Potassium supports drought tolerance and photosynthesis." },
+      { title: "Improves the soil", how: "Better structure, more good microbes, fertiliser goes further." },
+    ],
     crops: ["All crops"],
     use: "Foliar, soil drench, fertilizer mix, seed treatment",
     pack: "1 kg and 5 kg",
@@ -372,6 +493,13 @@ export const products: Product[] = [
     technology: "Potassium fulvate",
     short:
       "Mineral fulvic acid with humic acid from oxidized leonardite. Imported. 1 kg and 25 kg. No repacking in India.",
+    tagline: "Fulvic acid that carries nutrients into the plant and pushes root and shoot growth.",
+    points: [
+      { title: "Carries nutrients in", how: "Binds minerals into a form the plant can absorb." },
+      { title: "More trace elements", how: "Makes micronutrients easier to take up." },
+      { title: "Stronger growth", how: "More roots and shoots, better germination and leaf uptake." },
+      { title: "Richer soil", how: "Raises organic carbon and wakes up good microbes." },
+    ],
     crops: ["All crops"],
     use: "Foliar with NPK or micronutrients, ground application, mix with organics and biofertilizers",
     pack: "1 kg and 25 kg",
@@ -414,6 +542,12 @@ export const products: Product[] = [
     technology: "Mineral fulvic acid with 30% calcium",
     short:
       "Fulvic acid plus 30% EDTA calcium. Imported. 1 kg and 5 kg. Caution with high-phosphorus fertilizers.",
+    tagline: "Calcium the plant can actually absorb, for strong cells, new roots and better fruit set.",
+    points: [
+      { title: "Unlocks calcium", how: "Fulvic acid turns locked soil calcium into a form plants take up." },
+      { title: "Stronger plants", how: "Builds cell walls and new roots." },
+      { title: "Better fruit set", how: "Helps flowers hold and fruit form." },
+    ],
     crops: ["All crops"],
     use: "Foliar, soil drench, fertilizer mix, seed treatment, manure enrichment",
     pack: "1 kg and 5 kg",
@@ -455,6 +589,12 @@ export const products: Product[] = [
     technology: "EDTA chelated micronutrients",
     short:
       "Water-soluble, non-dusting mix of Fe, Zn, Mn, Cu chelates plus B, Mo, Mg, and S. Imported. 1 kg.",
+    tagline: "Every key micronutrient in one fast-acting mix that dissolves fully in water.",
+    points: [
+      { title: "Fixes deficiencies", how: "Especially in zinc-deficient soils." },
+      { title: "Taken up fast", how: "EDTA chelates keep the nutrients available to the plant." },
+      { title: "Complete mix", how: "Iron, zinc, manganese, copper, boron, molybdenum, magnesium, sulphur." },
+    ],
     crops: ["Fruit", "Vegetable", "Flower", "Field crops"],
     use: "Foliar or drip at 1-2 kg/ha; typically 2-3 applications per season",
     pack: "1 kg",
@@ -481,6 +621,8 @@ export const products: Product[] = [
       {
         title: "Foliar spray or drip fertigation",
         text: "1-2 kg/ha per application. Typically 2-3 applications per growing season. Foliar concentration 0.75-1 g/L.",
+        dose: "1-2 kg per hectare",
+        note: "Spray at 0.75-1 g/L, or run through drip. 2-3 times a season.",
       },
     ],
     precaution: "Imported product. Store in original pack below 25°C.",
@@ -497,6 +639,13 @@ export const products: Product[] = [
     technology: "Amino acids with Ascophyllum nodosum extract",
     short:
       "Selected amino acids plus seaweed extract with vitamins, minerals, cytokinins, auxins, and micronutrients. Dose 3 ml/L.",
+    tagline: "Amino acids and seaweed extract that push growth and help crops through stress.",
+    points: [
+      { title: "Faster growth", how: "A natural stimulant for roots and germination." },
+      { title: "Greener leaves", how: "More chlorophyll, so the leaf takes in more CO₂." },
+      { title: "Handles stress", how: "Better resistance to weather and pest stress." },
+      { title: "Better harvest", how: "Higher yield and a better market grade." },
+    ],
     crops: ["All crops", "Fruit", "Vegetable", "Flower", "Arable"],
     use: "Foliar feeding; also drip fertigation with NPK and micronutrient mixes",
     pack: "1 L and 5 L",
@@ -508,6 +657,8 @@ export const products: Product[] = [
       {
         title: "Foliar",
         text: "Dilute 3 ml in 1 litre of water. Spray thoroughly on the undersides of leaves.",
+        dose: "3 ml per litre",
+        note: "Spray well on the undersides of the leaves.",
       },
     ],
     precaution: "Store in original pack below 25°C.",
