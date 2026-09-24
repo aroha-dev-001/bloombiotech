@@ -58,13 +58,44 @@ export function windowOf(
   return `${f.toFixed(4)} ${t.toFixed(4)}${r}`;
 }
 
-/** Chapters for the rail, each pointing at the first leg that carries it. */
-export const chapters = legs.reduce<{ name: string; leg: number; last: number }[]>(
-  (acc, l, i) => {
+/**
+ * Where a scroll is allowed to come to rest.
+ *
+ * Between these the film is a camera in motion: generated legs morph from one
+ * shot into the next, two seams dissolve one clip over another, and the lens
+ * is mid-flight. Any of those held still reads as a broken frame, so when a
+ * scroll ends the page glides on to one of these (flight.ts).
+ *
+ * Each is a composed frame, picked off the clips, and sits clear of every
+ * seam band so exactly one clip is on screen. The copy windows and the
+ * specimen timeline are laid out around them: at every rest frame each copy
+ * block is fully up or fully gone, and the lens is never between states.
+ */
+export const stops = [
+  { leg: 0, at: 0 }, // the estate from above, the hero
+  { leg: 1, at: 0.37 }, // in the coffee row
+  { leg: 1, at: 0.9 }, // the base of one plant, in silence
+  { leg: 2, at: 0.92 }, // the root in the soil
+  { leg: 3, at: 0.925 }, // bacteria on the root hair, the lens open
+  { leg: 4, at: 0.92 }, // the backlit leaf
+  { leg: 5, at: 0.87 }, // the plant from the air
+  { leg: 6, at: 0.63 }, // the orbit
+  { leg: 7, at: 0.51 }, // the fermentation hall
+  { leg: 8, at: 0.88 }, // the cans on the bench
+  { leg: 9, at: 0.23 }, // the farmer spraying
+  { leg: 9, at: 0.9 }, // the drip line
+  { leg: 10, at: 1 }, // back over the estate, the finale
+].map((s) => ({ ...s, t: at(s.leg, s.at) }));
+
+/**
+ * Chapters for the rail, each pointing at the first leg that carries it and
+ * the first rest frame inside it.
+ */
+export const chapters = legs
+  .reduce<{ name: string; leg: number; last: number }[]>((acc, l, i) => {
     const prev = acc[acc.length - 1];
     if (prev && prev.name === l.chapter) prev.last = i;
     else acc.push({ name: l.chapter, leg: i, last: i });
     return acc;
-  },
-  [],
-);
+  }, [])
+  .map((c) => ({ ...c, stop: stops.findIndex((s) => legs[s.leg].chapter === c.name) }));

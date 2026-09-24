@@ -190,6 +190,36 @@ Diff and what changed:
 - Leg 6 still reads **plain**, not trust. It is the client's real drone clip, upscaled from 640x352 and soft next to the generated legs. Left in because the brief asks for real assets first; a fresh 4K drone pass over the plant would fix it.
 - The peak is the largest visual change on the sheet and has the longest continuous run (3.8vh, one line of copy). The act before it is the quietest frame on the page. The finale holds with its CTA on screen.
 
+## Rest frames (added 2026-09-24)
+
+Client feedback: *"Every single scroll should end with proper image frame and smoother navigation flow."*
+
+What a scroll could stop on before: the two authored dissolves as a double exposure (hall over the aerial, the can over the field), the mid-clip morphs Kling makes between shots (root into the microscope, root hair into the leaf, the cans materialising, the can sweeping past the lens), and the lens in mid-air above the can.
+
+Now scroll still scrubs the film under the hand, but when a scroll ends the page glides (smoothstep, ~0.6-1.4s by distance) to one of thirteen rest frames in `components/home/world/legs.ts` (`stops`). A nudge of more than ~6% of a screen carries on to the next frame in that direction; less goes back. Keyboard arrows, Page keys and Space step frame to frame; Home and End go to the ends. The chapter rail glides to a chapter within 2.4 screens and cuts through a 240ms dip to the canvas colour for anything further, holding the dip until the destination clip has a real frame at its target. Any input during a glide hands the page back. Reduced motion: no glides, the keyboard and rail jump.
+
+| # | Leg @ local | Frame | Copy up |
+|---|---|---|---|
+| 0 | 0 @ 0 | the estate from above | hero |
+| 1 | 1 @ 0.37 | in the coffee row | crop |
+| 2 | 1 @ 0.9 | the base of one plant | none (the silence) |
+| 3 | 2 @ 0.92 | the root in the soil | none |
+| 4 | 3 @ 0.925 | bacteria on the root hair, lens fully open | microbes |
+| 5 | 4 @ 0.92 | the backlit leaf, lens docked | plant |
+| 6 | 5 @ 0.87 | the plant from the air | grown-here |
+| 7 | 6 @ 0.63 | the orbit | factory |
+| 8 | 7 @ 0.51 | the hall, lens full | fermentation |
+| 9 | 8 @ 0.88 | the cans on the bench, lens gone into the can | products |
+| 10 | 9 @ 0.23 | the farmer spraying | application |
+| 11 | 9 @ 0.9 | the drip line, release finished | none |
+| 12 | 10 @ 1 | back over the estate | finale |
+
+Every frame sits outside the seam bands, so exactly one clip is on screen. To make each copy block fully up at its frame, the microbes, plant and products windows moved later (they had faded out before the clean frame arrived). Every specimen move now finishes before the frame it leads to: open at leg 3 0.7-0.9, grow at leg 7 0.04-0.46, drop at leg 8 0.56-0.84, release at leg 9 0.6-0.86. The portrait lens is clamped on screen, because the bacteria sit at the right edge of the 9:16 crop.
+
+**If a clip is regenerated, re-pick its rest frame.** Check the frame is not a morph, keep it clear of the seam band (0.08vh either side of a leg boundary), and check the copy windows and the specimen timeline against it.
+
+Verified at 1440x900: at all 13 frames exactly one leg is at opacity 1 and every copy block is at 0 or 1. Wheel, keyboard, rail glide, rail cut, slip back, reverse, an interrupted glide and landing after a reload all end on a rest frame. No frame took over 24ms during a glide, at about 80 seeks per second. At 500x714 portrait, frames 4, 5 and 9 checked by eye. Not verified: real touch on iOS or Android, and Safari, which has no `scrollend` and relies on the 180ms quiet timer.
+
 ## Generated
 
 Higgsfield (no kie.ai key on this machine). 12 stills on nano_banana_pro 2K (~2 credits each), 11 Kling 3.0 Pro silent clips (8.75 per 5s, 10.5 per 6s), including 2 rerolls. Balance 245.5 before, 141.5 after the first wave, ~124 after the rerolls. Two stills were cropped rather than regenerated (soil vignette, stem centring).

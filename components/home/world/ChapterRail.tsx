@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { chapters, legs, starts, weights } from "./legs";
+import { goTo } from "./flight";
+import { chapters, legs } from "./legs";
 
 /** Which chapter each leg belongs to, by index. */
 const chapterOfLeg = legs.map((l) => chapters.findIndex((c) => c.name === l.chapter));
@@ -15,7 +16,8 @@ const GROUND_AFTER = chapters.findIndex((c) => c.name === "Crop");
  * A continuous world has no sections to scroll between, so this is how the
  * visitor knows where they are and how they skip ahead. One tick per chapter,
  * the current one named, a hairline where the ground is. Every tick is a
- * button that flies the camera there.
+ * button that takes the camera to the chapter's first rest frame: a glide to
+ * a neighbour, a cut to anywhere further.
  */
 export function ChapterRail() {
   const [active, setActive] = useState(0);
@@ -47,16 +49,6 @@ export function ChapterRail() {
     };
   }, []);
 
-  const go = (leg: number) => {
-    // Land a third of the way into the leg, where its words are already up.
-    const into = leg === 0 ? 0 : 0.35;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({
-      top: Math.round((starts[leg] + weights[leg] * into) * window.innerHeight),
-      behavior: reduce ? "auto" : "smooth",
-    });
-  };
-
   return (
     <nav className="wrail" aria-label="Chapters" data-flash={flash || undefined}>
       <ol>
@@ -65,7 +57,7 @@ export function ChapterRail() {
             <button
               type="button"
               aria-current={i === active ? "step" : undefined}
-              onClick={() => go(c.leg)}
+              onClick={() => goTo(c.stop)}
             >
               <span className="wrail__tick" aria-hidden />
               <span className="wrail__name">{c.name}</span>

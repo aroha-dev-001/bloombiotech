@@ -6,8 +6,9 @@ import { Fragment, useCallback, useEffect, useRef, type ReactNode } from "react"
 import { preconnect } from "react-dom";
 import { Aperture } from "../Aperture";
 import { ChapterRail } from "./ChapterRail";
+import { goTo, settleNow, startFlight } from "./flight";
 import { Specimen } from "./Specimen";
-import { legs, weights, windowOf } from "./legs";
+import { legs, stops, weights, windowOf } from "./legs";
 import { media, MEDIA_ORIGIN } from "@/lib/media";
 import "./scrollcraft.css";
 import "./world.css";
@@ -28,7 +29,11 @@ import "./world.css";
  * decoded video to the browser the moment the visitor leaves.
  */
 
-type ScrollCraft = { mount: (root: Element, opts?: object) => unknown };
+type ScrollCraft = {
+  mount: (root: Element, opts?: object) => unknown;
+  /** The engine's live records, one per mount. flight.ts reads the playheads. */
+  instances?: unknown[];
+};
 declare global {
   interface Window {
     ScrollCraft?: ScrollCraft;
@@ -42,6 +47,8 @@ type Side = "lead" | "trail";
 type Block = {
   id: string;
   window: string;
+  /** The rest frame (legs.ts) this block is fully up on. */
+  stop: number;
   side: Side;
   /** A denser scrim, for the white fermentation hall. */
   deep?: boolean;
@@ -52,6 +59,7 @@ const blocks: Block[] = [
   {
     id: "hero",
     window: "hero",
+    stop: 0,
     side: "lead",
     body: (
       <>
@@ -71,6 +79,7 @@ const blocks: Block[] = [
   {
     id: "crop",
     window: windowOf([1, 0.02], [1, 0.72]),
+    stop: 1,
     side: "trail",
     body: (
       <>
@@ -84,8 +93,11 @@ const blocks: Block[] = [
   },
   // Leg 2, the surface closing over the lens, carries nothing on purpose.
   {
+    // Up as the camera reaches the root hair, and held through the lens
+    // opening on the bacteria, where the scroll comes to rest.
     id: "microbes",
-    window: windowOf([3, 0.16], [3, 0.97]),
+    window: windowOf([3, 0.5], [4, 0.1], [0.4, 0.15]),
+    stop: 4,
     side: "lead",
     body: (
       <>
@@ -98,8 +110,10 @@ const blocks: Block[] = [
     ),
   },
   {
+    // Over the leaf, not the morph into it.
     id: "plant",
-    window: windowOf([4, 0.3], [4, 0.97]),
+    window: windowOf([4, 0.5], [5, 0.12], [0.4, 0.15]),
+    stop: 5,
     side: "trail",
     body: (
       <>
@@ -114,12 +128,14 @@ const blocks: Block[] = [
   {
     id: "grown-here",
     window: windowOf([5, 0.42], [6, 0.3]),
+    stop: 6,
     side: "lead",
     body: <h2 className="wtitle">We grow those microbes here.</h2>,
   },
   {
     id: "factory",
     window: windowOf([6, 0.24], [7, 0.02]),
+    stop: 7,
     side: "trail",
     body: (
       <>
@@ -134,6 +150,7 @@ const blocks: Block[] = [
   {
     id: "fermentation",
     window: windowOf([7, 0.06], [7, 0.96]),
+    stop: 8,
     side: "lead",
     deep: true,
     body: (
@@ -147,8 +164,10 @@ const blocks: Block[] = [
     ),
   },
   {
+    // Arrives with the cans, and stays up until the dissolve to the field.
     id: "products",
-    window: windowOf([8, 0.4], [8, 1]),
+    window: windowOf([8, 0.5], [8, 1], [0.4, 0.12]),
+    stop: 9,
     side: "trail",
     deep: true,
     body: (
@@ -165,6 +184,7 @@ const blocks: Block[] = [
     // Up while the farmer is spraying, gone before the camera passes the can.
     id: "application",
     window: windowOf([9, 0.02], [9, 0.44]),
+    stop: 10,
     side: "lead",
     body: (
       <>
@@ -179,6 +199,7 @@ const blocks: Block[] = [
   {
     id: "finale",
     window: "finale",
+    stop: stops.length - 1,
     side: "lead",
     body: (
       <>
@@ -202,6 +223,7 @@ const blocks: Block[] = [
 
 export function World() {
   const host = useRef<HTMLDivElement>(null);
+  const veil = useRef<HTMLDivElement>(null);
 
   // The first poster is the page's largest paint and it comes from the media
   // host, so open that connection with the document. The clips are fetched
@@ -230,11 +252,18 @@ export function World() {
 
     // The spacer is sized once at mount. Re-measure when the window and the
     // faces have settled, or a mount that saw a 0px viewport never scrolls.
-    const relayout = () => window.dispatchEvent(new Event("resize"));
+    // A reload restores the scroll to wherever it was, so land that too.
+    const relayout = () => {
+      window.dispatchEvent(new Event("resize"));
+      settleNow();
+    };
     if (document.readyState === "complete") relayout();
     else window.addEventListener("load", relayout, { once: true });
     document.fonts?.ready.then(relayout);
   }, []);
+
+  // Every scroll ends on a rest frame. See flight.ts.
+  useEffect(() => startFlight(veil.current), []);
 
   // Leave by full navigation. See the note at the top of the file.
   useEffect(() => {
@@ -287,14 +316,13 @@ export function World() {
   }, []);
 
   // Keyboard focus on a link inside a copy block that is not on screen yet
-  // lands on something invisible. Fly to where that block is fully shown.
+  // lands on something invisible. Jump to the rest frame that block is up on.
   useEffect(() => {
     const onFocus = (e: FocusEvent) => {
-      const block = (e.target as Element | null)?.closest?.("[data-at]");
+      const block = (e.target as Element | null)?.closest?.("[data-stop]");
       if (!(block instanceof HTMLElement)) return;
       if (parseFloat(getComputedStyle(block).opacity || "0") > 0.9) return;
-      const at = parseFloat(block.dataset.at ?? "0");
-      window.scrollTo({ top: Math.round(at * document.documentElement.scrollHeight), behavior: "instant" });
+      goTo(Number(block.dataset.stop), "instant");
     };
     document.addEventListener("focusin", onFocus);
     return () => document.removeEventListener("focusin", onFocus);
@@ -360,7 +388,7 @@ export function World() {
                 data-sc-copy
                 data-sc-window={b.window}
                 data-copy-id={b.id}
-                data-at={plateauOf(b.window)}
+                data-stop={b.stop}
                 className={`wcopy wcopy--${b.side}`}
               >
                 {b.body}
@@ -373,20 +401,9 @@ export function World() {
       </div>
 
       <Specimen />
+
+      {/* The dip a far chapter jump cuts through. */}
+      <div ref={veil} className="wveil" aria-hidden />
     </div>
   );
-}
-
-/**
- * The middle of a copy block's window as a fraction of the page's scroll
- * height, for the focus handler. The spacer is the track plus one viewport,
- * so a track fraction maps onto the document by the same ratio.
- */
-function plateauOf(win: string) {
-  const total = weights.reduce((a, b) => a + b, 0);
-  const track = total / (total + 1);
-  if (win === "hero") return "0";
-  if (win === "finale") return track.toFixed(4);
-  const [f, t] = win.split(" ").map(Number);
-  return (((f + t) / 2) * track).toFixed(4);
 }

@@ -29,18 +29,20 @@ const CAPTURE: [number, number] = [0.6, 0.55]; // bacteria on the root hair
 const CAN: [number, number] = [0.505, 0.6]; // label of the centre can
 const DRIP: [number, number] = [0.5, 0.7]; // the wet soil under the emitter
 
-/* The timeline, in track positions (viewport-heights of scroll). */
+/* The timeline, in track positions (viewport-heights of scroll). Every move
+   finishes before the rest frame it leads to (legs.ts), so a scroll never
+   comes to rest with the lens half-open, in mid-air or half-released. */
 const T = {
-  open0: at(3, 0.74),
-  open1: at(3, 0.94),
+  open0: at(3, 0.7),
+  open1: at(3, 0.9),
   dock0: at(4, 0.04),
   dock1: at(4, 0.26),
-  grow0: at(7, 0.08),
-  grow1: at(7, 0.78),
-  drop0: at(8, 0.42),
-  drop1: at(8, 0.9),
-  out0: at(9, 0.66),
-  out1: at(9, 1) + 0.12,
+  grow0: at(7, 0.04),
+  grow1: at(7, 0.46),
+  drop0: at(8, 0.56),
+  drop1: at(8, 0.84),
+  out0: at(9, 0.6),
+  out1: at(9, 0.86),
 };
 
 type Cell = {
@@ -291,7 +293,12 @@ export function Specimen() {
       const narrow = vw <= 860;
       const d = dock(narrow);
       const big = Math.min(vw, vh) * (narrow ? 0.22 : 0.17);
-      const [cx, cy] = toScreen(CAPTURE, vw, vh, portrait);
+      // In the portrait crop the bacteria sit near the right edge, and the
+      // microbes rest frame is held open right there. Keep the whole lens on
+      // screen.
+      const [bx, cy] = toScreen(CAPTURE, vw, vh, portrait);
+      const edge = big + Math.min(24, vw * 0.04);
+      const cx = Math.min(Math.max(bx, edge), vw - edge);
       const [kx, ky] = toScreen(CAN, vw, vh, portrait);
       const [rx, ry] = toScreen(DRIP, vw, vh, portrait);
 
@@ -340,12 +347,20 @@ export function Specimen() {
       }
     };
 
+    // A chapter cut lands somewhere else entirely. Be there, rather than
+    // flying the lens across its whole timeline once the veil lifts.
+    const onCut = () => {
+      smoothT = -1;
+    };
+
     size();
     window.addEventListener("resize", size, { passive: true });
+    window.addEventListener("world:cut", onCut);
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", size);
+      window.removeEventListener("world:cut", onCut);
     };
   }, []);
 

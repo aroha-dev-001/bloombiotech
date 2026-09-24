@@ -401,3 +401,23 @@ body {
     transition-duration: 1ms;
   }
 }
+
+/* ---------------------------------------------------------------- veil --- */
+
+/* The dip a far chapter jump cuts through (flight.ts). Over the film, the
+   words and the lens; under the rail, so the tick is seen to move. */
+.wveil {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--sc-canvas);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 460ms var(--sc-ease-out);
+}
+
+.wveil[data-on] {
+  opacity: 1;
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+}
