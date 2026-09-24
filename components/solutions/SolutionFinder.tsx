@@ -179,7 +179,7 @@ export function SolutionFinder({
 
       {/* ------------------------------------------------------- the crop */}
       <div className="finder-q" ref={cropStep}>
-        <h3 className="display d-2">What do you grow?</h3>
+        <h3 className="display pg-h3">What do you grow?</h3>
         <div className="crop-grid" role="group" aria-label="What do you grow?">
           {crops.map((c) => (
             <button
@@ -210,7 +210,7 @@ export function SolutionFinder({
 
       {/* ------------------------------------------------------- the need */}
       <div className="finder-q" ref={needStep} data-state={crop ? undefined : "locked"}>
-        <h3 className="display d-2">What do you want to do?</h3>
+        <h3 className="display pg-h3">What do you want to do?</h3>
         <div className="need-grid" role="group" aria-label="What do you want to do?">
           {orderedNeeds.map((n) => (
             <button
@@ -240,7 +240,7 @@ export function SolutionFinder({
           Shown rather than listed: four photographs of the product actually
           reaching the root, each carrying the dose printed against it. */}
       <div className="finder-q" ref={routeStep} data-state={need ? undefined : "locked"}>
-        <h3 className="display d-2">How will you apply it?</h3>
+        <h3 className="display pg-h3">How will you apply it?</h3>
         <div className="route-grid" role="group" aria-label="How will you apply it?">
           {applications.map((a) => (
             <button
@@ -263,9 +263,7 @@ export function SolutionFinder({
             </button>
           ))}
         </div>
-        <p className="prose-body">
-          Skip this if you are not sure — it only narrows the list.
-        </p>
+        <p className="finder-note">Not sure? Skip it. It only narrows the list.</p>
       </div>
 
       {/* ---------------------------------------------------- the answer */}
@@ -273,7 +271,7 @@ export function SolutionFinder({
         {crop ? (
           <>
             <div className="flex flex-wrap items-end justify-between gap-6">
-              <h3 className="display d-2 max-w-[18ch]">
+              <h3 className="display pg-h3 max-w-[22ch]">
                 {needRecord
                   ? `${needRecord.short} in ${cropRecord?.name.toLowerCase()}`
                   : `For ${cropRecord?.name.toLowerCase()}`}
@@ -296,7 +294,7 @@ export function SolutionFinder({
                 ))}
               </div>
             ) : (
-              <p className="lede lede-wide">
+              <p className="finder-note">
                 Nothing matches that combination.{" "}
                 {route ? (
                   <button type="button" className="link" onClick={() => setRoute(undefined)}>
@@ -321,7 +319,7 @@ export function SolutionFinder({
             </div>
           </>
         ) : (
-          <p className="lede lede-wide">
+          <p className="finder-note">
             Pick a crop to see the packs made for it, or{" "}
             <Link href="/products" className="text-[var(--fg)] underline underline-offset-4">
               browse everything

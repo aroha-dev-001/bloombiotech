@@ -81,6 +81,8 @@ export const chapters: readonly Chapter[] = [
 export type Capability = {
   index: string;
   title: string;
+  /** One line for the card. `body` is the full sentence, shown when opened. */
+  short: string;
   body: string;
   meta: string[];
 };
@@ -89,36 +91,42 @@ export const capabilities: readonly Capability[] = [
   {
     index: "01",
     title: "Liquid fermentation",
+    short: "Stainless-steel fermenters grow the liquid consortia and biocontrols.",
     body: "Scigenics stainless-steel fermenters with dedicated control panels and sterile air, feeding the liquid consortia and biocontrol lines.",
     meta: ["Bhu Samruddhi", "Bio Astra liquid", "Bluderma", "Blumonas"],
   },
   {
     index: "02",
     title: "Carrier formulation",
+    short: "Powder packs for drenching, compost, neem cake and drip.",
     body: "Powder formulations on a carrier base for soil drenching, FYM and compost enrichment, neem cake enrichment and filtered drip fertigation.",
     meta: ["Bio Sanjiveeni", "Bio Astra carrier", "Compost culture"],
   },
   {
     index: "03",
     title: "Entomopathogens",
+    short: "Natural fungi against soil insects, sucking pests and nematodes.",
     body: "Metarhizium, Beauveria, Verticillium and Pochonia produced as both carrier and liquid for soil insects, sucking pests and nematodes.",
     meta: ["Bio Erase", "Bio Hit", "Bio Ace", "Bio Vanish"],
   },
   {
     index: "04",
     title: "Composting programmes",
+    short: "A culture that turns farm waste into compost in 30-45 days.",
     body: "Arka Fermented Cocopeat culture for coffee pulp, farmyard manure, green waste and raw coco-peat, on windrow beds that mature in 30 to 45 days.",
     meta: ["Coffee pulp 2 kg/MT", "FYM 3 kg/MT", "Coco-peat 4 kg/MT"],
   },
   {
     index: "05",
     title: "Crop nutrition",
+    short: "An imported range: humate, fulvate, calcium, micronutrients, seaweed.",
     body: "An imported nutrition line — potassium humate and fulvate, EDTA calcium, chelated micronutrients and seaweed amino acids — held to the printed analysis on each pack.",
     meta: ["Jackpot", "Fulcare", "Calcare", "NutriCare C2", "AscoGold"],
   },
   {
     index: "06",
     title: "Technical assistance",
+    short: "Dose by crop, route and pack, quoted from the plant.",
     body: "The brochure mission is products plus technical assistance: dose by crop, route and pack, quoted from the plant rather than sold from a shelf.",
     meta: ["Farmers", "Dealers", "Estates", "KVKs"],
   },
@@ -282,6 +290,7 @@ export const routes = [
   {
     index: "01",
     name: "Soil drench",
+    short: "Drench the whole root zone.",
     dose: "1 kg in 40 L of water",
     body: "Mix and drench the entire root system. The standard route for Bio Sanjiveeni, Bio Astra and the biocontrol carriers.",
     photo: "/farm/application.jpg",
@@ -290,6 +299,7 @@ export const routes = [
   {
     index: "02",
     name: "FYM or compost",
+    short: "Mix in, then apply to soil after 7-10 days.",
     dose: "5–10 kg in 1 MT of FYM",
     body: "Enrich farmyard manure or compost, then apply to the soil after 7 to 10 days. Biocontrols go in at 10 kg per tonne.",
     photo: "/farm/compost.jpg",
@@ -298,6 +308,7 @@ export const routes = [
   {
     index: "03",
     name: "Drip fertigation",
+    short: "Always filter first. It protects the emitters.",
     dose: "1 kg in 40 L, filtered",
     body: "Mix, filter the solution, then fertigate through the drip line. Filtering is not optional — it protects the emitters.",
     photo: "/farm/drip.jpg",
@@ -306,6 +317,7 @@ export const routes = [
   {
     index: "04",
     name: "Liquid",
+    short: "Bhu Samruddhi, as a spray or through drip.",
     dose: "10 ml per litre",
     body: "Bhu Samruddhi as foliar spray or through drip. Same three AMC organisms as the powder, delivered in liquid.",
     photo: "/farm/foliar.jpg",

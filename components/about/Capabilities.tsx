@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { capabilities } from "@/lib/plant";
 import { products } from "@/lib/products";
-import { SectionHead } from "../SectionHead";
 
 /**
  * What the unit can make — six capabilities, each one openable.
@@ -81,14 +80,14 @@ export function Capabilities() {
   const shot = cap ? shots[cap.index] : null;
 
   return (
-    <section id="capability" data-tone="light" className="band">
+    <section id="capability" data-tone="light" className="pg-band">
       <div className="shell">
-        <SectionHead
-          title="What the unit can make."
-          lede="Six capabilities, each tied to packs you can hold."
-        />
+        <div className="pg-head">
+          <h2 className="display pg-h2">What the unit can make.</h2>
+          <p className="pg-note">Six capabilities, each tied to packs you can hold. Open one to see them.</p>
+        </div>
 
-        <ul className="mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {capabilities.map((c, i) => (
             <li key={c.index} data-rv style={{ ["--rv-d" as string]: `${i * 60}ms` }}>
               <button
@@ -98,11 +97,11 @@ export function Capabilities() {
                 aria-haspopup="dialog"
               >
                 <span className="cap-shot" aria-hidden>
-                  <Image src={shots[c.index].src} alt="" fill sizes="22rem" />
+                  <Image src={shots[c.index].src} alt="" fill sizes="(min-width: 640px) 22rem, 6rem" />
                 </span>
                 <span className="cap-body">
-                  <span className="display d-3">{c.title}</span>
-                  <span className="prose-body mt-3 block">{c.body}</span>
+                  <span className="cap-title">{c.title}</span>
+                  <span className="cap-line">{c.short}</span>
                   <span className="cap-more">
                     What this makes
                     <i aria-hidden>→</i>
@@ -136,8 +135,8 @@ export function Capabilities() {
             </figure>
 
             <div className="cap-dialog-body">
-              <h3 className="display d-2">{cap.title}</h3>
-              <p className="pex-lead mt-5 text-[var(--dim)]">{cap.body}</p>
+              <h3 className="display pg-h2">{cap.title}</h3>
+              <p className="cap-dialog-lead">{cap.body}</p>
 
               <p className="cap-dialog-label">What this makes</p>
               <ul className="cap-packs">

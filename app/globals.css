@@ -1275,12 +1275,12 @@ textarea.field {
 
 .finder {
   display: grid;
-  gap: clamp(2.5rem, 5vw, 4.5rem);
+  gap: clamp(1.75rem, 3.5vw, 3rem);
 }
 
 .finder-q {
   display: grid;
-  gap: clamp(1.25rem, 2.5vw, 2rem);
+  gap: clamp(0.85rem, 1.8vw, 1.25rem);
   /* Every step is a scroll target; clear the fixed header and the trail. */
   scroll-margin-top: calc(var(--nav-h) + 4.5rem);
 }
@@ -1363,8 +1363,8 @@ textarea.field {
 }
 
 .finder-chip-label {
-  padding: 0.5rem 0.35rem 0.5rem 0.95rem;
-  font-size: 1rem;
+  padding: 0.45rem 0.35rem 0.45rem 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
   letter-spacing: -0.01em;
   cursor: pointer;
@@ -1388,8 +1388,8 @@ textarea.field {
 }
 
 .finder-reset {
-  padding: 0.5rem 0.9rem;
-  font-size: 1rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.95rem;
   color: var(--dim);
   cursor: pointer;
   transition: color 0.3s var(--ease-out);
@@ -1399,11 +1399,12 @@ textarea.field {
   color: var(--fg);
 }
 
-/* crop tiles — image-led, no captions under them */
+/* crop tiles — image-led, no captions under them. Three to a row on a
+   phone, so the five crops take two short rows instead of three tall ones. */
 .crop-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.6rem, 1.2vw, 1rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.2vw, 1rem);
 }
 
 @media (min-width: 760px) {
@@ -1419,7 +1420,7 @@ textarea.field {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: var(--r);
-  padding: 1.1rem;
+  padding: clamp(0.65rem, 1.4vw, 1.1rem);
   color: var(--bone);
   cursor: pointer;
   isolation: isolate;
@@ -1472,25 +1473,31 @@ textarea.field {
 .crop-card-name {
   font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   font-weight: 600;
-  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  font-size: clamp(0.98rem, 1.5vw, 1.25rem);
   letter-spacing: -0.025em;
   line-height: 1.05;
 }
 
-/* need list — large, tappable rows */
+/* need list — tappable, two to a row on a phone */
 .need-grid {
   display: grid;
-  gap: 0.6rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 760px) {
+  .need-grid {
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
 }
 
 .need-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  min-height: 4.75rem;
-  padding: 1rem 1.4rem;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.7rem 1rem;
   border: 1px solid var(--line);
   border-radius: var(--r);
   background: transparent;
@@ -1516,9 +1523,22 @@ textarea.field {
 }
 
 .need-card span:first-child {
-  font-size: 1.15rem;
+  font-size: 0.98rem;
   font-weight: 500;
-  letter-spacing: -0.015em;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.finder-note {
+  max-width: 50ch;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.finder-note .link,
+.finder-note a {
+  color: var(--fg);
 }
 
 .need-card i {
@@ -2089,10 +2109,15 @@ textarea.field {
     grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
     align-items: start;
   }
+
+  .label-stage {
+    width: 100%;
+  }
 }
 
 .label-stage {
   position: relative;
+  width: min(100%, 16rem);
   aspect-ratio: 4 / 5;
   border-radius: var(--r-lg);
   border: 1px solid var(--line);
@@ -2261,7 +2286,8 @@ textarea.field {
   }
 }
 
-.pp-band {
+.pp-band,
+.pg-band {
   padding-block: clamp(2.25rem, 4.5vw, 4rem);
 }
 
@@ -2275,13 +2301,15 @@ textarea.field {
   padding-top: 0;
 }
 
-.pp-h2 {
+.pp-h2,
+.pg-h2 {
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.05;
   letter-spacing: -0.03em;
 }
 
-.pp-note {
+.pp-note,
+.pg-note {
   margin-top: 0.6rem;
   font-size: 1rem;
   line-height: 1.5;
@@ -2354,6 +2382,241 @@ textarea.field {
 
 .pp-next:hover .pp-next-arw {
   transform: translateX(4px);
+}
+
+/* ---------- reading pages ----------
+   The compact scale the product pages set, shared by Solutions, About and
+   Contact: a shorter hero, a step-down title, section heads that are one
+   heading and one line, and bands that do not leave a screen of bone between
+   them. */
+
+.pg-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  min-height: clamp(21rem, 56svh, 34rem);
+  padding-top: calc(var(--nav-h) + 3rem);
+  padding-bottom: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+.pg-hero-plain {
+  padding-top: calc(var(--nav-h) + clamp(1.25rem, 3vw, 2.5rem));
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.pg-title {
+  max-width: 16ch;
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.pg-lede {
+  margin-top: 1rem;
+  max-width: 46ch;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--dim);
+  text-wrap: pretty;
+}
+
+[data-tone="dark"] .pg-lede {
+  color: color-mix(in srgb, var(--bone) 84%, transparent);
+}
+
+.pg-head {
+  display: grid;
+  max-width: 46rem;
+  margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.pg-h3 {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+/* The closing band: one line and the two ways onward, on one row. */
+.pg-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+}
+
+.pg-cta .pg-h2 {
+  max-width: 20ch;
+}
+
+.pg-cta-actions,
+.pg-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* Two buttons side by side on a phone rather than stacked. */
+@media (max-width: 559px) {
+  .pg-cta-actions .btn,
+  .pg-btns .btn {
+    padding-inline: 1.15rem;
+  }
+}
+
+/* ---------- route guide (solutions) ----------
+   Four dose cards, all visible. A phone gets a small photograph beside each
+   card; a wide screen puts it on top. */
+
+.rg {
+  display: grid;
+  gap: 0.7rem;
+}
+
+@media (min-width: 900px) {
+  .rg {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.rg-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r);
+  background: var(--surface);
+}
+
+.rg-shot {
+  position: relative;
+  flex: none;
+  width: 5.5rem;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  background: var(--steel);
+}
+
+.rg-shot img {
+  object-fit: cover;
+}
+
+@media (min-width: 900px) {
+  .rg-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .rg-card > div {
+    padding: 0 0.4rem 0.4rem;
+  }
+
+  .rg-shot {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ---------- contact ----------
+   Three ways in under the title, then the form, with the addresses beside it
+   (under it on a phone, after the form rather than before). */
+
+.ct-quick {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+@media (min-width: 640px) {
+  .ct-quick {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ct-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  height: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--surface);
+  transition:
+    border-color 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out),
+    transform 0.35s var(--spring-out);
+}
+
+.ct-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  transform: translateY(-2px);
+}
+
+.ct-card svg {
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.55rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ct-card > span {
+  display: grid;
+  min-width: 0;
+}
+
+.ct-way {
+  font-size: 0.95rem;
+  color: var(--dim);
+}
+
+.ct-val {
+  font-weight: 500;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.ct-main {
+  padding-top: 0;
+}
+
+.ct-grid {
+  display: grid;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .ct-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+}
+
+.ct-photo {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .ct-photo {
+    display: block;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 1rem;
+    border-radius: var(--r-lg);
+  }
 }
 
 /* ---------- catalogue ----------
@@ -2760,14 +3023,6 @@ textarea.field {
   transform: none;
 }
 
-/* Still used by the About page's capabilities. */
-.pex-lead {
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: var(--fg);
-  text-wrap: pretty;
-}
-
 /* A wide, bright strip of real footage used to break up light pages.
    No dark scrim: nothing sits on top of it. */
 .page-band {
@@ -2956,7 +3211,7 @@ textarea.field {
   overflow: hidden;
   text-align: left;
   border: 1px solid var(--line);
-  border-radius: var(--r-lg);
+  border-radius: var(--r);
   background: transparent;
   cursor: pointer;
   transition:
@@ -2991,18 +3246,62 @@ textarea.field {
 }
 
 .cap-body {
-  display: block;
-  padding: clamp(1.5rem, 2.5vw, 2rem);
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.cap-title {
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+}
+
+.cap-line {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--dim);
 }
 
 .cap-more {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  margin-top: 1.4rem;
-  font-size: 1.05rem;
+  margin-top: 0.45rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--accent);
+}
+
+/* A phone gets the picture beside the words, not a banner above them. */
+@media (max-width: 639px) {
+  .cap-card {
+    flex-direction: row;
+    align-items: center;
+    border-radius: var(--r);
+  }
+
+  .cap-shot {
+    flex: none;
+    width: 6rem;
+    align-self: stretch;
+    aspect-ratio: auto;
+  }
+
+  .cap-body {
+    padding: 0.85rem 1rem;
+  }
+}
+
+.cap-dialog-lead {
+  margin-top: 0.9rem;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--dim);
 }
 
 .cap-more i {
@@ -3243,92 +3542,150 @@ textarea.field {
   font-size: 1.02rem;
 }
 
-/* ---------- from culture to pack (about) ----------
-   The frame pins and the steps scroll past it on a wide screen; on a phone the
-   steps simply stack, each carrying its own frame. */
+/* ---------- about ----------
+   The story as key points beside the founders, the process as five compact
+   steps, capability cards with one line each. */
 
-.proc {
+.ab-origin {
   display: grid;
-  gap: 3rem;
+  gap: 1.75rem;
+  align-items: start;
 }
 
 @media (min-width: 900px) {
-  .proc {
-    position: relative;
-    grid-template-columns: minmax(0, 32rem) minmax(0, 1fr);
-    gap: clamp(3rem, 6vw, 6rem);
-    align-items: start;
+  .ab-origin {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+    gap: clamp(2rem, 5vw, 4rem);
   }
 }
 
-.proc-media {
-  position: sticky;
-  top: calc(var(--nav-h) + 3rem);
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border-radius: var(--r-lg);
-  background: color-mix(in srgb, var(--fg) 5%, transparent);
-}
-
-.proc-frame {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.05);
-  transition:
-    opacity 0.7s var(--ease-out),
-    transform 1.4s var(--ease-out);
-}
-
-.proc-frame[data-on="true"] {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.proc-steps {
-  display: grid;
-  gap: 4rem;
-}
-
-@media (min-width: 900px) {
-  .proc-steps {
-    /* Each step gets enough travel that the frame beside it has time to land
-       before the next one takes over. */
-    gap: 0;
-  }
-
-  .proc-step {
-    display: flex;
-    min-height: 78svh;
-    flex-direction: column;
-    justify-content: center;
-    opacity: 0.4;
-    transition: opacity 0.5s var(--ease-out);
-  }
-
-  .proc-step[data-on="true"] {
-    opacity: 1;
+@media (min-width: 1100px) {
+  .ab-origin {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 25rem);
   }
 }
 
-.proc-step-media {
-  position: relative;
-  margin-bottom: 1.75rem;
+.ab-founders {
   aspect-ratio: 16 / 11;
-  overflow: hidden;
-  border-radius: var(--r);
-  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  border-radius: var(--r-lg);
 }
 
-.proc-n {
-  color: var(--accent);
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
+@media (min-width: 900px) {
+  .ab-founders {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+.ab-quote {
+  margin-top: 1.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--brand);
+}
+
+.ab-quote p {
+  max-width: 44ch;
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.ab-quote footer {
+  margin-top: 0.45rem;
   font-size: 0.95rem;
+  color: var(--dim);
 }
 
-.reduce-motion .proc-frame {
-  transition: none;
+/* Steps: rows with a small picture on a phone, five columns on a wide screen. */
+.ab-steps {
+  display: grid;
+  gap: 0.6rem;
+}
+
+@media (min-width: 1024px) {
+  .ab-steps {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+.ab-step {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r);
+  background: var(--surface);
+}
+
+.ab-step-shot {
+  position: relative;
+  flex: none;
+  width: 5.5rem;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  background: var(--steel);
+}
+
+@media (min-width: 1024px) {
+  .ab-step {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .ab-step > div {
+    padding: 0 0.35rem 0.35rem;
+  }
+
+  .ab-step-shot {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.ab-step-n {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ab-step-title {
+  margin-top: 0.45rem;
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.06rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.ab-step-line {
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--dim);
+}
+
+.ab-where {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .ab-where {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+  }
 }
 
 /* ---------- application route cards (finder step 3) ----------

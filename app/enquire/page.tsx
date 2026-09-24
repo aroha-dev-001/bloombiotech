@@ -2,7 +2,6 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { audienceFromSlug } from "@/lib/audience";
-import { Button } from "@/components/Button";
 import { site, whatsappUrl, telHref } from "@/lib/site";
 import { plant } from "@/lib/plant";
 import { Split } from "@/components/motion/Split";
@@ -21,85 +20,89 @@ export default async function EnquirePage({ searchParams }: Props) {
 
   return (
     <>
-      {/* Split rather than another full-bleed banner: two pages already open
-          on one, and a contact page reads warmer with the field beside the
-          invitation than under it. */}
-      <header data-tone="light" className="pt-[calc(var(--nav-h)+4rem)] pb-20">
-        <div className="shell grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
-          <div>
-            <Split as="h1" text="Talk to us." className="display d-hero max-w-[12ch]" />
-            <p
-              className="lede lede-wide mt-8"
-              data-rv
-              style={{ ["--rv-d" as string]: "240ms" }}
-            >
-              No price list, no checkout. Tell us what you grow and we quote
-              against it.
-            </p>
-            <div
-              className="mt-10 flex flex-wrap gap-3"
-              data-rv
-              style={{ ["--rv-d" as string]: "320ms" }}
-            >
-              <Button href={whatsappUrl()}>WhatsApp us</Button>
-              <Button href={telHref()} variant="ghost" arrow={false}>
-                {site.phoneDisplay}
-              </Button>
-            </div>
-          </div>
+      <header data-tone="light" className="pg-hero-plain">
+        <div className="shell">
+          <Split as="h1" text="Talk to us." className="display pg-title" />
+          <p className="pg-lede" data-rv style={{ ["--rv-d" as string]: "200ms" }}>
+            No price list, no checkout. Tell us what you grow and we quote
+            against it.
+          </p>
 
-          <figure className="frame aspect-[4/5]" data-rv="mask">
-            <Image
-              src="/farm/plantation-portrait.jpg"
-              alt="A sunlit coffee plantation in Karnataka"
-              fill
-              priority
-              sizes="(min-width: 1024px) 26rem, 100vw"
-              className="object-cover"
-            />
-          </figure>
+          {/* The three ways in, before anything else. */}
+          <ul className="ct-quick" data-rv style={{ ["--rv-d" as string]: "280ms" }}>
+            <li>
+              <a href={whatsappUrl()} className="ct-card">
+                <svg viewBox="0 0 24 24" aria-hidden>
+                  <path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.1A8 8 0 1 1 20 11.5z" />
+                </svg>
+                <span>
+                  <span className="ct-way">WhatsApp</span>
+                  <span className="ct-val">Message us</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href={telHref()} className="ct-card">
+                <svg viewBox="0 0 24 24" aria-hidden>
+                  <path d="M6.6 3.5h2.9l1.4 4.1-2 1.4a11 11 0 0 0 6.1 6.1l1.4-2 4.1 1.4v2.9a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" />
+                </svg>
+                <span>
+                  <span className="ct-way">Call</span>
+                  <span className="ct-val">{site.phoneDisplay}</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${site.email}`} className="ct-card">
+                <svg viewBox="0 0 24 24" aria-hidden>
+                  <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+                  <path d="M4 7l8 6 8-6" />
+                </svg>
+                <span>
+                  <span className="ct-way">Email</span>
+                  <span className="ct-val">{site.email}</span>
+                </span>
+              </a>
+            </li>
+          </ul>
         </div>
       </header>
 
-      <section data-tone="light" className="band">
-        <div className="shell grid gap-14 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-20">
-          <div>
-            <dl className="spec spec-tight">
-              <div>
-                <dt>Phone</dt>
-                <dd>
-                  <a href={telHref()}>{site.phoneDisplay}</a>
-                </dd>
-              </div>
-              <div>
-                <dt>Email</dt>
-                <dd>
-                  <a href={`mailto:${site.email}`}>{site.email}</a>
-                </dd>
-              </div>
-              <div>
-                <dt>Production unit</dt>
-                <dd>{plant.unitAddress}</dd>
-              </div>
-              <div>
-                <dt>Office</dt>
-                <dd>{site.addressLines.join(", ")}</dd>
-              </div>
+      <section data-tone="light" className="pg-band ct-main">
+        <div className="shell ct-grid">
+          <div className="pp-form">
+            <h2 className="display pg-h3">Send an enquiry</h2>
+            <p className="pg-note">Crop, area and the pack if you know it. We reply with a quote.</p>
+            <div className="mt-6">
+              <EnquiryForm presetAudience={audience} presetProduct={q.product} />
+            </div>
+          </div>
+
+          <aside className="ct-aside">
+            <figure className="frame ct-photo">
+              <Image
+                src="/farm/plantation-portrait.jpg"
+                alt="A sunlit coffee plantation in Karnataka"
+                fill
+                sizes="(min-width: 900px) 24rem, 1px"
+                className="object-cover"
+              />
+            </figure>
+            <dl className="pk-spec ct-spec">
               <div>
                 <dt>Hours</dt>
                 <dd>{site.hours}</dd>
               </div>
+              <div data-wide>
+                <dt>Production unit</dt>
+                <dd>{plant.unitAddress}</dd>
+              </div>
+              <div data-wide>
+                <dt>Office</dt>
+                <dd>{site.addressLines.join(", ")}</dd>
+              </div>
             </dl>
-            <div className="mt-10">
-              <Button href={whatsappUrl()} variant="ghost" arrow={false}>
-                WhatsApp instead
-              </Button>
-            </div>
-          </div>
-
-          <div className="rounded-[var(--r-lg)] border border-[var(--line)] bg-[var(--surface)] p-7 sm:p-12">
-            <EnquiryForm presetAudience={audience} presetProduct={q.product} />
-          </div>
+          </aside>
         </div>
       </section>
     </>

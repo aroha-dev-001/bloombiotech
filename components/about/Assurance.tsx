@@ -44,29 +44,29 @@ export function Assurance() {
     { dt: "Storage", dd: product.storage },
   ].filter((r) => r.dd);
 
+  // What every label carries, as the points to look for.
+  const checks = ["The organisms inside", "Colony count", "Batch number", "Date made", "Expiry date"];
+
   return (
-    <section id="assurance" data-tone="carbon" className="band">
-      <div className="shell grid gap-14 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-20">
+    <section id="assurance" data-tone="carbon" className="pg-band">
+      <div className="shell grid gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:self-start">
-          <h2 className="display d-1" data-rv>
+          <h2 className="display pg-h2" data-rv>
             Read the label, not the brochure.
           </h2>
-          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "100ms" }}>
-            Every pack prints the things you can check without taking our word
-            for it: the organisms inside, the colony count per gram or
-            millilitre, the batch it came from, the day it was made and the day
-            it stops working.
+          <p className="pg-note" data-rv>
+            Every pack prints what you can check yourself:
           </p>
-          <p
-            className="prose-body mt-6 max-w-[44ch]"
-            data-rv
-            style={{ ["--rv-d" as string]: "160ms" }}
-          >
-            <strong>Where this page and the pack in your hand disagree, the
-            pack wins.</strong> Formulations are improved and label figures move
-            with them; the can is the version that shipped.
+          <ul className="pk-chips mt-4" data-rv>
+            {checks.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+          <p className="pg-note mt-5" data-rv>
+            <strong className="text-[var(--fg)]">If this page and the pack disagree, the pack wins.</strong>{" "}
+            Label figures move with the formulation.
           </p>
-          <div className="mt-10" data-rv style={{ ["--rv-d" as string]: "220ms" }}>
+          <div className="mt-6" data-rv>
             <Link href="/products" className="btn btn-ghost">
               Every pack in full
               <span className="arw" aria-hidden>
@@ -126,21 +126,19 @@ export function Assurance() {
                 ))}
               </div>
 
-              <h3 className="display d-2 mt-8">{product.name}</h3>
-              <p className="meta mt-2">{product.technology}</p>
+              <h3 className="display pg-h3 mt-6">{product.name}</h3>
+              <p className="meta mt-1">{product.technology}</p>
 
-              {/* Tight variant: in a ~20rem column the two-column spec leaves the value
-                  less room than its label. */}
-              <dl className="spec spec-tight mt-8" key={product.slug}>
+              <dl className="pk-spec mt-4" key={product.slug}>
                 {printed.map((r) => (
-                  <div key={r.dt}>
+                  <div key={r.dt} data-wide={r.dd.length > 30 || undefined}>
                     <dt>{r.dt}</dt>
                     <dd>{r.dd}</dd>
                   </div>
                 ))}
               </dl>
 
-              <div className="mt-8">
+              <div className="mt-5">
                 <Link href={`/products/${product.slug}`} className="link">
                   {product.name} in full
                 </Link>

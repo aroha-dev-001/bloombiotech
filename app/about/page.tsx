@@ -6,8 +6,7 @@ import { plant } from "@/lib/plant";
 import { Origin } from "@/components/about/Origin";
 import { Capabilities } from "@/components/about/Capabilities";
 import { Assurance } from "@/components/about/Assurance";
-import { ProcessScroll } from "@/components/about/ProcessScroll";
-import { SectionHead } from "@/components/SectionHead";
+import { ProcessSteps } from "@/components/about/ProcessSteps";
 import { Split } from "@/components/motion/Split";
 
 export const metadata: Metadata = {
@@ -19,10 +18,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <header
-        data-tone="dark"
-        className="relative isolate flex min-h-[70svh] items-end overflow-hidden pt-[calc(var(--nav-h)+5rem)] pb-20"
-      >
+      <header data-tone="dark" className="pg-hero">
         <Image
           src="/film/factory-aerial.jpg"
           alt=""
@@ -34,41 +30,41 @@ export default function AboutPage() {
         <div className="hero-veil -z-10" />
         <div className="grain" aria-hidden />
         <div className="shell">
-          <Split as="h1" text="Growing microbes in Chikkamagaluru since 2013." className="display d-hero max-w-[13ch]" />
-          <p className="lede lede-wide mt-8" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
-            An agri-biotechnology company in technological collaboration with
-            ICAR-IIHR, making licensed microbial inputs at its own unit in
-            Chikkamagaluru.
+          <Split
+            as="h1"
+            text="Growing microbes in Chikkamagaluru since 2013."
+            className="display pg-title"
+          />
+          <p className="pg-lede" data-rv style={{ ["--rv-d" as string]: "240ms" }}>
+            An agri-biotech company working with ICAR-IIHR, making licensed
+            microbial inputs at our own unit.
           </p>
         </div>
       </header>
 
       <Origin />
 
-      {/* From culture to pack — the five steps, with the frame pinned beside
-          them. The copy is the plant's own chapter list. */}
-      <section id="process" data-tone="bone" className="band">
+      {/* From culture to pack: five steps, a picture and a line each. */}
+      <section id="process" data-tone="bone" className="pg-band">
         <div className="shell">
-          <SectionHead
-            title="From culture to pack."
-            lede="What is licensed, what is grown, and what is printed on the label."
-          />
-          <div className="mt-16">
-            <ProcessScroll />
+          <div className="pg-head">
+            <h2 className="display pg-h2">From culture to pack.</h2>
+            <p className="pg-note">What is licensed, what is grown, and what is printed on the label.</p>
           </div>
+          <ProcessSteps />
         </div>
       </section>
 
       <Capabilities />
       <Assurance />
 
-      <section data-tone="light" className="band">
-        <div className="shell grid gap-14 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-20">
+      <section data-tone="light" className="pg-band">
+        <div className="shell ab-where">
           <div>
-            <h2 className="display d-1" data-rv>
+            <h2 className="display pg-h2" data-rv>
               Where it is made.
             </h2>
-            <div className="mt-10 flex flex-wrap gap-3" data-rv>
+            <div className="pg-btns mt-5" data-rv>
               <Link href={site.maps} className="btn btn-ghost">
                 Google Maps
               </Link>
@@ -78,18 +74,14 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <dl className="spec" data-rv>
-            <div>
+          <dl className="pk-spec" data-rv>
+            <div data-wide>
               <dt>Production unit</dt>
               <dd>{plant.unitAddress}</dd>
             </div>
-            <div>
+            <div data-wide>
               <dt>Office</dt>
               <dd>{site.addressLines.join(", ")}</dd>
-            </div>
-            <div>
-              <dt>GSTIN</dt>
-              <dd>{plant.gstin}</dd>
             </div>
             <div>
               <dt>Phone</dt>
@@ -97,22 +89,24 @@ export default function AboutPage() {
                 <a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a>
               </dd>
             </div>
-            <div>
+            <div data-wide>
               <dt>Email</dt>
               <dd>
                 <a href={`mailto:${site.email}`}>{site.email}</a>
               </dd>
             </div>
+            <div>
+              <dt>GSTIN</dt>
+              <dd>{plant.gstin}</dd>
+            </div>
           </dl>
         </div>
       </section>
 
-      <section data-tone="carbon" className="band">
-        <div className="shell flex flex-wrap items-end justify-between gap-10">
-          <h2 className="display d-1 max-w-[16ch]">
-            Every pack is quoted from this address.
-          </h2>
-          <div className="flex flex-wrap gap-3">
+      <section data-tone="carbon" className="pg-band">
+        <div className="shell pg-cta">
+          <h2 className="display pg-h2">Every pack is quoted from this address.</h2>
+          <div className="pg-cta-actions">
             <Link href="/solutions#find" className="btn btn-primary">
               Find your solution
               <span className="arw" aria-hidden>

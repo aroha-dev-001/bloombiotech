@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { plateOf, type Product } from "@/lib/products";
 import { applicationsOf } from "@/lib/solutions";
+import { KeyPoints } from "@/components/KeyPoints";
 
 /**
  * A pack, in key points.
@@ -75,15 +76,6 @@ function routeVisual(product: Product) {
 }
 
 const microbial = (p: Product) => p.cfu !== "Not a microbial product";
-
-function Tick() {
-  return (
-    <svg viewBox="0 0 20 20" aria-hidden className="pk-tick">
-      <circle cx="10" cy="10" r="10" />
-      <path d="M5.8 10.4l2.7 2.7 5.7-6" />
-    </svg>
-  );
-}
 
 export function ProductExplorer({ product }: { product: Product }) {
   const [tab, setTab] = useState<TabKey>("does");
@@ -167,17 +159,7 @@ export function ProductExplorer({ product }: { product: Product }) {
         >
           {tab === "does" ? (
             <>
-              <ul className="pk-points">
-                {product.points.map((p) => (
-                  <li key={p.title}>
-                    <Tick />
-                    <div>
-                      <h3>{p.title}</h3>
-                      <p>{p.how}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <KeyPoints items={product.points} />
               {product.against?.length ? (
                 <div className="pk-group">
                   <h3 className="pk-sub">Works against</h3>
