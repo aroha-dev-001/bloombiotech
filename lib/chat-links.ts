@@ -1,10 +1,10 @@
 import { products } from "./products";
-import { site } from "./site";
+import { site, whatsappUrl } from "./site";
 
 /**
  * Turns the plain text of an assistant answer into text and links, so that
  * whatever the answer mentions can be acted on where it is read: a phone
- * number calls, an email opens mail, the plant's address opens the map, a
+ * number calls, the WhatsApp number opens WhatsApp, an email opens mail, the plant's address opens the map, a
  * web address opens, and a pack name opens that pack's page.
  *
  * It runs on the text as rendered, so it covers the grounded answers and the
@@ -26,6 +26,7 @@ const pattern = new RegExp(
     String.raw`(?<email>[\w.%+-]+@[\w-]+(?:\.[\w-]+)+)`,
     String.raw`(?<url>https?:\/\/[^\s<>()]+|www\.[^\s<>()]+)`,
     String.raw`(?<address>Assessment Number 10[^\n]{0,120}?577102)`,
+    `(?<whatsapp>${escape(site.whatsappDisplay)})`,
     String.raw`(?<phone>(?:\+91[\s-]?|\b)[6-9]\d{4}[\s-]?\d{5}\b)`,
     String.raw`(?<product>\b(?:${names.join("|")})\b)`,
   ].join("|"),
@@ -48,6 +49,7 @@ export function linkify(text: string): Segment[] {
       // This site's own address stays in this tab.
       if (href.startsWith(site.website)) href = href.slice(site.website.length) || "/";
     } else if (g.address) href = site.maps;
+    else if (g.whatsapp) href = whatsappUrl();
     else if (g.phone) href = `tel:+91${raw.replace(/\D/g, "").slice(-10)}`;
     else if (g.product) {
       const slug = slugByName.get(raw.toLowerCase());

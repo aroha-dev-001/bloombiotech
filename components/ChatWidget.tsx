@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ThinkingOrb } from "thinking-orbs";
 import { welcomeAnswer, type ChatAnswer } from "@/lib/assistant";
 import { isExternal, isHandoff, linkify } from "@/lib/chat-links";
+import { site, telHref, whatsappUrl } from "@/lib/site";
 import { AiMark } from "./AiMark";
 
 type RoleMsg =
@@ -142,7 +143,7 @@ export function ChatWidget() {
           bullets: ["Could not reach the assistant.", "Use WhatsApp or the quote form."],
           links: [
             { label: "Quote", href: "/enquire" },
-            { label: "WhatsApp", href: "https://wa.me/918884568019" },
+            { label: "WhatsApp", href: whatsappUrl() },
           ],
           followUps: [],
         },
@@ -155,10 +156,10 @@ export function ChatWidget() {
         answer: asAnswer({
           title: "Offline",
           summary: "The chat could not reach the server. Call or WhatsApp the plant.",
-          bullets: ["Network error.", "Call +91 88845 68019."],
+          bullets: ["Network error.", `Call ${site.phoneDisplay}.`],
           links: [
-            { label: "Call +91 88845 68019", href: "tel:+918884568019" },
-            { label: "WhatsApp", href: "https://wa.me/918884568019" },
+            { label: `Call ${site.phoneDisplay}`, href: telHref() },
+            { label: "WhatsApp", href: whatsappUrl() },
             { label: "Quote form", href: "/enquire" },
           ],
           followUps: [],

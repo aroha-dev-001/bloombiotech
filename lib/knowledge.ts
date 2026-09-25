@@ -22,7 +22,7 @@ export function companyKnowledge(): KnowledgeChunk[] {
       id: "contact",
       title: "Contact and address",
       href: "/enquire",
-      text: `Phone / customer care ${site.phoneDisplay}. Email ${site.email}. Hours: ${site.hours}. Address: ${site.addressLines.join(", ")}. Website ${site.website}. Instagram ${site.instagram}. Maps: ${site.maps}.`,
+      text: `Phone / customer care ${site.phoneDisplay}. WhatsApp ${site.whatsappDisplay}. Email ${site.email}. Hours: ${site.hours}. Address: ${site.addressLines.join(", ")}. Website ${site.website}. Instagram ${site.instagram}. Maps: ${site.maps}.`,
     },
     {
       id: "licence",
@@ -34,7 +34,7 @@ export function companyKnowledge(): KnowledgeChunk[] {
       id: "quote",
       title: "How to get a quote",
       href: "/enquire",
-      text: `Request a quote at /enquire or WhatsApp ${site.phoneDisplay} or email ${site.email}. Include crop, area, and solid vs liquid. No published price list and no online checkout. Prices are quoted by the plant.`,
+      text: `Request a quote at /enquire or WhatsApp ${site.whatsappDisplay} or email ${site.email}. Include crop, area, and solid vs liquid. No published price list and no online checkout. Prices are quoted by the plant.`,
     },
     {
       id: "mix",
@@ -58,7 +58,7 @@ export function companyKnowledge(): KnowledgeChunk[] {
       id: "audiences",
       title: "Who to contact and how",
       href: "/enquire",
-      text: `One contact form at /enquire for everyone. It asks once whether you are a farmer, distributor, retailer or other, then name, phone, product of interest and what you need. Estates, KVKs and institutions use the same desk. WhatsApp ${site.phoneDisplay} is fastest during working hours.`,
+      text: `One contact form at /enquire for everyone. It asks once whether you are a farmer, distributor, retailer or other, then name, phone, product of interest and what you need. Estates, KVKs and institutions use the same desk. WhatsApp ${site.whatsappDisplay} is fastest during working hours.`,
     },
   ];
 

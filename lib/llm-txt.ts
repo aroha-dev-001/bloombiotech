@@ -27,7 +27,8 @@ Source: the Bloom Biotech printed brochure and pack labels. There is no publishe
 
 ## Contact
 
-- Phone and WhatsApp: ${site.phoneDisplay} (https://wa.me/91${site.phone})
+- Phone: ${site.phoneDisplay}
+- WhatsApp: ${site.whatsappDisplay} (https://wa.me/${site.whatsapp})
 - Email: ${site.email}
 - Plant: ${site.addressLines.join(", ")} (${site.maps})
 - Hours: ${site.hours}

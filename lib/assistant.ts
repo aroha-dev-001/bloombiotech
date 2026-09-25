@@ -76,9 +76,10 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
   if (/phone|call|whatsapp|email|address|where|location|map|hour|open|contact/.test(q)) {
     return {
       title: "Plant & contact",
-      summary: `Bloom Biotech, Assessment Number 10, 5th Phase KHB Colony, CMC Ward No. 1, K.M. Road, Chikkamagaluru 577102. Customer care ${site.phoneDisplay}. Email ${site.email}. Website ${site.website}.`,
+      summary: `Bloom Biotech, Assessment Number 10, 5th Phase KHB Colony, CMC Ward No. 1, K.M. Road, Chikkamagaluru 577102. Customer care ${site.phoneDisplay}. WhatsApp ${site.whatsappDisplay}. Email ${site.email}. Website ${site.website}.`,
       bullets: [
-        `Phone / WhatsApp: ${site.phoneDisplay}`,
+        `Phone: ${site.phoneDisplay}`,
+        `WhatsApp: ${site.whatsappDisplay}`,
         `Email: ${site.email}`,
         site.addressLines.join(", "),
         `${site.hours} · ${site.website}`,
@@ -92,10 +93,10 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
     return {
       title: "How quoting works",
       summary:
-        "The brochure does not print prices. The plant quotes after crop, area, and solid vs liquid. WhatsApp or email the same contacts on the pack.",
+        "The brochure does not print prices. The plant quotes after crop, area, and solid vs liquid. WhatsApp or email the plant.",
       bullets: [
         "Send crop, acres or seedling count, and powder vs liquid.",
-        `WhatsApp ${site.phoneDisplay} or email ${site.email}.`,
+        `WhatsApp ${site.whatsappDisplay} or email ${site.email}.`,
         "Pouch and bottle labels still win on dose and CFU.",
         "Jackpot, Fulcare, Calcare, NutriCare C2 are imported; no repacking in India.",
       ],
@@ -264,7 +265,7 @@ export function answerQuestion(question: string, priorUser: string[] = []): Chat
 
   return {
     title: "I don’t have that in the brochure",
-    summary: `I only brief packs printed in the Bloom Biotech brochure. I will not invent a price or a yield percentage. WhatsApp ${site.phoneDisplay} or email ${site.email}.`,
+    summary: `I only brief packs printed in the Bloom Biotech brochure. I will not invent a price or a yield percentage. WhatsApp ${site.whatsappDisplay} or email ${site.email}.`,
     bullets: [
       "Try Bio Sanjiveeni, Bhu Samruddhi, Bio Astra, Bluderma, or compost culture.",
       "Ask AMC dose for the 1 kg / 40 L and 10 ml/L figures.",
@@ -366,5 +367,5 @@ Rules:
 - Compost Culture doses: coffee pulp 2 kg/MT; FYM 3 kg/MT; green leaf 1 kg/MT; coco-peat 4 kg culture + 4 kg urea / MT.
 - href must be a site path. No em dashes. Do not claim to place an order.
 - Product pages are /products/<slug>, with slug one of: ${products.map((p) => p.slug).join(", ")}. Each has an enquiry form at /products/<slug>#enquire. Other pages: /products, /solutions#find, /enquire, /about, /faq.
-- Write pack names exactly as listed, and the phone ${site.phoneDisplay} and email ${site.email} in full: they become links on screen.
+- Write pack names exactly as listed, the phone ${site.phoneDisplay}, the WhatsApp number ${site.whatsappDisplay} and email ${site.email} in full: they become links on screen.
 `;

@@ -42,11 +42,11 @@ export const faqs: readonly Faq[] = [
   },
   {
     q: "How do I identify the genuine product?",
-    a: `Read the label. Every Bloom pack prints the batch number, month and year of manufacture, expiry, MRP and net content, with the licence and CIBRC registration numbers. The IIHR-licensed packs also carry the ICAR, IIHR and 100% Organic marks and the line “R&D by Indian Institute of Horticultural Research”. If anything is missing or looks altered, WhatsApp a photo of the label to ${site.phoneDisplay} before you use it.`,
+    a: `Read the label. Every Bloom pack prints the batch number, month and year of manufacture, expiry, MRP and net content, with the licence and CIBRC registration numbers. The IIHR-licensed packs also carry the ICAR, IIHR and 100% Organic marks and the line “R&D by Indian Institute of Horticultural Research”. If anything is missing or looks altered, WhatsApp a photo of the label to ${site.whatsappDisplay} before you use it.`,
   },
   {
     q: "Where can I buy Bloom products?",
-    a: `Directly from the plant in Chikkamagaluru. WhatsApp or call ${site.phoneDisplay}, email ${site.email}, or send an enquiry from this site. There is no online shop — the plant quotes against your crop and area.`,
+    a: `Directly from the plant in Chikkamagaluru. WhatsApp ${site.whatsappDisplay}, call ${site.phoneDisplay}, email ${site.email}, or send an enquiry from this site. There is no online shop — the plant quotes against your crop and area.`,
   },
   {
     q: "Do you supply directly to farmers?",
@@ -54,7 +54,7 @@ export const faqs: readonly Faq[] = [
   },
   {
     q: "Do you supply dealers/distributors?",
-    a: `Yes. Choose Distributor or Retailer on the enquiry form, or WhatsApp ${site.phoneDisplay}, and tell us which packs you want to carry.`,
+    a: `Yes. Choose Distributor or Retailer on the enquiry form, or WhatsApp ${site.whatsappDisplay}, and tell us which packs you want to carry.`,
   },
   {
     q: "What is the minimum order quantity?",
@@ -66,6 +66,6 @@ export const faqs: readonly Faq[] = [
   },
   {
     q: "How can I get technical assistance?",
-    a: `WhatsApp or call ${site.phoneDisplay} during working hours, or email ${site.email}. Tell us the crop, the area and what you are seeing in the field — a photo helps — and the plant will help with the pack, the dose and how to apply it.`,
+    a: `WhatsApp ${site.whatsappDisplay} or call ${site.phoneDisplay} during working hours, or email ${site.email}. Tell us the crop, the area and what you are seeing in the field — a photo helps — and the plant will help with the pack, the dose and how to apply it.`,
   },
 ] as const;

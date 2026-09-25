@@ -122,7 +122,7 @@ export function EnquiryForm({
 
       {status === "err" ? (
         <p className="prose-body">
-          That did not go through. WhatsApp or call {site.phoneDisplay}.
+          That did not go through. WhatsApp {site.whatsappDisplay} or call {site.phoneDisplay}.
         </p>
       ) : null}
     </form>

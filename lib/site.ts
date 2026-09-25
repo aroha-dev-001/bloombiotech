@@ -8,6 +8,8 @@ export const site = {
   website: "https://www.bloombiotech.co.in",
   phone: "8884568019",
   phoneDisplay: "+91 88845 68019",
+  whatsapp: "15551480890",
+  whatsappDisplay: "+1 (555) 148-0890",
   email: "bloombiotech@gmail.com",
   instagram: "https://www.instagram.com/bloom_biotech/",
   facebook: "https://www.facebook.com/bloombiotech/",
@@ -31,5 +33,5 @@ export function whatsappUrl(text?: string) {
   const message =
     text ??
     "Hello Bloom Biotech, I would like a quote for biofertilizer / microbial products.";
-  return `https://wa.me/91${site.phone}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(message)}`;
 }
