@@ -65,6 +65,10 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${archivo.variable} ${plex.variable} ${plexMono.variable}`}
+      // The home page's stylesheet turns on smooth scrolling. This tells
+      // Next to switch it off for route changes, so a new page opens at its
+      // top instead of scrolling there.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

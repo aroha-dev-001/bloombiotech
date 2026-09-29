@@ -6,7 +6,7 @@ import { Fragment, useCallback, useEffect, useRef, type ReactNode } from "react"
 import { preconnect } from "react-dom";
 import { Aperture } from "../Aperture";
 import { ChapterRail } from "./ChapterRail";
-import { goTo, settleNow, startFlight } from "./flight";
+import { goTo, startFlight } from "./flight";
 import { Specimen } from "./Specimen";
 import { legs, stops, weights, windowOf } from "./legs";
 import { media, MEDIA_ORIGIN } from "@/lib/media";
@@ -252,17 +252,13 @@ export function World() {
 
     // The spacer is sized once at mount. Re-measure when the window and the
     // faces have settled, or a mount that saw a 0px viewport never scrolls.
-    // A reload restores the scroll to wherever it was, so land that too.
-    const relayout = () => {
-      window.dispatchEvent(new Event("resize"));
-      settleNow();
-    };
+    const relayout = () => window.dispatchEvent(new Event("resize"));
     if (document.readyState === "complete") relayout();
     else window.addEventListener("load", relayout, { once: true });
     document.fonts?.ready.then(relayout);
   }, []);
 
-  // Every scroll ends on a rest frame. See flight.ts.
+  // The keyboard and the rail step between rest frames. See flight.ts.
   useEffect(() => startFlight(veil.current), []);
 
   // Leave by full navigation. See the note at the top of the file.

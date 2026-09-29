@@ -71,7 +71,8 @@ body {
   bottom: var(--w-copy-bottom);
   max-width: min(40rem, 46vw);
   text-shadow:
-    0 1px 2px rgb(4 6 5 / 0.35),
+    0 1px 2px rgb(4 6 5 / 0.45),
+    0 2px 10px rgb(4 6 5 / 0.3),
     0 6px 28px rgb(4 6 5 / 0.35);
 }
 
@@ -135,46 +136,47 @@ body {
   pointer-events: none;
 }
 
-/* One shape, mirrored: an ellipse of density centred on where the copy sits,
-   so the headline's top edge is covered as well as the corner, and the rest of
-   the frame keeps its full contrast. */
+/* One shape, mirrored: a soft ellipse of density centred on where the copy
+   sits, so the headline's top edge is covered as well as the corner. Kept
+   light (the owner found the first, denser one read as a dark patch on the
+   film); the letters' own shadow does the rest. */
 .wscrim--lead {
   background: radial-gradient(
-    ellipse 56% 52% at 27% 76%,
-    rgb(7 10 8 / 0.8) 0%,
-    rgb(7 10 8 / 0.72) 42%,
-    rgb(7 10 8 / 0.36) 72%,
+    ellipse 50% 46% at 27% 78%,
+    rgb(7 10 8 / 0.46) 0%,
+    rgb(7 10 8 / 0.36) 40%,
+    rgb(7 10 8 / 0.14) 72%,
     transparent 100%
   );
 }
 
 .wscrim--trail {
   background: radial-gradient(
-    ellipse 56% 52% at 73% 76%,
-    rgb(7 10 8 / 0.8) 0%,
-    rgb(7 10 8 / 0.72) 42%,
-    rgb(7 10 8 / 0.36) 72%,
+    ellipse 50% 46% at 73% 78%,
+    rgb(7 10 8 / 0.46) 0%,
+    rgb(7 10 8 / 0.36) 40%,
+    rgb(7 10 8 / 0.14) 72%,
     transparent 100%
   );
 }
 
-/* The same shape, denser, for the white fermentation hall. */
+/* The same shape, a little denser, for the white fermentation hall. */
 .wscrim--deep.wscrim--lead {
   background: radial-gradient(
-    ellipse 58% 54% at 27% 76%,
-    rgb(7 10 8 / 0.9) 0%,
-    rgb(7 10 8 / 0.84) 44%,
-    rgb(7 10 8 / 0.46) 74%,
+    ellipse 52% 48% at 27% 78%,
+    rgb(7 10 8 / 0.6) 0%,
+    rgb(7 10 8 / 0.5) 42%,
+    rgb(7 10 8 / 0.2) 74%,
     transparent 100%
   );
 }
 
 .wscrim--deep.wscrim--trail {
   background: radial-gradient(
-    ellipse 58% 54% at 73% 76%,
-    rgb(7 10 8 / 0.9) 0%,
-    rgb(7 10 8 / 0.84) 44%,
-    rgb(7 10 8 / 0.46) 74%,
+    ellipse 52% 48% at 73% 78%,
+    rgb(7 10 8 / 0.6) 0%,
+    rgb(7 10 8 / 0.5) 42%,
+    rgb(7 10 8 / 0.2) 74%,
     transparent 100%
   );
 }
@@ -340,10 +342,10 @@ body {
   .wscrim--trail {
     background: linear-gradient(
       to top,
-      rgb(7 10 8 / 0.9) 0%,
-      rgb(7 10 8 / 0.74) 26%,
-      rgb(7 10 8 / 0.34) 48%,
-      transparent 66%
+      rgb(7 10 8 / 0.6) 0%,
+      rgb(7 10 8 / 0.44) 26%,
+      rgb(7 10 8 / 0.16) 48%,
+      transparent 62%
     );
   }
 
@@ -351,10 +353,10 @@ body {
   .wscrim--deep.wscrim--trail {
     background: linear-gradient(
       to top,
-      rgb(7 10 8 / 0.94) 0%,
-      rgb(7 10 8 / 0.86) 34%,
-      rgb(7 10 8 / 0.5) 54%,
-      transparent 72%
+      rgb(7 10 8 / 0.72) 0%,
+      rgb(7 10 8 / 0.56) 32%,
+      rgb(7 10 8 / 0.24) 52%,
+      transparent 68%
     );
   }
 
