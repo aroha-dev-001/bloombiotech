@@ -4,12 +4,9 @@ import type { Ref } from "react";
 import { cutoutOf, products, shotOf, type Product } from "@/lib/products";
 
 /**
- * The two halves of the pack showcase, shared by the catalogue (where they
- * turn on their own, PackCarousel) and by every product page (where they are
- * links, and the page's own pack is the one standing in front).
- *
- * Neither holds state, so a server page can render them as plain links and
- * the carousel can drive them with a callback.
+ * The two halves of a product page's opening frame: the page's own pack
+ * standing in front with its neighbours behind, and every pack's name along
+ * the foot. Both are plain links, so the page renders them on the server.
  */
 
 const n = products.length;
@@ -19,59 +16,28 @@ function offset(i: number, active: number) {
   let d = i - active;
   if (d > n / 2) d -= n;
   if (d < -n / 2) d += n;
-  return Math.abs(d) > 2 ? "far" : String(d);
+  return Math.abs(d) > 1 ? "far" : String(d);
 }
 
 export const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
- * The pack in front, with the packs either side of it standing behind.
- *
- * Every pack is on the stage the whole time and moves between five places
- * (far left, left, front, right, far right), so turning to the next one is
- * one continuous move rather than a picture swapping. The cutouts are the real
- * packs lifted off their photographs; see scripts/cutouts/build.py.
+ * The pack in front, with the packs either side of it standing behind, each a
+ * link to its own page. The cutouts are the real packs lifted off their
+ * photographs; see scripts/cutouts/build.py.
  */
-export function PackStage({
-  active,
-  onSelect,
-  linked,
-  priority,
-  stageRef,
-  onPointerDown,
-  onPointerUp,
-  onHover,
-}: {
-  active: number;
-  /** Carousel: a neighbour brings itself to the front. */
-  onSelect?: (i: number) => void;
-  /** Product page: a neighbour is a link to its own page. */
-  linked?: boolean;
-  priority?: boolean;
-  stageRef?: Ref<HTMLDivElement>;
-  onPointerDown?: React.PointerEventHandler<HTMLDivElement>;
-  onPointerUp?: React.PointerEventHandler<HTMLDivElement>;
-  /** A mouse over the packs (not a finger, which never leaves). */
-  onHover?: (over: boolean) => void;
-}) {
+export function PackStage({ active, priority }: { active: number; priority?: boolean }) {
   return (
-    <div
-      className="ps-stage"
-      ref={stageRef}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerEnter={onHover && ((e) => e.pointerType === "mouse" && onHover(true))}
-      onPointerLeave={onHover && ((e) => e.pointerType === "mouse" && onHover(false))}
-    >
+    <div className="ps-stage">
       {products.map((p, i) => {
         const pos = offset(i, active);
-        const side = pos === "-1" || pos === "1";
+        if (pos === "far") return null;
         const img = (
           <Image
             src={cutoutOf(p)}
             alt={i === active ? altOf(p) : ""}
             fill
-            priority={priority && (pos === "0" || side)}
+            priority={priority}
             sizes="(min-width: 900px) 30rem, 72vw"
             className="ps-img"
             draggable={false}
@@ -84,19 +50,14 @@ export function PackStage({
             className="ps-pack"
             data-pos={pos}
             data-shot={shotOf(p)}
-            data-slug={p.slug}
             aria-hidden={i !== active || undefined}
           >
-            {side && linked ? (
+            {i === active ? (
+              img
+            ) : (
               <Link href={`/products/${p.slug}`} className="ps-hit" tabIndex={-1}>
                 {img}
               </Link>
-            ) : side && onSelect ? (
-              <button type="button" className="ps-hit" tabIndex={-1} onClick={() => onSelect(i)}>
-                {img}
-              </button>
-            ) : (
-              img
             )}
           </div>
         );
@@ -109,103 +70,37 @@ function altOf(p: Product) {
   return shotOf(p) === "contents" ? `${p.name}: ${p.actives}` : `${p.name} pack`;
 }
 
-/**
- * Every pack by name along the foot of the showcase, with a line under each.
- * The line under the pack in front fills while it is on show.
- */
+/** Every pack by name, each a link, with a line under the current one. */
 export function PackStrip({
   active,
-  onSelect,
-  linked,
-  running,
-  paused,
-  onDone,
   stripRef,
   label,
 }: {
   active: number;
-  onSelect?: (i: number) => void;
-  linked?: boolean;
-  /** The front pack's line fills over the dwell, then calls onDone. */
-  running?: boolean;
-  /** Hold the fill where it is (pointer over, focus inside, out of view). */
-  paused?: boolean;
-  onDone?: () => void;
   stripRef?: Ref<HTMLElement>;
   label: string;
 }) {
-  const fill = (i: number) =>
-    i === active ? (
-      <span
-        key={`${active}-${running ? "run" : "full"}`}
-        className="ps-fill"
-        data-run={running || undefined}
-        data-paused={paused || undefined}
-        onAnimationEnd={onDone}
-      />
-    ) : null;
-
-  if (linked) {
-    return (
-      <nav className="ps-strip" aria-label={label} ref={stripRef}>
-        {products.map((p, i) => (
-          <Link
-            key={p.slug}
-            href={`/products/${p.slug}`}
-            className="ps-tab"
-            aria-current={i === active ? "page" : undefined}
-            data-on={i === active || undefined}
-          >
-            <span className="ps-tab-name">{p.name}</span>
-            <span className="ps-track">{fill(i)}</span>
-          </Link>
-        ))}
-      </nav>
-    );
-  }
-
   return (
-    <div
-      className="ps-strip"
-      role="tablist"
-      aria-label={label}
-      ref={stripRef as Ref<HTMLDivElement>}
-    >
+    <nav className="ps-strip" aria-label={label} ref={stripRef}>
       {products.map((p, i) => (
-        <button
+        <Link
           key={p.slug}
-          type="button"
-          role="tab"
-          id={`ps-tab-${p.slug}`}
-          aria-selected={i === active}
-          aria-controls={`ps-panel-${p.slug}`}
-          tabIndex={i === active ? 0 : -1}
+          href={`/products/${p.slug}`}
           className="ps-tab"
+          aria-current={i === active ? "page" : undefined}
           data-on={i === active || undefined}
-          onClick={() => onSelect?.(i)}
-          onKeyDown={(e) => {
-            const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-            if (!step) return;
-            e.preventDefault();
-            const next = (i + step + n) % n;
-            onSelect?.(next);
-            document.getElementById(`ps-tab-${products[next].slug}`)?.focus();
-          }}
         >
           <span className="ps-tab-name">{p.name}</span>
-          <span className="ps-track">{fill(i)}</span>
-        </button>
+          <span className="ps-track">{i === active ? <span className="ps-fill" /> : null}</span>
+        </Link>
       ))}
-    </div>
+    </nav>
   );
 }
 
-/** Keep the strip's current name in view without moving the page. */
-export function centreInStrip(strip: HTMLElement | null, i: number, behavior: ScrollBehavior = "smooth") {
+/** Scroll the strip so its current name is in the middle, without moving the page. */
+export function centreInStrip(strip: HTMLElement | null, i: number) {
   const tab = strip?.children[i] as HTMLElement | undefined;
   if (!strip || !tab || strip.scrollWidth <= strip.clientWidth) return;
-  strip.scrollTo({
-    left: tab.offsetLeft - strip.clientWidth / 2 + tab.clientWidth / 2,
-    behavior,
-  });
+  strip.scrollLeft = tab.offsetLeft - strip.clientWidth / 2 + tab.clientWidth / 2;
 }

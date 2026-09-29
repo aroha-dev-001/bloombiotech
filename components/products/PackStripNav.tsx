@@ -12,8 +12,8 @@ export function PackStripNav({ active }: { active: number }) {
   const strip = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    centreInStrip(strip.current, active, "instant");
+    centreInStrip(strip.current, active);
   }, [active]);
 
-  return <PackStrip active={active} linked label="Every product" stripRef={strip} />;
+  return <PackStrip active={active} label="Every product" stripRef={strip} />;
 }

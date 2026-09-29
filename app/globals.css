@@ -2516,8 +2516,36 @@ textarea.field {
 }
 
 /* ---------- catalogue ----------
-   The catalogue opens on the pack showcase (.ps-browse, at the end of this
-   file). What is left here is its closing band and the filter chips. */
+   Same idea as the product page: a step down from the display scale, and the
+   packs close under the words rather than a screen below them. */
+
+.cat-hero {
+  padding-top: calc(var(--nav-h) + clamp(1rem, 2.5vw, 2rem));
+}
+
+.cat-intro {
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.cat-title {
+  max-width: 16ch;
+  font-size: clamp(2.1rem, 4.6vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.cat-lede {
+  max-width: 40ch;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--dim);
+  text-wrap: pretty;
+}
+
+.cat-band {
+  padding-block: clamp(1.25rem, 3vw, 2.5rem) clamp(2.5rem, 5vw, 4rem);
+}
 
 .cat-cta {
   font-size: clamp(1.75rem, 3.6vw, 2.75rem);
@@ -4343,11 +4371,11 @@ textarea.field {
   }
 }
 
-/* ---------- pack showcase ----------
-   The catalogue opens on one pack at a time: the pack standing in front with
-   its neighbours behind, its name and purpose beside it, and every pack's
-   name along the foot. Product pages open on the same frame for their own
-   pack. See components/products/PackShow.tsx and PackCarousel.tsx. */
+/* ---------- product page frame ----------
+   A product page opens on its pack standing in front with its neighbours
+   behind, its name and purpose beside it, and every pack's name along the
+   foot. A step smaller than the display scale: this page is read to decide,
+   so the key points start close under it. See components/products/PackShow.tsx. */
 
 .ps {
   position: relative;
@@ -4358,25 +4386,16 @@ textarea.field {
     linear-gradient(180deg, #edf1e8 0%, var(--bone) 100%);
 }
 
-.ps-browse {
-  display: flex;
-  flex-direction: column;
-  min-height: 100svh;
-  padding-top: calc(var(--nav-h) + clamp(0.75rem, 2vw, 1.5rem));
-  padding-bottom: clamp(0.75rem, 2vw, 1.25rem);
-}
-
-.ps-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+.ps-page {
+  padding-top: calc(var(--nav-h) + clamp(1rem, 2.5vw, 2rem));
+  padding-bottom: clamp(1rem, 2.5vw, 1.75rem);
 }
 
 .ps-grid {
   display: grid;
-  flex: 1;
   align-items: center;
   gap: clamp(1rem, 3vw, 1.5rem);
+  margin-top: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 /* Phone: the pack first, the words under it. */
@@ -4395,79 +4414,7 @@ textarea.field {
   }
 }
 
-/* Phone, catalogue: the names go straight under the packs, above the words,
-   so the whole index is on the first screen and never under the chat button
-   that sits at the foot of it. */
-@media (max-width: 899px) {
-  .ps-browse .ps-grid {
-    display: contents;
-  }
-
-  .ps-browse .ps-body {
-    gap: 1rem;
-  }
-
-  .ps-browse .ps-stage {
-    order: 1;
-  }
-
-  .ps-browse .ps-foot {
-    order: 2;
-    margin-top: 0;
-  }
-
-  .ps-browse .ps-words {
-    order: 3;
-    padding-bottom: 5rem;
-  }
-}
-
 /* ----- the words ----- */
-
-.ps-words {
-  display: grid;
-}
-
-.ps-copy {
-  grid-area: 1 / 1;
-  align-self: center;
-  visibility: hidden;
-  transition: visibility 0s linear 0.3s;
-}
-
-.ps-copy[data-on] {
-  visibility: visible;
-  transition: none;
-}
-
-.ps-copy > * {
-  opacity: 0;
-  transform: translateY(0.75rem);
-  transition:
-    opacity 0.28s var(--ease-out),
-    transform 0.28s var(--ease-out);
-}
-
-.ps-copy[data-on] > * {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 0.7s var(--ease-out),
-    transform 0.9s var(--ease-out);
-  transition-delay: 0.26s;
-}
-
-.ps-copy[data-on] > :nth-child(2) {
-  transition-delay: 0.32s;
-}
-
-.ps-copy[data-on] > :nth-child(3) {
-  transition-delay: 0.4s;
-}
-
-.ps-copy[data-on] > :nth-child(n + 4) {
-  transition-delay: 0.46s;
-}
 
 .ps-kind {
   font-size: 0.95rem;
@@ -4479,7 +4426,7 @@ textarea.field {
 
 .ps-name {
   margin-top: 0.55rem;
-  font-size: clamp(2.5rem, 5.6vw, 5rem);
+  font-size: clamp(2.4rem, 5vw, 4.25rem);
   line-height: 0.96;
   letter-spacing: -0.045em;
 }
@@ -4522,8 +4469,7 @@ textarea.field {
      a pack. They overlap it, as if standing on the same shelf behind it. */
   --spread: 50%;
   position: relative;
-  height: clamp(14rem, 36svh, 22rem);
-  touch-action: pan-y;
+  height: clamp(13.5rem, 31svh, 19rem);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -4531,7 +4477,7 @@ textarea.field {
 @media (min-width: 900px) {
   .ps-stage {
     --spread: 58%;
-    height: clamp(21rem, calc(100svh - var(--nav-h) - 14.5rem), 32rem);
+    height: clamp(20rem, 50svh, 29rem);
   }
 }
 
@@ -4562,37 +4508,28 @@ textarea.field {
   background: radial-gradient(closest-side, rgb(24 40 22 / 0.28), rgb(24 40 22 / 0));
 }
 
+/* Moving between product pages keeps the stage, so a neighbour that becomes
+   the page's own pack slides forward rather than swapping in. */
 .ps-pack {
   --x: 0%;
   --s: 1;
   position: absolute;
   bottom: 0;
   left: 50%;
-  z-index: 1;
+  z-index: 3;
   height: 100%;
   aspect-ratio: 3 / 4;
-  opacity: 0;
-  pointer-events: none;
   transform: translateX(calc(-50% + var(--x))) scale(calc(var(--s) * var(--k, 1)));
   transform-origin: 50% 100%;
   transition:
-    transform 1s var(--ease-out),
-    opacity 0.7s var(--ease-out),
-    filter 0.7s var(--ease-out);
-}
-
-.ps-pack[data-pos="0"] {
-  z-index: 3;
-  opacity: 1;
-  pointer-events: auto;
+    transform 0.9s var(--ease-out),
+    filter 0.6s var(--ease-out);
 }
 
 .ps-pack[data-pos="-1"],
 .ps-pack[data-pos="1"] {
   --s: 0.68;
   z-index: 2;
-  opacity: 1;
-  pointer-events: auto;
   filter: saturate(0.78) brightness(1.07) contrast(0.92);
 }
 
@@ -4610,20 +4547,6 @@ textarea.field {
   filter: saturate(0.92) brightness(1.03);
 }
 
-.ps-pack[data-pos="-2"] {
-  --x: calc(var(--spread) * -1.7);
-  --s: 0.5;
-}
-
-.ps-pack[data-pos="2"] {
-  --x: calc(var(--spread) * 1.7);
-  --s: 0.5;
-}
-
-.ps-pack[data-pos="far"] {
-  --s: 0.45;
-}
-
 .ps-img {
   object-fit: contain;
   object-position: 50% 100%;
@@ -4636,19 +4559,10 @@ textarea.field {
   --k: 0.8;
 }
 
-.ps-pack[data-pos="far"] .ps-img,
-.ps-pack[data-pos="-2"] .ps-img,
-.ps-pack[data-pos="2"] .ps-img {
-  filter: none;
-}
-
 .ps-hit {
   position: absolute;
   inset: 0;
   display: block;
-  padding: 0;
-  border: 0;
-  background: none;
   cursor: pointer;
 }
 
@@ -4656,8 +4570,6 @@ textarea.field {
 
 .ps-foot {
   display: flex;
-  align-items: flex-end;
-  gap: 1rem;
   margin-top: clamp(1rem, 2.5vw, 1.75rem);
 }
 
@@ -4690,15 +4602,11 @@ textarea.field {
   gap: 0.6rem;
   min-width: 8.5rem;
   padding: 0.55rem 0 0.65rem;
-  border: 0;
-  background: none;
   color: var(--dim);
   font-size: 0.95rem;
   font-weight: 500;
   line-height: 1.2;
-  text-align: left;
   white-space: nowrap;
-  cursor: pointer;
   transition: color 0.3s var(--ease-out);
 }
 
@@ -4724,73 +4632,10 @@ textarea.field {
   position: absolute;
   inset: 0;
   background: var(--brand);
-  transform-origin: 0 50%;
-}
-
-.ps-fill[data-run] {
-  animation: ps-fill 6.5s linear forwards;
-}
-
-.ps-fill[data-paused] {
-  animation-play-state: paused;
-}
-
-@keyframes ps-fill {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-/* ----- on a product page -----
-   The same frame for the page's own pack, a step smaller: this page is read
-   to decide, so the key points should start close under it. */
-
-.ps-page {
-  padding-top: calc(var(--nav-h) + clamp(1rem, 2.5vw, 2rem));
-  padding-bottom: clamp(1rem, 2.5vw, 1.75rem);
-}
-
-.ps-page .ps-grid {
-  margin-top: clamp(0.75rem, 2vw, 1.5rem);
-}
-
-.ps-page .ps-copy {
-  grid-area: auto;
-  visibility: visible;
-}
-
-.ps-page .ps-copy > * {
-  opacity: 1;
-  transform: none;
-}
-
-.ps-page .ps-name {
-  font-size: clamp(2.4rem, 5vw, 4.25rem);
-}
-
-.ps-page .ps-stage {
-  height: clamp(13.5rem, 31svh, 19rem);
-}
-
-@media (min-width: 900px) {
-  .ps-page .ps-stage {
-    height: clamp(20rem, 50svh, 29rem);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ps-pack,
-  .ps-copy,
-  .ps-copy > * {
-    transition-duration: 1ms !important;
-    transition-delay: 0s !important;
-  }
-
-  /* No fill, so nothing turns on its own. */
-  .ps-fill[data-run] {
-    animation: none;
+  .ps-pack {
+    transition-duration: 1ms;
   }
 }

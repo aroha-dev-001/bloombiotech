@@ -38,9 +38,8 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <>
-      {/* The catalogue's frame, for this pack: it stands in front, the packs
-          either side of it behind (each a link to its own page), and every
-          pack's name along the foot. */}
+      {/* This pack stands in front, the packs either side of it behind (each
+          a link to its own page), and every pack's name along the foot. */}
       <header data-tone="light" className="ps ps-page">
         <div className="shell">
           <BackLink />
@@ -67,7 +66,7 @@ export default async function ProductPage({ params }: Props) {
               </div>
             </div>
 
-            <PackStage active={i} linked priority />
+            <PackStage active={i} priority />
           </div>
 
           <div className="ps-foot">
