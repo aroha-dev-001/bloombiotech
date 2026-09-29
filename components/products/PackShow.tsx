@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Ref } from "react";
 import { cutoutOf, products, shotOf, type Product } from "@/lib/products";
 
 /**
- * The two halves of a product page's opening frame: the page's own pack
- * standing in front with its neighbours behind, and every pack's name along
- * the foot. Both are plain links, so the page renders them on the server.
+ * A product page's opening frame: the page's own pack standing in front with
+ * its neighbours behind, each a plain link, so the page renders it on the
+ * server. The catalogue's turntable (PackCarousel) borrows `pad` and
+ * `centreInStrip` from here.
  */
 
 const n = products.length;
@@ -68,34 +68,6 @@ export function PackStage({ active, priority }: { active: number; priority?: boo
 
 function altOf(p: Product) {
   return shotOf(p) === "contents" ? `${p.name}: ${p.actives}` : `${p.name} pack`;
-}
-
-/** Every pack by name, each a link, with a line under the current one. */
-export function PackStrip({
-  active,
-  stripRef,
-  label,
-}: {
-  active: number;
-  stripRef?: Ref<HTMLElement>;
-  label: string;
-}) {
-  return (
-    <nav className="ps-strip" aria-label={label} ref={stripRef}>
-      {products.map((p, i) => (
-        <Link
-          key={p.slug}
-          href={`/products/${p.slug}`}
-          className="ps-tab"
-          aria-current={i === active ? "page" : undefined}
-          data-on={i === active || undefined}
-        >
-          <span className="ps-tab-name">{p.name}</span>
-          <span className="ps-track">{i === active ? <span className="ps-fill" /> : null}</span>
-        </Link>
-      ))}
-    </nav>
-  );
 }
 
 /** Scroll the strip so its current name is in the middle, without moving the page. */

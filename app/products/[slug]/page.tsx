@@ -10,7 +10,6 @@ import { ProductMedia } from "@/components/products/ProductMedia";
 import { whatsappUrl } from "@/lib/site";
 import { Split } from "@/components/motion/Split";
 import { PackStage, pad } from "@/components/products/PackShow";
-import { PackStripNav } from "@/components/products/PackStripNav";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -38,8 +37,8 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <>
-      {/* This pack stands in front, the packs either side of it behind (each
-          a link to its own page), and every pack's name along the foot. */}
+      {/* This pack stands in front, the packs either side of it behind, each
+          a link to its own page. */}
       <header data-tone="light" className="ps ps-page">
         <div className="shell">
           <BackLink />
@@ -67,10 +66,6 @@ export default async function ProductPage({ params }: Props) {
             </div>
 
             <PackStage active={i} priority />
-          </div>
-
-          <div className="ps-foot">
-            <PackStripNav active={i} />
           </div>
         </div>
       </header>
