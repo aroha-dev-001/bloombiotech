@@ -4639,3 +4639,250 @@ textarea.field {
     transition-duration: 1ms;
   }
 }
+
+/* ---------- catalogue: the turntable ----------
+   The catalogue opens on six packs standing on a turntable, the front one's
+   words beside it and every name along the foot. Choosing another turns the
+   table in depth and the words turn with it. The packs' transforms are
+   written by the table's own frame loop (components/products/PackCarousel.tsx);
+   this is the frame they stand in. */
+
+.ps-browse {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: calc(var(--nav-h) + clamp(0.75rem, 2vw, 1.5rem));
+  padding-bottom: clamp(0.75rem, 2vw, 1.25rem);
+  /* The front pack's label colour, washed out, and daylight behind it. It
+     settles into the page ground at the foot so the catalogue carries on. */
+  background-color: var(--tint, #edf1e8);
+  background-image:
+    radial-gradient(52% 58% at 74% 48%, rgb(255 255 255 / 0.8) 0%, rgb(255 255 255 / 0) 72%),
+    linear-gradient(180deg, rgb(244 243 238 / 0) 62%, var(--bone) 100%);
+  transition: background-color 0.9s var(--ease-out);
+}
+
+.ps-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.ps-browse .ps-grid {
+  flex: 1;
+  margin-top: 0;
+}
+
+.cat-hero--after {
+  padding-top: 0;
+}
+
+/* Phone: the names go straight under the packs, above the words, so the
+   whole index is on the first screen and clear of the chat button. */
+@media (max-width: 899px) {
+  .ps-browse .ps-grid {
+    display: contents;
+  }
+
+  .ps-browse .ps-body {
+    gap: 1rem;
+  }
+
+  .ps-browse .ps-stage {
+    order: 1;
+  }
+
+  .ps-browse .ps-foot {
+    order: 2;
+    margin-top: 0;
+  }
+
+  .ps-browse .ps-words {
+    order: 3;
+    padding-bottom: 5rem;
+  }
+}
+
+/* ----- the table ----- */
+
+.ps-table {
+  /* The front pack's height and width. Every place on the table is worked
+     out in these, so the server's first frame is already right. */
+  --ph: clamp(13.5rem, 31svh, 19rem);
+  --pw: calc(var(--ph) * 0.75);
+  /* How far a neighbour stands to the side, in pack-widths. */
+  --sp: 0.5;
+  height: var(--ph);
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.ps-table:active {
+  cursor: grabbing;
+}
+
+@media (min-width: 900px) {
+  .ps-table {
+    --ph: clamp(20rem, 52svh, 30rem);
+    --sp: 0.62;
+  }
+}
+
+.ps-orb {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+
+.ps-orb .ps-hit {
+  cursor: pointer;
+}
+
+.ps-orb .ps-img {
+  transition: translate 0.45s var(--ease-out);
+}
+
+.ps-orb .ps-hit:hover .ps-img {
+  translate: 0 -2.5%;
+}
+
+/* ----- the words, turning with the table ----- */
+
+.ps-words {
+  display: grid;
+}
+
+.ps-words > .ps-copy {
+  grid-area: 1 / 1;
+  align-self: center;
+  visibility: hidden;
+}
+
+.ps-words > .ps-copy > * {
+  opacity: 0;
+}
+
+.ps-words > .ps-copy[data-state] {
+  visibility: visible;
+}
+
+.ps-words > .ps-copy[data-state="on"] > * {
+  opacity: 1;
+}
+
+.ps-words[data-dir] > .ps-copy[data-state="on"] > * {
+  animation: 0.95s var(--ease-out) both;
+}
+
+.ps-words[data-dir] > .ps-copy[data-state="out"] > * {
+  animation: 0.42s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+.ps-words[data-dir="next"] > .ps-copy[data-state="on"] > * {
+  animation-name: ps-in-next;
+}
+
+.ps-words[data-dir="prev"] > .ps-copy[data-state="on"] > * {
+  animation-name: ps-in-prev;
+}
+
+.ps-words[data-dir="next"] > .ps-copy[data-state="out"] > * {
+  animation-name: ps-out-next;
+}
+
+.ps-words[data-dir="prev"] > .ps-copy[data-state="out"] > * {
+  animation-name: ps-out-prev;
+}
+
+/* Line by line, top first: the name leads, the button arrives last. */
+.ps-words > .ps-copy[data-state="on"] > :nth-child(1) { animation-delay: 0.16s; }
+.ps-words > .ps-copy[data-state="on"] > :nth-child(2) { animation-delay: 0.21s; }
+.ps-words > .ps-copy[data-state="on"] > :nth-child(3) { animation-delay: 0.28s; }
+.ps-words > .ps-copy[data-state="on"] > :nth-child(4) { animation-delay: 0.33s; }
+.ps-words > .ps-copy[data-state="on"] > :nth-child(5) { animation-delay: 0.38s; }
+.ps-words > .ps-copy[data-state="out"] > :nth-child(2) { animation-delay: 0.03s; }
+.ps-words > .ps-copy[data-state="out"] > :nth-child(n + 3) { animation-delay: 0.06s; }
+
+/* Coming round from the side the next pack comes from, turned away, and
+   leaving to the side the last one went. */
+@keyframes ps-in-next {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translate3d(2.75rem, 0, -4rem) rotateY(26deg);
+  }
+}
+
+@keyframes ps-in-prev {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translate3d(-2.75rem, 0, -4rem) rotateY(-26deg);
+  }
+}
+
+@keyframes ps-out-next {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: perspective(900px) translate3d(-2.75rem, 0, -4rem) rotateY(-26deg);
+  }
+}
+
+@keyframes ps-out-prev {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: perspective(900px) translate3d(2.75rem, 0, -4rem) rotateY(26deg);
+  }
+}
+
+/* ----- the line under the current name fills while it is on show ----- */
+
+.ps-browse .ps-fill {
+  transform-origin: 0 50%;
+}
+
+.ps-fill[data-run] {
+  animation: ps-fill 6.5s linear forwards;
+}
+
+.ps-fill[data-paused] {
+  animation-play-state: paused;
+}
+
+@keyframes ps-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ps-browse {
+    transition-duration: 1ms;
+  }
+
+  .ps-words[data-dir] > .ps-copy > * {
+    animation: none !important;
+  }
+
+  .ps-words > .ps-copy[data-state="out"] {
+    visibility: hidden;
+  }
+
+  /* No fill, so nothing turns on its own. */
+  .ps-fill[data-run] {
+    animation: none;
+  }
+}

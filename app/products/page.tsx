@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { CatalogueBrowser } from "@/components/solutions/CatalogueBrowser";
-import { PlateMarquee } from "@/components/products/PlateMarquee";
+import { PackCarousel } from "@/components/products/PackCarousel";
 import { Button } from "@/components/Button";
 import { Split } from "@/components/motion/Split";
 
@@ -15,10 +15,9 @@ export const metadata: Metadata = {
 /**
  * The catalogue.
  *
- * It used to open on a heading over empty bone with the first pack a screen
- * and a half below, and a photograph of the fermentation hall between them.
- * The packs are the subject of this page, so they are what it opens on: the
- * whole catalogue drifting across the top, then the words, then the filters.
+ * The packs are the subject of this page, so they are what it opens on: six
+ * of them on a turntable that turns to whichever one is chosen
+ * (PackCarousel), then the words, then every pack with its filters.
  *
  * The fermenter photograph moved to the foot of the page, where it answers
  * "where does this come from" after the packs have been seen, rather than
@@ -27,9 +26,9 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <header data-tone="light" className="cat-hero">
-        <PlateMarquee />
+      <PackCarousel />
 
+      <header data-tone="light" className="cat-hero cat-hero--after">
         <div className="shell cat-intro">
           <Split as="h1" text="Every product we make." className="display cat-title" />
           <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
