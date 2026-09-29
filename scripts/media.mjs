@@ -145,21 +145,28 @@ async function check() {
   process.exit(all ? 0 : 1);
 }
 
+/** Must match DEFAULT_MEDIA_URL in lib/media.ts. */
+const DEFAULT_MEDIA_URL = "https://bloom-biotech-media.pages.dev";
+
 /**
- * Runs before every `next build`. Off Netlify it does nothing. On Netlify it
- * refuses to build a site whose home page would have no film: public/world is
- * not in the repo, so without a working media URL the page would ship broken.
- * A failed build leaves the previous deploy live, which is the right outcome.
+ * Runs before every `next build`. Off Netlify and Vercel it does nothing. On
+ * either host it refuses to build a site whose home page would have no film:
+ * public/world is not in the repo, so the media host has to be serving the
+ * files the manifest names. A failed build leaves the previous deploy live,
+ * which is the right outcome.
+ *
+ * With NEXT_PUBLIC_MEDIA_URL unset, a production build uses DEFAULT_MEDIA_URL
+ * (lib/media.ts), so that is the host checked.
  */
 async function guard() {
-  if (process.env.NETLIFY !== "true") return;
-  const base = (process.env.NEXT_PUBLIC_MEDIA_URL || "").replace(/\/+$/, "");
+  if (process.env.NETLIFY !== "true" && !process.env.VERCEL) return;
+  const base = (process.env.NEXT_PUBLIC_MEDIA_URL ?? DEFAULT_MEDIA_URL).replace(/\/+$/, "");
   if (!base) {
     if (fs.existsSync(path.join(PUBLIC, "world"))) return;
     console.error(
-      "\nNEXT_PUBLIC_MEDIA_URL is not set and public/world is not in the repo, so the home page\n" +
-        "would deploy without its film. Run `npm run media:deploy`, then set NEXT_PUBLIC_MEDIA_URL\n" +
-        "in netlify.toml (see docs/media-cdn.md).\n",
+      "\nNEXT_PUBLIC_MEDIA_URL is empty and public/world is not in the repo, so the home page\n" +
+        "would deploy without its film. Run `npm run media:deploy`, then point NEXT_PUBLIC_MEDIA_URL\n" +
+        "at the media host (see docs/media-cdn.md).\n",
     );
     process.exit(1);
   }

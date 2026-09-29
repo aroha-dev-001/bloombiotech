@@ -22,9 +22,13 @@ How it fits together:
   committed.
 - `lib/media.ts` builds the URLs from `NEXT_PUBLIC_MEDIA_URL` and the manifest.
   With the variable unset (local dev), everything loads from `public/`.
-- Before every Netlify build, a guard checks the media host is serving the
-  current files. If it isn't, the build fails and the previous deploy stays
-  live, instead of publishing a home page with no film.
+- A production build with `NEXT_PUBLIC_MEDIA_URL` unset uses
+  `https://bloom-biotech-media.pages.dev` (`DEFAULT_MEDIA_URL` in
+  `lib/media.ts`), so Vercel needs no environment variable. Set it only to
+  point at a different host.
+- Before every Netlify or Vercel build, a guard checks the media host is
+  serving the current files. If it isn't, the build fails and the previous
+  deploy stays live, instead of publishing a home page with no film.
 
 ---
 

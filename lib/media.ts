@@ -12,9 +12,20 @@ import manifest from "./media-manifest.json";
  * Files there carry their content hash in their name so they can be cached for
  * a year; the committed manifest maps each plain path to its hashed name.
  *
- * Unset (local dev), paths resolve to this site's own /public, unhashed.
+ * Unset in local dev, paths resolve to this site's own /public, unhashed.
  */
-export const MEDIA_URL = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/+$/, "");
+export const DEFAULT_MEDIA_URL = "https://bloom-biotech-media.pages.dev";
+
+/**
+ * A production build uses the Cloudflare host unless told otherwise, so a host
+ * that was never given the variable (Vercel was not) still ships the film
+ * rather than asking itself for files that are not in the repo. Set
+ * NEXT_PUBLIC_MEDIA_URL to an empty string to force local paths.
+ */
+export const MEDIA_URL = (
+  process.env.NEXT_PUBLIC_MEDIA_URL ??
+  (process.env.NODE_ENV === "production" ? DEFAULT_MEDIA_URL : "")
+).replace(/\/+$/, "");
 
 const hashed: Record<string, string> = manifest;
 
