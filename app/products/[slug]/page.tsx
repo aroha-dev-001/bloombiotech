@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProduct, products, shotOf } from "@/lib/products";
+import { getProduct, kindOf, products, shotOf } from "@/lib/products";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { Button } from "@/components/Button";
 import { BackLink } from "@/components/BackLink";
@@ -9,6 +9,8 @@ import { ProductExplorer } from "@/components/products/ProductExplorer";
 import { ProductMedia } from "@/components/products/ProductMedia";
 import { whatsappUrl } from "@/lib/site";
 import { Split } from "@/components/motion/Split";
+import { PackStage, pad } from "@/components/products/PackShow";
+import { PackStripNav } from "@/components/products/PackStripNav";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,34 +38,40 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <>
-      <header data-tone="light" className="pp-hero">
+      {/* The catalogue's frame, for this pack: it stands in front, the packs
+          either side of it behind (each a link to its own page), and every
+          pack's name along the foot. */}
+      <header data-tone="light" className="ps ps-page">
         <div className="shell">
           <BackLink />
 
-          {/* On a phone the pack sits beside its name, so the words start on
-              the first screen instead of under a full-width picture. */}
-          <div className="pp-top">
-            <ProductMedia product={product} size="hero" priority morph className="pp-plate" />
-
-            <div className="pp-head">
-              <p className="pp-kind">{product.technology}</p>
-              <Split as="h1" text={product.name} className="display pp-name" />
-            </div>
-
-            <div className="pp-more">
-              <p className="pp-tagline">{product.tagline}</p>
-              <p className="pp-pack">
+          <div className="ps-grid">
+            <div className="ps-copy">
+              <p className="ps-kind">
+                {kindOf(product)} · {pad(i)} / {pad(products.length - 1)}
+              </p>
+              <Split as="h1" text={product.name} className="display ps-name" />
+              <p className="ps-tagline">{product.tagline}</p>
+              <p className="ps-tech">
+                {product.technology}
+                <br />
                 {shotOf(product) === "contents"
                   ? `Pictured: the formulation, not the pack. Supplied as ${product.pack.toLowerCase()}`
                   : product.pack}
               </p>
-              <div className="pp-cta">
+              <div className="ps-cta">
                 <Button href="#enquire">Ask for this pack</Button>
                 <Button href={whatsapp} variant="ghost">
                   WhatsApp
                 </Button>
               </div>
             </div>
+
+            <PackStage active={i} linked priority />
+          </div>
+
+          <div className="ps-foot">
+            <PackStripNav active={i} />
           </div>
         </div>
       </header>

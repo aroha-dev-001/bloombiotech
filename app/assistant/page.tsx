@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function AssistantPage() {
   return (
     <section data-tone="dark" className="pt-[calc(var(--nav-h)+5rem)] pb-28">
-      <div className="shell-narrow px-0">
+      <div className="shell-narrow">
         <Split as="h1" text="Ask Bloom AI." className="display d-hero" />
         <p className="lede lede-wide mt-8">
           Open the assistant from the button at the bottom right. It answers from

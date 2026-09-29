@@ -705,3 +705,23 @@ export function shotOf(product: Product): PackShot {
 export function plateOf(product: Product) {
   return `/plates/${product.slug}.jpg`;
 }
+
+/**
+ * The pack on its own, without the photograph around it, for the showcase
+ * that stands packs on the page ground. Built by `scripts/cutouts/build.py`.
+ */
+export function cutoutOf(product: Product) {
+  return `/cutouts/${product.slug}.webp`;
+}
+
+const kinds: Record<Product["category"], string> = {
+  Consortium: "Microbial consortium",
+  Biocontrol: "Biocontrol",
+  Compost: "Compost culture",
+  Nutrition: "Crop nutrition",
+};
+
+/** The category in words a grower would use, for the line above a name. */
+export function kindOf(product: Product) {
+  return kinds[product.category];
+}

@@ -77,7 +77,10 @@ export function Footer() {
         <address className="not-italic text-[1.0625rem] leading-relaxed text-[var(--dim)]">
           {plant.unitAddress}
           <span className="mt-3 block">
-            <a className="text-[var(--fg)] hover:text-[var(--accent)]" href={`tel:+91${site.phone}`}>
+            <a
+              className="whitespace-nowrap text-[var(--fg)] hover:text-[var(--accent)]"
+              href={`tel:+91${site.phone}`}
+            >
               {site.phoneDisplay}
             </a>
             <span className="mx-2 opacity-40">·</span>
