@@ -3914,12 +3914,20 @@ textarea.field {
    by offsets rather than translate(-50%): Safari resolves a percentage
    translate once, when the scale animation starts, so with the width
    changing under it the picture sat with its left edge on the frame's centre
-   line and the box opened as its right half only. */
+   line and the box opened as its right half only.
+
+   Vertically it is the flight's stage exactly (scrollcraft.css): from the top
+   of the screen, as tall as the large viewport. The frame stays centred on
+   the visible screen, so the lens opens in the middle of a phone whether or
+   not its address bar is showing, and lets go of the same frame the page
+   holds underneath. */
 .ap-img {
   position: absolute;
-  top: calc(50% - 50svh);
+  top: calc(50% - 50vh);
+  top: calc(50% - 50dvh);
   left: calc(50% - 50vw);
-  height: 100svh;
+  height: 100vh;
+  height: 100lvh;
   width: 100vw;
   max-width: none;
   object-fit: cover;
@@ -3951,7 +3959,7 @@ textarea.field {
   }
   100% {
     width: 100vw;
-    height: 100svh;
+    height: 100dvh;
     border-radius: 0;
   }
 }

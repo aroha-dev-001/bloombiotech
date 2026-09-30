@@ -134,6 +134,20 @@
    gated by a deadband and skipped while the decoder is still seeking. Without
    the smoothing a trackpad flick reads as a stutter, because wheel events do
    not arrive at a constant rate and a 1:1 write reproduces every gap in them.
+   The fraction is per 60Hz frame and scaled to the real frame time, so a 120Hz
+   phone and a throttled 30Hz one follow the scroll at the same speed.
+
+   ---------------------------------------------------------------------------
+   THE RULER
+   ---------------------------------------------------------------------------
+   Every scroll position is measured in viewport-heights, so the height used
+   must not change mid-scroll. On a phone innerHeight does: it grows and shrinks
+   as the address bar slides away and back. Measured against it, every point on
+   the track moved whenever the bar did, and the film leapt forward or back by
+   up to a leg under a steady thumb. The ruler is the large viewport (100lvh, or
+   100vh where lvh is unknown, which is the same height on iOS and Android): the
+   height with the bars retracted, which the bars moving never changes. The
+   worldflight stage is sized to it too, so the film is never re-zoomed either.
    ========================================================================== */
 
 (function (global) {
@@ -292,6 +306,18 @@
     var y = 0, needsLayout = true;
     var progressBar = root.querySelector('[data-sc-progress]');
     var docEl = document.documentElement;
+
+    // The ruler (see THE RULER above). An invalid 100lvh is dropped by the
+    // parser, which leaves the 100vh before it.
+    var ruler = document.createElement('div');
+    ruler.setAttribute('aria-hidden', 'true');
+    ruler.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;' +
+      'visibility:hidden;pointer-events:none;';
+    document.body.appendChild(ruler);
+    function measureVh() {
+      var h = ruler.getBoundingClientRect().height;
+      return h > 0 ? h : innerHeight;
+    }
 
     // One rate for the page, overridable per clip. Read from the mount root, the
     // document element, or the option bag, in that order.
@@ -552,7 +578,7 @@
 
     // ---- layout -----------------------------------------------------------
     function layout() {
-      vh = innerHeight; vw = innerWidth;
+      vh = measureVh(); vw = innerWidth;
       acts.forEach(function (a) {
         if (a.pinned) a.el.style.height = (a.span * 100) + 'vh';
       });
@@ -560,8 +586,8 @@
       // the sum of the leg weights plus one viewport: without that extra screen
       // the track runs out at the moment the last leg reaches p=1, so the last
       // leg's final second is a place the reader can never actually stop.
-      // Set in pixels, not vh, because .sc-world is sized in svh on phones and a
-      // vh/svh mismatch would put the track and the stage on different rulers.
+      // Set in pixels of the ruler, the unit read() divides by, so the track
+      // and the stage can never be on different rulers.
       worlds.forEach(function (W) {
         if (W.spacer) W.spacer.style.height = Math.round((W.total + 1) * vh) + 'px';
       });
@@ -797,12 +823,13 @@
       // Publish the route, draw none of it. A gauge, a map, a leg counter and a
       // set of chapter dots are all the same two numbers, and a runtime that
       // ships one of them ships it to every page that uses this mode.
+      // --sc-segp changes every frame, so it goes on the flight only. On <html>
+      // it made the browser restyle the whole document on every scroll frame.
       var cur = W.segs[k];
-      W.el.style.setProperty('--sc-seg', String(k));
       W.el.style.setProperty('--sc-segp', cur.local.toFixed(4));
-      docEl.style.setProperty('--sc-seg', String(k));
-      docEl.style.setProperty('--sc-segp', cur.local.toFixed(4));
       if (k !== W.index) {
+        W.el.style.setProperty('--sc-seg', String(k));
+        docEl.style.setProperty('--sc-seg', String(k));
         W.index = k;
         try {
           W.el.dispatchEvent(new CustomEvent('sc:waypoint', {
@@ -990,14 +1017,27 @@
     // Split from read() on purpose: seeking is asynchronous and rate-limited by
     // the decoder, while read() must stay cheap enough to run on every scroll
     // event. The lerp here is also what turns a jittery wheel into a glide.
-    function tick() {
+    var lastTick = 0;
+    function tick(now) {
       // Deadband. A phone decoder cannot service a seek every frame, so asking
       // for one costs more than it shows; 20ms of clip is under a frame of
       // footage anyway.
       var eps = isMobile() ? 0.02 : 0.008;
+      // The lerp is a fraction per 60Hz frame; scale it to this frame's length.
+      var dt = lastTick && now > lastTick ? Math.min(now - lastTick, 100) : 1000 / 60;
+      lastTick = now;
+      var steps = dt / (1000 / 60);
       for (var i = 0; i < playheads.length; i++) {
         var V = playheads[i];
         if (!V.ready) continue;
+        // The playhead walks every frame, whatever the decoder is doing, so a
+        // slow seek costs frames of film but never position: the next seek goes
+        // to where the playhead is now, not to where it was when the decoder
+        // fell behind. On a phone that is the difference between a film that
+        // updates less often and one that trails the thumb.
+        if (V.live || Math.abs(V.cur - V.target) >= 0.002) {
+          V.cur += (V.target - V.cur) * (reduce ? 1 : 1 - Math.pow(1 - V.lerp, steps));
+        }
         // Never queue a seek while the decoder is still resolving the last one.
         // On a phone a fast flick otherwise piles seeks up and freezes the clip.
         // But a seek that never completes would freeze the clip for the life of
@@ -1015,7 +1055,6 @@
         V.stuckAt = 0;
         // An offscreen clip that has already arrived stops costing anything.
         if (!V.live && Math.abs(V.cur - V.target) < 0.002) continue;
-        V.cur += (V.target - V.cur) * (reduce ? 1 : V.lerp);
         var dur = V.el.duration || 1;
         var t = clamp(V.cur, 0, 0.999) * dur;
         if (Math.abs(V.el.currentTime - t) > eps) { try { V.el.currentTime = t; } catch (e) {} }
@@ -1178,9 +1217,11 @@
 
     var lastW = innerWidth;
     addEventListener('resize', function () {
-      // Ignore URL-bar-only height changes on phones. Relaying out on those
-      // makes the page jump under the reader's thumb for no reason.
-      if (innerWidth === lastW && isMobile()) { vh = innerHeight; return; }
+      // A phone's address bar sliding in or out changes innerHeight and
+      // nothing else: the ruler holds, so the track, the spacer and the stage
+      // all stay exactly where they were under the reader's thumb. A rotation
+      // or a desktop window resize moves the width or the ruler, and relays out.
+      if (innerWidth === lastW && Math.abs(measureVh() - vh) < 0.5) return;
       lastW = innerWidth;
       layout();
     }, { passive: true });

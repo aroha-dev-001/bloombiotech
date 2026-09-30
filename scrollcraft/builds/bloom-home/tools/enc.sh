@@ -12,9 +12,10 @@ ffmpeg -y -hide_banner -loglevel error -i "$IN" -an \
   -vf "$DN,scale=${W}:-2:flags=lanczos,format=yuv420p" \
   -c:v libx264 -profile:v high -preset slow -tune film -crf "$CRF" -g 8 -keyint_min 8 -sc_threshold 0 \
   -movflags +faststart "$OUT/$NAME.mp4"
+# Phone cut: every frame a keyframe, so a seek decodes one frame (enc-phone.sh).
 ffmpeg -y -hide_banner -loglevel error -i "$IN" -an \
   -vf "$DN,crop=ih*9/16:ih,scale=720:-2:flags=lanczos,format=yuv420p" \
-  -c:v libx264 -profile:v high -preset slow -tune film -crf 28 -g 4 -keyint_min 4 -sc_threshold 0 \
+  -c:v libx264 -profile:v high -preset slow -tune film -crf 25 -g 1 -keyint_min 1 -bf 0 -sc_threshold 0 \
   -movflags +faststart "$OUT/$NAME-m.mp4"
 # posters are the ENCODED clip's own first frame
 ffmpeg -y -hide_banner -loglevel error -i "$OUT/$NAME.mp4" -frames:v 1 -q:v 4 "$OUT/$NAME.jpg"

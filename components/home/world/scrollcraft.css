@@ -317,8 +317,13 @@ video[data-sc-scrub] { opacity: 0; transition: opacity 380ms var(--sc-ease-out);
 
 [data-sc-mode="worldflight"] { position: relative; }
 
+/* Sized to the large viewport, the engine's ruler, and anchored at the top.
+   With inset: 0 a phone's address bar sliding away grew the stage mid-scroll,
+   and object-fit: cover re-zoomed every clip by as much as a tenth. While the
+   bar is out, the bottom of the stage is simply behind it. */
 .sc-world {
-  position: fixed; inset: 0;
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 100vh; height: 100lvh;
   overflow: clip;
   z-index: var(--sc-z-stage);
   background: var(--sc-canvas);

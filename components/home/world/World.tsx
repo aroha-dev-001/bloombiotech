@@ -23,14 +23,15 @@ import "./world.css";
  * frames that were generated to match. The only thing in document flow is an
  * empty spacer; scroll drives the film and the words, nothing else moves.
  *
- * The runtime is the unmodified scrollcraft engine, loaded from /public. It
+ * The runtime is the scrollcraft engine, loaded from /public, with two phone
+ * fixes of its own (its header: THE PLAYHEAD, THE RULER). It
  * has no teardown, so this page is never left by a client-side navigation:
  * internal links from here load their page in full. That also returns the
  * decoded video to the browser the moment the visitor leaves.
  */
 
 type ScrollCraft = {
-  mount: (root: Element, opts?: object) => unknown;
+  mount: (root: Element, opts?: object) => { layout: () => void };
   /** The engine's live records, one per mount. flight.ts reads the playheads. */
   instances?: unknown[];
 };
@@ -248,11 +249,12 @@ export function World() {
       else v.removeAttribute("data-sc-src-mobile");
     });
 
-    sc.mount(el);
+    const engine = sc.mount(el);
 
     // The spacer is sized once at mount. Re-measure when the window and the
     // faces have settled, or a mount that saw a 0px viewport never scrolls.
-    const relayout = () => window.dispatchEvent(new Event("resize"));
+    // Asked of the engine directly: it ignores a resize that changed nothing.
+    const relayout = () => engine.layout();
     if (document.readyState === "complete") relayout();
     else window.addEventListener("load", relayout, { once: true });
     document.fonts?.ready.then(relayout);

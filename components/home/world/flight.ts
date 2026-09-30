@@ -53,7 +53,13 @@ const LAST = stops.length - 1;
 const clamp = (x: number, a: number, b: number) => (x < a ? a : x > b ? b : x);
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const maxY = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-const px = (i: number) => Math.min(Math.round(stops[i].t * window.innerHeight), maxY());
+/**
+ * The engine's ruler: the stage's height, which is the large viewport and does
+ * not change when a phone's address bar does (scrollcraft.js, THE RULER).
+ */
+const unit = () =>
+  document.querySelector("[data-sc-world]")?.getBoundingClientRect().height || window.innerHeight;
+const px = (i: number) => Math.min(Math.round(stops[i].t * unit()), maxY());
 const setY = (y: number) => window.scrollTo({ top: y, behavior: "instant" });
 const wait = (ms: number) => new Promise((r) => window.setTimeout(r, ms));
 
@@ -94,7 +100,7 @@ function fly(i: number) {
   }
   // About a second for one leg of film: the camera is seen to move, and the
   // next frame is never more than a breath away.
-  const dur = clamp(500 + (480 * Math.abs(dist)) / window.innerHeight, 560, 1400);
+  const dur = clamp(500 + (480 * Math.abs(dist)) / unit(), 560, 1400);
   const now = performance.now();
   let m0 = 0;
   if (glide) {

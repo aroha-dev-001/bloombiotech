@@ -126,10 +126,19 @@ export function Specimen() {
     let raf = 0;
     let blank = false;
 
+    // The canvas is the stage's size, the large viewport (world.css), which is
+    // also the engine's ruler. So the lens lands on the film exactly, and a
+    // phone's address bar sliding in or out neither resizes the canvas nor
+    // moves the lens along its timeline.
     const size = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      vw = window.innerWidth;
-      vh = window.innerHeight;
+      const box = canvas.getBoundingClientRect();
+      const w = box.width || window.innerWidth;
+      const h = box.height || window.innerHeight;
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      if (w === vw && h === vh && d === dpr) return;
+      vw = w;
+      vh = h;
+      dpr = d;
       canvas.width = Math.round(vw * dpr);
       canvas.height = Math.round(vh * dpr);
       blank = false;
@@ -267,12 +276,15 @@ export function Specimen() {
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
-      const dt = Math.min(0.05, (now - last) / 1000);
+      const ms = Math.min(100, Math.max(0, now - last));
       last = now;
-      if (!reduce) clock += dt;
+      if (!reduce) clock += Math.min(0.05, ms / 1000);
 
+      // LERP is per 60Hz frame, scaled to this frame's length exactly as the
+      // engine scales its playhead, so the two agree at any refresh rate.
       const target = Math.min(TOTAL, Math.max(0, window.scrollY / Math.max(1, vh)));
-      smoothT = smoothT < 0 || reduce ? target : smoothT + (target - smoothT) * LERP;
+      const k = 1 - Math.pow(1 - LERP, ms / (1000 / 60));
+      smoothT = smoothT < 0 || reduce ? target : smoothT + (target - smoothT) * k;
       const t = smoothT;
 
       const live = t > T.open0 - 0.05 && t < T.out1 + 0.05;

@@ -5,14 +5,30 @@ import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
+let heroShift = "";
+
+/**
+ * A custom property set on <html> restyles the whole document, so write one
+ * only when its value changes. --hero-shift stops changing past 900px.
+ */
 function paintScroll(y: number) {
   const next = Number.isFinite(y) ? Math.max(0, y) : window.scrollY || 0;
-  const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   const root = document.documentElement;
-  root.style.setProperty("--scroll", String(Math.min(1, next / max)));
-  root.style.setProperty("--hero-shift", String(Math.min(next, 900)));
+  const shift = String(Math.min(Math.round(next), 900));
+  if (shift !== heroShift) {
+    root.style.setProperty("--hero-shift", shift);
+    heroShift = shift;
+  }
   root.classList.toggle("is-scrolled", next > 24);
 }
+
+/**
+ * Lenis smooths the wheel and leaves a finger to the browser, but it still
+ * listens to touches with non-passive handlers, so on a phone every swipe
+ * waits on the main thread before the page may move. Only a mouse or
+ * trackpad gets it; touch screens scroll natively.
+ */
+const smoothWheel = () => matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 /**
  * One observer reveals every [data-rv] element on the page, so sections can
@@ -67,7 +83,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     let frame = 0;
     let lenis: Lenis | undefined;
 
-    if (!reduce && smoothScroll) {
+    if (!reduce && smoothScroll && smoothWheel()) {
       lenis = new Lenis({ autoRaf: true, anchors: true, duration: 1.05 });
       lenis.on("scroll", (instance: { scroll: number }) => paintScroll(instance.scroll));
       paintScroll(window.scrollY);

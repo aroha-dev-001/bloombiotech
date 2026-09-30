@@ -228,7 +228,7 @@ Verified at 1440x900: at all 13 frames exactly one leg is at opacity 1 and every
 
 Higgsfield (no kie.ai key on this machine). 12 stills on nano_banana_pro 2K (~2 credits each), 11 Kling 3.0 Pro silent clips (8.75 per 5s, 10.5 per 6s), including 2 rerolls. Balance 245.5 before, 141.5 after the first wave, ~124 after the rerolls. Two stills were cropped rather than regenerated (soil vignette, stem centring).
 
-Encodes: 1600px desktop at crf 27 GOP 8, 720x1280 portrait phone cut at crf 28 GOP 4, light hqdn3d first. 34 MB desktop / 24 MB phone across the whole flight, fetched ±1.6vh around the reader.
+Encodes: 1600px desktop at crf 27 GOP 8, 720x1280 portrait phone cut at crf 28 GOP 4, light hqdn3d first. 34 MB desktop / 24 MB phone across the whole flight, fetched ±1.6vh around the reader. (The phone cut is all-intra since 2026-09-30; see Phones.)
 
 ## Verified
 
@@ -239,3 +239,15 @@ Encodes: 1600px desktop at crf 27 GOP 8, 720x1280 portrait phone cut at crf 28 G
 - Leaving the page: header link loads /products in full (no engine CSS, footer present); back remounts one engine instance; forward loads in full.
 
 Not verified: a real phone (iOS decoder, Low Power Mode, touch scrolling), Safari desktop, Firefox.
+
+## Phones (added 2026-09-30)
+
+The owner reported that scrolling was not smooth on phones, iOS and Android. Three causes:
+
+- **The track moved with the address bar.** Every scroll position was measured in `innerHeight`, which on a phone grows and shrinks as the address bar slides away and back. Each time it did, the film jumped with no scroll at all: 5000px down a 390x664 phone, the bar retracting (innerHeight 664 to 750) threw the film from the orbit (leg 6) back into leg 5 and swapped the headline. The engine, the specimen and flight.ts now measure in the large viewport (100lvh), which the bar never changes, and the stage and the specimen canvas are that size, anchored at the top, so the film is not re-zoomed either. The entrance picture is the same box, with the lens still centred on the visible screen. **Nothing on this page may measure the flight with `innerHeight`.**
+- **Phone clips were slow to seek.** A keyframe every 4 frames plus B-frames meant a seek decoded up to five frames. The phone cut is now all-intra (`tools/enc-phone.sh`, crf 25, the same SSIM against the masters as the old cut; frames, timing and seams unchanged). With the engine's own seek loop in Chrome at 4x CPU throttle: software decode p50 14.4 to 7.8ms, p95 21.3 to 8.9ms; hardware p95 4.5 to 2.9ms. The phone flight is now 35 MB, was 18.
+- **Lenis held up touch scrolling on every other page.** It listens to touchstart/touchmove on window with non-passive handlers, though it only smooths the wheel, so every swipe waited on the main thread. It now runs only for a fine pointer with hover.
+
+Also: the playhead lerp is per 60Hz frame scaled to the real frame time (a 120Hz Android tracked twice as fast as a 60Hz iPhone), the playhead keeps moving while a seek is in flight, and nothing rewrites a custom property on `<html>` on every scroll frame any more.
+
+Checked in Chrome phone emulation (390x664, touch): the simulated address bar leaves the film and copy exactly where they were (the old engine jumped a leg); a touch run paints all 11 legs from phone clips only and reaches the finale; the rail lands on its rest frames; the entrance completes; long frames are unchanged from before; Lenis is off on a phone and on at 1440x900. Not verified on a real phone: the address bar was simulated by overriding innerHeight.
